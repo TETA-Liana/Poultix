@@ -8,16 +8,25 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import hostConfig from '@/config/hostConfig';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import tw from 'twrnc'; // Ensure Tailwind works
+import axios from 'axios';
 
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState('');
   const router = useRouter();
 
-  const handleSendEmail = () => {
-    console.log('Send recovery email to:', email);
+  const handleSendEmail = async () => {
+    try {
+      const response = await axios.post(hostConfig.host + '/forgotPassword', {
+        email,
+      });
+      console.log(response)
+    } catch (error) {
+      console.error('Error sending email:', error);
+    }
   };
 
   return (
@@ -28,8 +37,8 @@ export default function ForgotPasswordScreen() {
       >
         <View style={tw`flex-1 px-6 pt-10`}>
           {/* Back Button */}
-          <TouchableOpacity 
-            onPress={() => router.back()} 
+          <TouchableOpacity
+            onPress={() => router.back()}
             style={tw`h-10 w-10 items-center justify-center rounded-full bg-gray-50`}
           >
             <Ionicons name="arrow-back" size={24} color="#000" />
@@ -65,7 +74,7 @@ export default function ForgotPasswordScreen() {
             />
 
             {/* Send Email Button */}
-            <TouchableOpacity 
+            <TouchableOpacity
               style={tw`h-12 bg-yellow-600 rounded-lg items-center justify-center mt-5`}
               onPress={handleSendEmail}
             >

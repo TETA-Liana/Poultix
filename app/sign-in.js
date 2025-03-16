@@ -44,7 +44,7 @@ export default function SignInScreen() {
       // Save user token or data (if needed)
       // AsyncStorage.setItem('token', response.data.token); // Example
 
-      router.push('/home-screen'); // Redirect after login
+      router.push('/screens/test'); // Redirect after login
     } catch (error) {
       console.error('Login Failed:', error.response?.data || error.message);
       Alert.alert('Login Failed', error.response?.data?.message || 'Something went wrong');

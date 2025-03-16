@@ -10,6 +10,7 @@ import {
   Platform,
   Alert,
 } from 'react-native';
+import hostConfig from '../config/hostConfig'
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -31,7 +32,7 @@ export default function SignInScreen() {
     }
 
     try {
-      const response = await axios.post('https://poultix-production.up.railway.app/api/signInUser', {
+      const response = await axios.post(hostConfig.host + '/signInUser', {
         email,
         password,
       });

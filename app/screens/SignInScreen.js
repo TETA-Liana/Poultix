@@ -25,7 +25,7 @@ export default function SignInScreen({ navigation }) {
       </TouchableOpacity>
 
       <View style={tw('flex-1 px-6')}>
-        <Text style={tw('text-2xl font-bold text-red-600 mb-2')}>Sign in to Your Account</Text>
+        <Text style={tw('text-2xl font-bold text-red-600 mb-2')}>Sign in to Your Account test</Text>
         <Text style={tw('text-base text-gray-500 mb-8')}>Welcome back, Sign in to your account</Text>
 
         <View style={tw('space-y-4')}>

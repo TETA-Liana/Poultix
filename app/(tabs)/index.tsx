@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -8,9 +8,13 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 import { Ionicons } from '@expo/vector-icons';
-import { Link } from 'expo-router';
-import tw from 'twrnc'; // Import Tailwind for React Native
+import { Link, router } from 'expo-router';
+import tw from 'twrnc';
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
+import hostConfig from '@/config/hostConfig';
 
 export default function SignUpScreen() {
   const [name, setName] = useState('');
@@ -18,8 +22,71 @@ export default function SignUpScreen() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSignUp = () => {
-    console.log('Signing up with:', { name, email, password });
+  useEffect(() => {
+    const checkUserSignIn = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        if (token) {
+          router.push('/screens/farm-overview')
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    checkUserSignIn();
+  }, [])
+
+  // Set up Google Sign-In configuration
+  GoogleSignin.configure({
+    webClientId: '', // Use your own client ID here
+  });
+
+
+  const handleSignUp = async () => {
+    try {
+      const response = await axios.post(`${hostConfig.host}/registerUser`, {
+        names: name,
+        email,
+        password,
+        role: 'user',
+      });
+      console.log(response)
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.status === 400) {
+          console.log(error?.response?.data);
+        }
+      } else {
+        console.log(error);
+      }
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const isPlayServicesAvailable = await GoogleSignin.hasPlayServices();
+      if (!isPlayServicesAvailable) {
+        console.log('Play services are not available');
+        return;
+      }
+
+      const userInfo = await GoogleSignin.signIn();
+      console.log(userInfo);
+      // You can handle user authentication here with userInfo
+      // Example: send userInfo.token to your backend for authentication
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+          console.log('User cancelled the login');
+        } else if (error.code === statusCodes.IN_PROGRESS) {
+          console.log('Sign-in is in progress');
+        } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+          console.log('Play services are not available');
+        } else {
+          console.error(error);
+        }
+      }
+    }
   };
 
   return (
@@ -78,7 +145,7 @@ export default function SignUpScreen() {
                 />
               </TouchableOpacity>
             </View>
-           
+
             {/* Forgot Password - Centered */}
             <View style={tw`items-center mb-6`}>
               <Link href="/screens/ForgotPassword">
@@ -87,7 +154,6 @@ export default function SignUpScreen() {
                 </Text>
               </Link>
             </View>
-
 
             {/* Sign Up Button */}
             <TouchableOpacity style={tw`bg-yellow-600 rounded-lg p-4 mb-5`} onPress={handleSignUp}>
@@ -98,7 +164,10 @@ export default function SignUpScreen() {
 
             {/* Social Sign Up Buttons */}
             <View style={tw`flex-row justify-between mb-5`}>
-              <TouchableOpacity style={tw`flex-1 h-12 border border-gray-300 rounded-lg flex items-center justify-center mx-2`}>
+              <TouchableOpacity
+                style={tw`flex-1 h-12 border border-gray-300 rounded-lg flex items-center justify-center mx-2`}
+                onPress={handleGoogleSignIn}
+              >
                 <Ionicons name="logo-google" size={24} color="#000" />
               </TouchableOpacity>
               <TouchableOpacity style={tw`flex-1 h-12 border border-gray-300 rounded-lg flex items-center justify-center mx-2`}>

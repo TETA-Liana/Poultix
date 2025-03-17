@@ -32,7 +32,7 @@ export default function AvailableDevicesScreen() {
 
   // Handle navigation to advanced settings
   const handleAdvancedSettings = () => {
-    router.push('screens/advanced-settings'); // Navigate to a hypothetical advanced settings screen
+    router.push('screens/bt-settings'); // Navigate to a hypothetical advanced settings screen
   };
 
   // Render each device item

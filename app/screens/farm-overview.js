@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -7,13 +7,45 @@ import {
   ScrollView,
   Image,
 } from 'react-native';
+import axios from 'axios'
+import hostConfig from '../../config/hostConfig';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import tw from 'twrnc';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function FarmOverviewScreen() {
   const router = useRouter();
+  const [farmOverview, setFarmOverview] = useState({
+    chickens: 0,
+    sick: 0,
+    healthy: 0,
+    atRisk: 0,
+  });
+
+  useEffect(() => {
+
+    const fetchFarmOverview = async () => {
+      const token = await AsyncStorage.getItem('token')
+      try {
+        const response = await axios.get(hostConfig.host + '/userFarms', {
+          headers: {
+            'Authorization': 'Bearer ' + token
+          }
+        })
+        console.log(response.data)
+      }
+      catch (error) {
+        if(axios.isAxiosError(error)) {
+          if(error.response.status === 401) {
+            router.push('/sign-in')
+          }
+        }
+      }
+    }
+    fetchFarmOverview()
+  }, [])
 
   return (
     <SafeAreaView style={tw`flex-1 bg-white`}>
@@ -31,7 +63,7 @@ export default function FarmOverviewScreen() {
                 style={tw`w-6 h-6 mr-2`}
               />
               <Text style={tw`text-white text-base`}>
-                chicken present : 278
+                chicken present : {farmOverview.chickens}
               </Text>
             </View>
             <View style={tw`flex-row items-center justify-between`}>
@@ -51,9 +83,9 @@ export default function FarmOverviewScreen() {
                 </Text>
               </View>
               <View>
-                <Text style={tw`text-red-600 text-sm font-medium mb-1`}>sick : 5</Text>
-                <Text style={tw`text-white text-sm font-medium mb-1`}>healthy : 273</Text>
-                <Text style={tw`text-green-600 text-sm font-medium`}>at risk : 20</Text>
+                <Text style={tw`text-red-600 text-sm font-medium mb-1`}>sick : {farmOverview.sick}</Text>
+                <Text style={tw`text-white text-sm font-medium mb-1`}>healthy : {farmOverview.healthy}</Text>
+                <Text style={tw`text-green-600 text-sm font-medium`}>at risk : {farmOverview.atRisk}</Text>
               </View>
             </View>
           </View>
@@ -61,7 +93,7 @@ export default function FarmOverviewScreen() {
           {/* Weather Check Button */}
           <TouchableOpacity
             style={tw`bg-red-700 rounded-lg px-4 py-2 w-40 mb-6  justify-between flew-row self-end`}
-            onPress={() => router.push('/weather')}
+            onPress={() => router.push('/')}
           >
             <Text style={tw`text-white text-sm font-medium`}>
               check weather conditions at the farm
@@ -110,7 +142,7 @@ export default function FarmOverviewScreen() {
           </View>
 
           {/* Navigation Button (for router.push('/screen/farm-overview') demonstration) */}
-         
+
 
           {/* Bottom Navigation Bar */}
           <View
@@ -124,7 +156,7 @@ export default function FarmOverviewScreen() {
               <Text style={tw`text-xs text-gray-900`}>Home</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => router.push('/devices')}
+              onPress={() => router.push('/screens/devices')}
               style={tw`items-center`}
             >
               <Ionicons name="hardware-chip-outline" size={24} color="#000" />

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios'
 import {
   View,
   Text,
@@ -7,11 +8,14 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from 'react-native';
+import hostConfig from '../config/hostConfig'
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import tw from 'twrnc';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function SignInScreen() {
   const [email, setEmail] = useState('');
@@ -21,6 +25,28 @@ export default function SignInScreen() {
   const router = useRouter();
   const handleBack = () => router?.back?.();
   const handleSignUp = () => router?.push?.('/signup');
+
+  const handleSignIn = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please enter email and password');
+      return;
+    }
+
+    try {
+      const response = await axios.post(hostConfig.host + '/signInUser', {
+        email,
+        password,
+      });
+
+      // Handle success (save token, navigate)
+      console.log('Login Successful:', response.data);
+      await AsyncStorage.setItem('token', response.data.token)
+
+    } catch (error) {
+      console.error('Login Failed:', error.response?.data || error.message);
+      Alert.alert('Login Failed', error.response?.data?.message || 'Something went wrong');
+    }
+  };
 
   return (
     <SafeAreaView style={tw`flex-1 bg-white`}>
@@ -92,6 +118,7 @@ export default function SignInScreen() {
 
             {/* Sign In Button */}
             <TouchableOpacity
+              onPress={handleSignIn}
               style={tw`h-14 bg-yellow-500 rounded-lg items-center justify-center`}
             >
               <Text style={tw`text-white font-semibold text-lg`}>Sign In</Text>

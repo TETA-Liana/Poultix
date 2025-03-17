@@ -1,5 +1,5 @@
 import { Link } from 'expo-router';
-import { openBrowserAsync } from 'expo-web-browser';
+import { openBrowserAsync } from '@/hooks/node_modules/expo-web-browser/src/WebBrowser';
 import { type ComponentProps } from 'react';
 import { Platform } from 'react-native';
 

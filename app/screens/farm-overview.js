@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,13 +7,23 @@ import {
   ScrollView,
   Image,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
+import axios from 'axios'
+import { Ionicons } from '@expo/vector-icons/src/Icons';
+import { useRouter } from 'expo-router/src';
+import { StatusBar } from 'expo-status-bar/src/StatusBar';
 import tw from 'twrnc';
 
 export default function FarmOverviewScreen() {
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchFarmOverview = async () => {
+      try { }
+      catch (error) {
+        console.log(error)
+      }
+    }
+  }, [])
 
   return (
     <SafeAreaView style={tw`flex-1 bg-white`}>
@@ -110,7 +120,7 @@ export default function FarmOverviewScreen() {
           </View>
 
           {/* Navigation Button (for router.push('/screen/farm-overview') demonstration) */}
-         
+
 
           {/* Bottom Navigation Bar */}
           <View

@@ -6,9 +6,9 @@ import {
   SafeAreaView,
   FlatList,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
+import { Ionicons } from '@expo/vector-icons/src/Icons';
+import { useRouter } from 'expo-router/src';
+import { StatusBar } from 'expo-status-bar/src/StatusBar';
 import tw from 'twrnc';
 
 export default function AvailableDevicesScreen() {
@@ -32,7 +32,7 @@ export default function AvailableDevicesScreen() {
 
   // Handle navigation to advanced settings
   const handleAdvancedSettings = () => {
-    router.push('screens/advanced-settings'); // Navigate to a hypothetical advanced settings screen
+    router.push('screens/bt-settings'); // Navigate to a hypothetical advanced settings screen
   };
 
   // Render each device item

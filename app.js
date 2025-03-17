@@ -1,6 +1,6 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native/hooks/node_modules/@react-navigation/native/src';
-import { createStackNavigator } from '@react-navigation/stack/hooks/node_modules/@react-navigation/stack/src';
+import { NavigationContainer } from '@react-navigation';
+import { createStackNavigator } from '@react-navigation';
 import SignUpScreen from './screens/SignUpScreen';
 import SignInScreen from './screens/SignInScreen'; 
 import ForgotPassword from  './screens/ForgotPassword';

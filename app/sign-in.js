@@ -15,6 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import tw from 'twrnc';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function SignInScreen() {
   const [email, setEmail] = useState('');
@@ -37,14 +38,10 @@ export default function SignInScreen() {
         password,
       });
 
-      // Handle success (e.g., save token, navigate)
+      // Handle success (save token, navigate)
       console.log('Login Successful:', response.data);
-      Alert.alert('Success', 'Login successful!');
+      await AsyncStorage.setItem('token', response.data.token)
 
-      // Save user token or data (if needed)
-      // AsyncStorage.setItem('token', response.data.token); // Example
-
-      router.push('/screens/test'); // Redirect after login
     } catch (error) {
       console.error('Login Failed:', error.response?.data || error.message);
       Alert.alert('Login Failed', error.response?.data?.message || 'Something went wrong');

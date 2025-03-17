@@ -61,7 +61,7 @@ export default function FarmOverviewScreen() {
           {/* Weather Check Button */}
           <TouchableOpacity
             style={tw`bg-red-700 rounded-lg px-4 py-2 w-40 mb-6  justify-between flew-row self-end`}
-            onPress={() => router.push('/weather')}
+            onPress={() => router.push('/')}
           >
             <Text style={tw`text-white text-sm font-medium`}>
               check weather conditions at the farm
@@ -124,7 +124,7 @@ export default function FarmOverviewScreen() {
               <Text style={tw`text-xs text-gray-900`}>Home</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => router.push('/devices')}
+              onPress={() => router.push('/screens/devices')}
               style={tw`items-center`}
             >
               <Ionicons name="hardware-chip-outline" size={24} color="#000" />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -8,9 +8,10 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { Ionicons } from '@expo/vector-icons';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import tw from 'twrnc';
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import hostConfig from '@/config/hostConfig';
@@ -21,10 +22,25 @@ export default function SignUpScreen() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
+  useEffect(() => {
+    const checkUserSignIn = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        if (token) {
+          router.push('/screens/farm-overview')
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    checkUserSignIn();
+  }, [])
+
   // Set up Google Sign-In configuration
   GoogleSignin.configure({
-    webClientId: 'YOUR_GOOGLE_WEB_CLIENT_ID', // Use your own client ID here
+    webClientId: '', // Use your own client ID here
   });
+
 
   const handleSignUp = async () => {
     try {
@@ -34,7 +50,7 @@ export default function SignUpScreen() {
         password,
         role: 'user',
       });
-      console.log(response.data);
+      console.log(response)
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.status === 400) {
@@ -48,7 +64,12 @@ export default function SignUpScreen() {
 
   const handleGoogleSignIn = async () => {
     try {
-      await GoogleSignin.hasPlayServices();
+      const isPlayServicesAvailable = await GoogleSignin.hasPlayServices();
+      if (!isPlayServicesAvailable) {
+        console.log('Play services are not available');
+        return;
+      }
+
       const userInfo = await GoogleSignin.signIn();
       console.log(userInfo);
       // You can handle user authentication here with userInfo

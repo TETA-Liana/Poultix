@@ -19,7 +19,7 @@ export default function VerifyIdentityScreen() {
 
   const handleContinue = () => {
     try {
-      router.push('/screens/verify-code');
+      router.push('/screens/verifyitsyou');
     } catch (error) {
       console.error('Navigation failed:', error);
     }

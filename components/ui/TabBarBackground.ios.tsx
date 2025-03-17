@@ -1,7 +1,7 @@
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs/hooks/node_modules/@react-navigation/bottom-tabs/src';
-import { BlurView } from '@/hooks/node_modules/expo-blur/src';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import { BlurView } from 'expo-blur';
 import { StyleSheet } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context/hooks/node_modules/react-native-safe-area-context/src';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function BlurTabBarBackground() {
   return (

@@ -8,12 +8,12 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import AsyncStorage from 'hooks/node_modules/@react-native-async-storage/async-storage/src';
-import axios from '@/hooks/node_modules/axios';
-import { Ionicons } from '@/hooks/node_modules/@expo/vector-icons/src/Icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { Ionicons } from '@expo/vector-icons';
 import { Link, router } from 'expo-router';
-import tw from '@/hooks/node_modules/twrnc/dist/esm';
-import { GoogleSignin, statusCodes } from '@react-native-google-signin/hooks/node_modules/@react-native-google-signin/google-signin/src';
+import tw from 'twrnc';
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import hostConfig from '@/config/hostConfig';
 
 export default function SignUpScreen() {

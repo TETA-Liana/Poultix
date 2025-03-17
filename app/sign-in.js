@@ -9,13 +9,13 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
-} from '../hooks/node_modules/react-native/types';
+} from 'react-native';
 import hostConfig from '../config/hostConfig'
-import { Ionicons } from '../hooks/node_modules/@expo/vector-icons/src/Icons';
-import { useRouter } from '../hooks/node_modules/expo-router/src';
-import { StatusBar } from '../hooks/node_modules/expo-status-bar/src/StatusBar';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import tw from 'twrnc';
-import AsyncStorage from 'hooks/node_modules/@react-native-async-storage/async-storage/src';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function SignInScreen() {
   const [email, setEmail] = useState('');

@@ -7,10 +7,10 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
-} from '../../hooks/node_modules/react-native/types';
-import { Ionicons } from '../../hooks/node_modules/@expo/vector-icons/src/Icons';
-import { useRouter } from '../../hooks/node_modules/expo-router/src';
-import { StatusBar } from '../../hooks/node_modules/expo-status-bar/src/StatusBar';
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import tw from 'twrnc';
 
 export default function VerifyIdentityScreen() {

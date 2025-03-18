@@ -6,151 +6,158 @@ import {
   SafeAreaView,
   ScrollView,
   Image,
+  Animated,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import tw from 'twrnc';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function FarmerScreen() {
   const router = useRouter();
+  const fadeAnim = React.useRef(new Animated.Value(0)).current;
+
+  React.useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 800,
+      useNativeDriver: true,
+    }).start();
+  }, []);
 
   return (
-    <SafeAreaView style={tw`flex-1 bg-blue-50`}>
+    <SafeAreaView style={tw`flex-1 bg-white`}>
       <StatusBar style="dark" backgroundColor="transparent" translucent />
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={tw`flex-1 px-5 pt-5`}>
+        <Animated.View style={[tw`flex-1 px-5 pt-12 pb-8`, { opacity: fadeAnim }]}>
           {/* Profile Section */}
-          <View style={tw`flex-row justify-between items-center mb-6`}>
-            <View>
-              <Text style={tw`text-2xl font-bold text-yellow-600`}>
-                Umutoni Raissa
-              </Text>
-              <Text style={tw`text-teal-500 text-sm`}>
-                Farmer - Female, 25
-              </Text>
+          <LinearGradient
+            colors={['#F97316', '#EA580C']}
+            style={tw`rounded-2xl p-6 mb-6 shadow-lg`}
+          >
+            <View style={tw`flex-row justify-between items-center`}>
+              <View>
+                <Text style={tw`text-2xl font-extrabold text-white tracking-tight`}>
+                  Umutoni Raissa
+                </Text>
+                <Text style={tw`text-orange-100 text-sm mt-1 font-medium opacity-90`}>
+                  Farmer • Female, 25
+                </Text>
+              </View>
+              <View style={tw`relative`}>
+                <Image
+                  source={{ uri: 'https://via.placeholder.com/50' }}
+                  style={tw`w-14 h-14 rounded-full border-3 border-white shadow-sm`}
+                />
+                <View style={tw`absolute -bottom-1 -right-1 w-4 h-4 bg-orange-300 rounded-full border-2 border-white`}></View>
+              </View>
             </View>
-            <View style={tw`w-12 h-12 bg-gray-200 rounded-full items-center justify-center`}>
-              <Image
-                source={{ uri: 'https://via.placeholder.com/50' }} // Replace with actual profile image URL
-                style={tw`w-12 h-12 rounded-full`}
-              />
-            </View>
-          </View>
+          </LinearGradient>
 
           {/* Upcoming Schedule Section */}
-          <View style={tw`bg-yellow-600 rounded-2xl p-5 mb-6 shadow-sm`}>
+          <View style={tw`bg-white rounded-2xl p-5 mb-6 shadow-md border border-orange-100`}>
             <View style={tw`flex-row justify-between items-center mb-4`}>
-              <Text style={tw`text-lg font-semibold text-white`}>
-                Upcoming schedule
+              <Text style={tw`text-xl font-semibold text-gray-800`}>
+                Upcoming Visit
               </Text>
               <TouchableOpacity onPress={() => router.push('/schedule')}>
-                <Text style={tw`text-red-600 text-sm font-medium`}>View all</Text>
+                <Text style={tw`text-orange-600 text-sm font-semibold`}>View All</Text>
               </TouchableOpacity>
             </View>
-            <View style={tw`flex-row items-center`}>
+            <View style={tw`flex-row items-center bg-orange-50 p-4 rounded-xl`}>
               <Image
-                source={{ uri: 'https://via.placeholder.com/50' }} // Replace with actual doctor image URL
-                style={tw`w-12 h-12 rounded-full mr-3`}
+                source={{ uri: 'https://via.placeholder.com/50' }}
+                style={tw`w-12 h-12 rounded-full mr-4 border border-orange-200`}
               />
-              <View>
-                <Text style={tw`text-white text-base font-semibold`}>
-                  Dr. Patricia Uwimana ...
+              <View style={tw`flex-1`}>
+                <Text style={tw`text-gray-800 text-base font-semibold`}>
+                  Dr. Patricia Uwimana
                 </Text>
-                <Text style={tw`text-white text-sm`}>
+                <Text style={tw`text-gray-600 text-sm mt-1`}>
                   Sunday, 27 June 2021
                 </Text>
-                <Text style={tw`text-white text-sm`}>08:00am - 10:00am</Text>
+                <Text style={tw`text-gray-500 text-xs mt-0.5`}>08:00am - 10:00am</Text>
               </View>
-              <View style={tw`ml-auto`}>
-                <TouchableOpacity>
-                  <Ionicons name="chatbubble-outline" size={24} color="#A61B1B" />
-                </TouchableOpacity>
-              </View>
+              <TouchableOpacity style={tw`p-2 bg-orange-100 rounded-full`}>
+                <Ionicons name="chatbubble-ellipses-outline" size={22} color="#F97316" />
+              </TouchableOpacity>
             </View>
           </View>
 
           {/* Choose Your Location Section */}
           <View style={tw`mb-6`}>
-            <Text style={tw`text-lg font-semibold text-gray-900 mb-4`}>
-              Choose your location
+            <Text style={tw`text-xl font-semibold text-gray-800 mb-4`}>
+              Select Location
             </Text>
-            <View style={tw`flex-row justify-between mb-4`}>
-              <TouchableOpacity
-                style={tw`bg-red-700 rounded-lg px-4 py-4 flex-1 mr-2 w-40 `}
-                onPress={() => router.push('/location/byose')}
-              >
-                <Text style={tw`text-white text-sm font-medium text-center`}>Byose</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={tw`bg-white rounded-lg px-4 py-2 flex-1 mr-2 border border-gray-300`}
-                onPress={() => router.push('/location/kibuye')}
-              >
-                <Text style={tw`text-gray-900 text-sm font-medium text-center`}>Kibuye</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={tw`bg-white rounded-lg px-4 py-2 flex-1 border border-gray-300`}
-                onPress={() => router.push('/location/muhanga')}
-              >
-                <Text style={tw`text-gray-900 text-sm font-medium text-center`}>Muhanga</Text>
-              </TouchableOpacity>
+            <View style={tw`flex-row gap-3 mb-5`}>
+              {['Byose', 'Kibuye', 'Muhanga'].map((location) => (
+                <TouchableOpacity
+                  key={location}
+                  style={tw`flex-1 bg-white p-4 rounded-xl shadow-sm border border-orange-100 active:bg-orange-50`}
+                  onPress={() => router.push(`/location/${location.toLowerCase()}`)}
+                >
+                  <Text style={tw`text-gray-800 text-sm font-semibold text-center`}>
+                    {location}
+                  </Text>
+                </TouchableOpacity>
+              ))}
             </View>
-            {/* Doctor for Muhanga */}
-            <View style={tw`bg-white rounded-2xl p-4 mb-3 shadow-sm flex-row items-center`}>
-              <Image
-                source={{ uri: 'https://via.placeholder.com/50' }} // Replace with actual doctor image URL
-                style={tw`w-12 h-12 rounded-full mr-3`}
-              />
-              <View>
-                <Text style={tw`text-gray-900 text-base font-semibold`}>
-                  Dr. Mutesi Hadidja
-                </Text>
-                <Text style={tw`text-gray-600 text-sm`}>Muhanga</Text>
+            {[
+              { name: 'Dr. Mutesi Hadidja', location: 'Muhanga' },
+              { name: 'Dr. Teta Liana', location: 'Nyamirambo' },
+            ].map((doctor) => (
+              <View
+                key={doctor.name}
+                style={tw`bg-white rounded-xl p-4 mb-3 shadow-sm flex-row items-center border border-orange-100`}
+              >
+                <Image
+                  source={{ uri: 'https://via.placeholder.com/50' }}
+                  style={tw`w-12 h-12 rounded-full mr-3 border border-orange-200`}
+                />
+                <View style={tw`flex-1`}>
+                  <Text style={tw`text-gray-800 text-base font-semibold`}>
+                    {doctor.name}
+                  </Text>
+                  <Text style={tw`text-gray-600 text-sm`}>{doctor.location}</Text>
+                </View>
+                <TouchableOpacity style={tw`p-2 bg-orange-50 rounded-full`}>
+                  <Ionicons name="ellipsis-horizontal" size={20} color="#EA580C" />
+                </TouchableOpacity>
               </View>
-              <View style={tw`ml-auto`}>
-                <Ionicons name="ellipsis-horizontal" size={20} color="#000" />
-              </View>
-            </View>
-            {/* Doctor for Nyamirambo */}
-            <View style={tw`bg-white rounded-2xl p-4 shadow-sm flex-row items-center`}>
-              <Image
-                source={{ uri: 'https://via.placeholder.com/50' }} // Replace with actual doctor image URL
-                style={tw`w-12 h-12 rounded-full mr-3`}
-              />
-              <View>
-                <Text style={tw`text-gray-900 text-base font-semibold`}>
-                  Dr. Teta Liana
-                </Text>
-                <Text style={tw`text-gray-600 text-sm`}>Nyamirambo</Text>
-              </View>
-              <View style={tw`ml-auto`}>
-                <Ionicons name="ellipsis-horizontal" size={20} color="#000" />
-              </View>
-            </View>
+            ))}
           </View>
 
           {/* Weekly Report Section */}
-          <View style={tw`bg-white rounded-2xl p-5 shadow-sm mb-6`}>
-            <Text style={tw`text-lg font-semibold text-gray-900 mb-4`}>
-              Your weekly report
+          <View style={tw`bg-white rounded-2xl p-5 shadow-md border border-orange-100`}>
+            <Text style={tw`text-xl font-semibold text-gray-800 mb-5`}>
+              Weekly Report
             </Text>
             <View style={tw`flex-row items-center justify-between`}>
-              <View style={tw`relative`}>
-                <View style={tw`w-20 h-20 rounded-full border-8 border-gray-200`} />
-                <View
-                  style={tw`absolute top-0 left-0 w-20 h-20 rounded-full border-8 border-green-400 transform rotate-90`}
+              <View style={tw`relative items-center justify-center`}>
+                <Animated.View
+                  style={tw`w-28 h-28 rounded-full border-8 border-orange-100`}
                 />
-                <Text style={tw`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-gray-900 text-base font-bold`}>
-                  Feb
+                <Animated.View
+                  style={tw`absolute top-0 left-0 w-28 h-28 rounded-full border-8 border-orange-500`}
+                />
+                <Text style={tw`absolute text-orange-600 text-2xl font-bold`}>
+                  87%
                 </Text>
               </View>
-              <View>
-                <Text style={tw`text-yellow-600 text-sm font-medium`}>Sick</Text>
-                <Text style={tw`text-red-600 text-sm font-medium`}>At Risk</Text>
+              <View style={tw`space-y-3`}>
+                <View style={tw`flex-row items-center`}>
+                  <View style={tw`w-3 h-3 rounded-full bg-orange-300 mr-2`}></View>
+                  <Text style={tw`text-gray-700 text-sm font-medium`}>Healthy</Text>
+                </View>
+                <View style={tw`flex-row items-center`}>
+                  <View style={tw`w-3 h-3 rounded-full bg-orange-500 mr-2`}></View>
+                  <Text style={tw`text-gray-700 text-sm font-medium`}>At Risk</Text>
+                </View>
               </View>
             </View>
           </View>
-        </View>
+        </Animated.View>
       </ScrollView>
     </SafeAreaView>
   );

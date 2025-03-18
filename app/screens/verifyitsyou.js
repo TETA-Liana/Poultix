@@ -1,142 +1,386 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
+  Animated,
+  Dimensions,
+  Vibration,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import tw from 'twrnc';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function VerifyItsYouScreen() {
   const router = useRouter();
-  const [code, setCode] = useState(['', '', '', '']); // Array to manage 4-digit code
+  const [code, setCode] = useState(['', '', '', '']);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isResending, setIsResending] = useState(false);
+  const [countdown, setCountdown] = useState(0);
+  const [keyPressed, setKeyPressed] = useState(null);
+  
+  const shakeAnimation = useRef(new Animated.Value(0)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.95)).current;
+  const { width } = Dimensions.get('window');
+  const boxSize = width * 0.15;
+  
+  // Animation for initial load
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        friction: 8,
+        tension: 40,
+        useNativeDriver: true,
+      })
+    ]).start();
+  }, []);
+  
+  // Countdown timer for resend code
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [countdown]);
 
   const handleBack = () => {
     router.back();
   };
 
   const handleResendCode = () => {
-    // Add logic to resend the code (e.g., API call)
-    console.log('Resend code requested');
+    if (countdown > 0) return;
+    
+    // Provide feedback
+    Vibration.vibrate(50);
+    setIsResending(true);
+    
+    // Simulate API call
+    setTimeout(() => {
+      setIsResending(false);
+      setCountdown(30); // 30 second countdown
+      setCode(['', '', '', '']);
+      setActiveIndex(0);
+      
+      // Show success animation
+      Animated.sequence([
+        Animated.timing(scaleAnim, {
+          toValue: 1.05,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(scaleAnim, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: true,
+        })
+      ]).start();
+    }, 1500);
   };
 
   const handleConfirm = () => {
-    // Add logic to verify the code
     const enteredCode = code.join('');
     if (enteredCode.length === 4) {
-      console.log('Code entered:', enteredCode);
-      router.push('/screens/verifyitsyou'); // Adjust the route as needed
+      // Provide feedback
+      Vibration.vibrate(50);
+      
+      // Simulate verification
+      if (enteredCode === '1234') { // Example correct code
+        // Success animation
+        Animated.sequence([
+          Animated.timing(scaleAnim, {
+            toValue: 1.05,
+            duration: 200,
+            useNativeDriver: true,
+          }),
+          Animated.timing(scaleAnim, {
+            toValue: 1,
+            duration: 200,
+            useNativeDriver: true,
+          })
+        ]).start(() => {
+          // Navigate after animation completes
+          router.push('/screens/verifyitsyou');
+        });
+      } else {
+        // Error animation - shake
+        Animated.sequence([
+          Animated.timing(shakeAnimation, {
+            toValue: 10,
+            duration: 100,
+            useNativeDriver: true,
+          }),
+          Animated.timing(shakeAnimation, {
+            toValue: -10,
+            duration: 100,
+            useNativeDriver: true,
+          }),
+          Animated.timing(shakeAnimation, {
+            toValue: 10,
+            duration: 100,
+            useNativeDriver: true,
+          }),
+          Animated.timing(shakeAnimation, {
+            toValue: 0,
+            duration: 100,
+            useNativeDriver: true,
+          })
+        ]).start();
+        
+        // Reset code after shake
+        setTimeout(() => {
+          setCode(['', '', '', '']);
+          setActiveIndex(0);
+        }, 500);
+      }
     } else {
-      alert('Please enter a 4-digit code');
+      // Provide feedback for incomplete code
+      Animated.sequence([
+        Animated.timing(shakeAnimation, {
+          toValue: 10,
+          duration: 100,
+          useNativeDriver: true,
+        }),
+        Animated.timing(shakeAnimation, {
+          toValue: -10,
+          duration: 100,
+          useNativeDriver: true,
+        }),
+        Animated.timing(shakeAnimation, {
+          toValue: 0,
+          duration: 100,
+          useNativeDriver: true,
+        })
+      ]).start();
     }
   };
 
   const handleKeyPress = (value) => {
-    let newCode = [...code];
-    for (let i = 0; i < newCode.length; i++) {
-      if (!newCode[i]) {
-        newCode[i] = value;
-        break;
+    // Provide haptic feedback
+    Vibration.vibrate(20);
+    
+    // Visual feedback for pressed key
+    setKeyPressed(value);
+    setTimeout(() => setKeyPressed(null), 200);
+    
+    if (activeIndex < 4) {
+      let newCode = [...code];
+      newCode[activeIndex] = value;
+      setCode(newCode);
+      setActiveIndex(activeIndex + 1);
+      
+      // Auto-submit when all digits are entered
+      if (activeIndex === 3) {
+        setTimeout(() => {
+          handleConfirm();
+        }, 300);
       }
     }
-    setCode(newCode);
   };
 
   const handleDelete = () => {
-    let newCode = [...code];
-    for (let i = newCode.length - 1; i >= 0; i--) {
-      if (newCode[i]) {
-        newCode[i] = '';
-        break;
-      }
+    // Provide haptic feedback
+    Vibration.vibrate(20);
+    
+    // Visual feedback for pressed key
+    setKeyPressed('delete');
+    setTimeout(() => setKeyPressed(null), 200);
+    
+    if (activeIndex > 0) {
+      let newCode = [...code];
+      newCode[activeIndex - 1] = '';
+      setCode(newCode);
+      setActiveIndex(activeIndex - 1);
     }
-    setCode(newCode);
+  };
+  
+  // Determine if confirm button should be enabled
+  const isConfirmEnabled = code.every(digit => digit !== '');
+  
+  // Animations for the main container
+  const containerAnimations = {
+    opacity: fadeAnim,
+    transform: [{ scale: scaleAnim }]
+  };
+  
+  // Animations for the code input boxes
+  const codeBoxAnimations = {
+    transform: [{ translateX: shakeAnimation }]
+  };
+
+  // Keypad data with letters like a phone
+  const keypadData = [
+    { number: '1', },
+    { number: '2',  },
+    { number: '3', },
+    { number: '4',  },
+    { number: '5', },
+    { number: '6', },
+    { number: '7',  },
+    { number: '8', },
+    { number: '9',  },
+    { number: '*', },
+    { number: '0', },
+    { number: '#',  },
+  ];
+
+  // Render a single digit box
+  const renderDigitBox = (digit, index) => {
+    const isActive = index === activeIndex && digit === '';
+    const isFilled = digit !== '';
+    
+    return (
+      <View
+        key={index}
+        style={[
+          tw`border rounded-2xl mx-2 items-center justify-center shadow-sm`,
+          isFilled ? tw`border-yellow-500 bg-yellow-50` : isActive ? tw`border-yellow-400` : tw`border-gray-300`,
+          { width: boxSize, height: boxSize }
+        ]}
+      >
+        {isFilled ? (
+          <Text style={tw`text-2xl font-bold text-yellow-700`}>{digit}</Text>
+        ) : isActive ? (
+          <View style={tw`w-3 h-3 bg-yellow-400 rounded-full`} />
+        ) : null}
+      </View>
+    );
   };
 
   return (
     <SafeAreaView style={tw`flex-1 bg-white`}>
-      <StatusBar style="light" translucent />
+      <StatusBar style="dark" />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={tw`flex-1`}
       >
-        <View style={tw`flex-1 px-6 pt-10 pb-6`}>
-          {/* Back Button */}
-          <TouchableOpacity onPress={handleBack} style={tw`mb-6`}>
-            <Ionicons name="chevron-back" size={24} color="#6B7280" />
-          </TouchableOpacity>
-
-          {/* Title and Description */}
-          <Text style={tw`text-2xl font-semibold text-red-600 mb-2 text-center`}>
-            Verify it's you
-          </Text>
-          <Text style={tw`text-gray-500 text-base text-center mb-6`}>
-            We send a code to (T****@gmail.com). Enter it here to verify your
-            identity
-          </Text>
-
-          {/* Code Input Boxes */}
-          <View style={tw`flex-row justify-center mb-6`}>
-            {code.map((digit, index) => (
-              <View
-                key={index}
-                style={tw`w-12 h-12 border border-gray-300 rounded-lg mx-2 flex items-center justify-center`}
-              >
-                <Text style={tw`text-xl`}>{digit}</Text>
-              </View>
-            ))}
+        <Animated.View style={[tw`flex-1 px-6 pt-10 pb-6`, containerAnimations]}>
+          {/* Header */}
+          <View style={tw`flex-row items-center mb-8`}>
+            <TouchableOpacity 
+              onPress={handleBack} 
+              style={tw`w-10 h-10 rounded-full bg-white shadow-sm items-center justify-center`}
+            >
+              <Ionicons name="chevron-back" size={24} color="#D97706" />
+            </TouchableOpacity>
+            <View style={tw`flex-1 items-center`}>
+              <Text style={tw`text-lg font-medium text-gray-700`}>Verification</Text>
+            </View>
+            <View style={tw`w-10`}></View> {/* Empty view for centering */}
           </View>
 
+          {/* Title and Description */}
+          <View style={tw`items-center mb-8`}>
+            <View style={tw`w-20 h-20 rounded-full bg-amber-100 items-center justify-center mb-6 shadow-sm`}>
+              <MaterialCommunityIcons name="shield-check" size={40} color="#D97706" />
+            </View>
+            <Text style={tw`text-2xl font-bold text-amber-700 mb-3 text-center`}>
+              Verify it's you
+            </Text>
+            <Text style={tw`text-gray-500 text-base text-center px-6`}>
+              We sent a code to <Text style={tw`font-medium text-gray-700`}>T****@gmail.com</Text>. Enter it below to verify your identity.
+            </Text>
+          </View>
+
+          {/* Code Input Boxes */}
+          <Animated.View style={[tw`flex-row justify-center mb-8`, codeBoxAnimations]}>
+            {code.map((digit, index) => renderDigitBox(digit, index))}
+          </Animated.View>
+
           {/* Resend Code */}
-          <TouchableOpacity onPress={handleResendCode}>
-            <Text style={tw`text-red-600 text-center mb-6`}>Resend Code</Text>
+          <TouchableOpacity 
+            onPress={handleResendCode}
+            disabled={countdown > 0 || isResending}
+            style={tw`mb-8 items-center`}
+          >
+            {isResending ? (
+              <Text style={tw`text-amber-400 font-medium`}>Sending code...</Text>
+            ) : countdown > 0 ? (
+              <Text style={tw`text-gray-500`}>Resend code in <Text style={tw`font-medium`}>{countdown}s</Text></Text>
+            ) : (
+              <Text style={tw`text-amber-600 font-medium`}>Resend Code</Text>
+            )}
           </TouchableOpacity>
 
           {/* Confirm Button */}
           <TouchableOpacity
             onPress={handleConfirm}
-            style={tw`w-full h-12 bg-yellow-600 rounded-lg items-center justify-center mb-6`}
+            disabled={!isConfirmEnabled}
+            style={[
+              tw`h-14 rounded-xl items-center justify-center mb-8 shadow-sm overflow-hidden`,
+              isConfirmEnabled ? tw`` : tw`opacity-70`
+            ]}
           >
-            <Text style={tw`text-white text-lg font-semibold`}>Confirm</Text>
+            <LinearGradient
+              colors={isConfirmEnabled ? ['#F59E0B', '#D97706'] : ['#FCD34D', '#F59E0B']}
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 0}}
+              style={tw`w-full h-full rounded-xl items-center justify-center`}
+            >
+              <Text style={tw`text-white text-lg font-semibold`}>Confirm</Text>
+            </LinearGradient>
           </TouchableOpacity>
 
-          {/* Numeric Keypad */}
-          <View style={tw`flex-row flex-wrap justify-center`}>
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+          {/* Phone-style Keypad */}
+          <View style={tw`bg-gray-100 rounded-3xl p-4 shadow-inner mx-auto`}>
+            <View style={tw`flex-row flex-wrap justify-center`}>
+              {keypadData.map((item, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => handleKeyPress(item.number)}
+                  style={[
+                    tw`items-center justify-center m-2 rounded-full`,
+                    keyPressed === item.number ? tw`bg-amber-200` : tw`bg-white`,
+                    { width: width * 0.22, height: width * 0.22 },
+                    item.number === 'delete' ? tw`bg-red-100` : null,
+                  ]}
+                  activeOpacity={0.7}
+                >
+                  <View style={tw`items-center`}>
+                    <Text style={[
+                      tw`text-2xl font-semibold mb-1`,
+                      keyPressed === item.number ? tw`text-amber-700` : tw`text-gray-700`
+                    ]}>
+                      {item.number}
+                    </Text>
+                    {item.letters ? (
+                      <Text style={tw`text-xs text-gray-500`}>{item.letters}</Text>
+                    ) : null}
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+            
+            {/* Delete button at the bottom */}
+            <View style={tw`items-center mt-2`}>
               <TouchableOpacity
-                key={num}
-                onPress={() => handleKeyPress(num.toString())}
-                style={tw`w-1/3 h-16 items-center justify-center`}
+                onPress={handleDelete}
+                style={[
+                  tw`items-center justify-center rounded-full py-3 px-8`,
+                  keyPressed === 'delete' ? tw`bg-amber-200` : tw`bg-white`,
+                ]}
+                activeOpacity={0.7}
               >
-                <Text style={tw`text-blue-600 text-2xl`}>{num}</Text>
+                <Ionicons 
+                  name="backspace-outline" 
+                  size={28} 
+                  color={keyPressed === 'delete' ? "#D97706" : "#F59E0B"} 
+                />
               </TouchableOpacity>
-            ))}
-            <TouchableOpacity
-              onPress={() => handleKeyPress('*')}
-              style={tw`w-1/3 h-16 items-center justify-center`}
-            >
-              <Text style={tw`text-blue-600 text-2xl`}> *</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => handleKeyPress('0')}
-              style={tw`w-1/3 h-16 items-center justify-center`}
-            >
-              <Text style={tw`text-blue-600 text-2xl`}>0</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={handleDelete}
-              style={tw`w-1/3 h-16 items-center justify-center`}
-            >
-              <Ionicons name="backspace-outline" size={24} color="#3B82F6" />
-            </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        </Animated.View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

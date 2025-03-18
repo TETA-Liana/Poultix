@@ -1,25 +1,56 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, SafeAreaView } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // Fixed import
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  SafeAreaView,
+  Animated,
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import tw from 'twrnc';
 
 export default function BluetoothSettingsScreen() {
   const router = useRouter();
-  const { deviceId } = useLocalSearchParams(); // Access the deviceId parameter
+  const { deviceId } = useLocalSearchParams();
 
-  // Handle navigation to connect to a new device
+  // Animation states
+  const [fadeAnim] = React.useState(new Animated.Value(0));
+  const [scaleAnim] = React.useState(new Animated.Value(0.95));
+  const [buttonScale] = React.useState(new Animated.Value(1));
+
+  React.useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        friction: 8,
+        tension: 40,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
   const handleAddDevice = () => {
-    router.push('/screens/connect-device'); // Updated to a proper screen
+    router.push('/screens/connect-device');
   };
 
-  // Handle navigation to exit (back or a specific screen)
   const handleExit = () => {
-    router.back();
+    Animated.spring(buttonScale, {
+      toValue: 0.95,
+      friction: 4,
+      useNativeDriver: true,
+    }).start(() => {
+      buttonScale.setValue(1);
+      router.back();
+    });
   };
 
-  // Placeholder handlers for other actions
   const handleRenameDevice = () => {
     console.log('Rename device');
   };
@@ -35,97 +66,121 @@ export default function BluetoothSettingsScreen() {
 
   return (
     <SafeAreaView style={tw`flex-1 bg-white`}>
-      <StatusBar style="dark" />
-      <View style={tw`flex-1 px-5 pt-5 relative`}>
-        {/* Background Wave Lines */}
-        <View style={[tw`absolute top-0 left-0 right-0 h-full opacity-10`]}>
-          <View style={[tw`w-full h-1/2 bg-gray-200 rounded-b-full`, { transform: [{ translateY: 50 }] }]} />
-          <View style={[tw`w-full h-1/2 bg-gray-300 rounded-t-full`, { transform: [{ translateY: -50 }] }]} />
-        </View>
+      <StatusBar style="dark" translucent />
+      <Animated.View
+        style={[
+          tw`flex-1 px-6 pt-8 pb-16 relative`,
+          { opacity: fadeAnim, transform: [{ scale: scaleAnim }] },
+        ]}
+      >
+        {/* Subtle Background Accent */}
+        <View style={tw`absolute top-0 left-0 right-0 h-1/4 bg-gray-50 rounded-b-3xl opacity-20 shadow-sm`} />
 
-        {/* Main Content */}
-        <Text style={tw`text-2xl font-bold text-gray-900 mb-6`}>Bluetooth settings</Text>
+        {/* Header */}
+        <Text style={tw`text-3xl font-semibold text-gray-900 mb-6 tracking-wide`}>
+          Bluetooth
+        </Text>
 
-        {/* Device Header */}
-        <View style={tw`flex-row items-center justify-between mb-6`}>
+        {/* Device Info */}
+        <View style={tw`flex-row items-center justify-between mb-6 bg-white rounded-xl p-4 shadow-md border border-gray-100`}>
           <View style={tw`flex-row items-center`}>
-            <View style={tw`w-6 h-6 bg-red-600 rounded-full mr-3`} />
-            <Text style={tw`text-gray-900 text-base font-semibold`}>
+            <View style={tw`w-7 h-7 bg-red-600 rounded-full mr-3 shadow-sm`} />
+            <Text style={tw`text-gray-900 text-base font-medium tracking-wide`}>
               {deviceId || 'Device12'}
             </Text>
           </View>
-          <TouchableOpacity onPress={handleDisconnect} style={tw`bg-yellow-600 rounded-lg px-4 py-2`}>
-            <Text style={tw`text-white text-sm font-medium`}>Disconnect</Text>
+          <TouchableOpacity
+            onPress={handleDisconnect}
+            style={tw`bg-yellow-600 rounded-lg px-3 py-1.5 shadow-sm`}
+          >
+            <Text style={tw`text-white text-sm font-semibold tracking-wide`}>Disconnect</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Settings Options */}
-        <View style={tw`bg-yellow-600 rounded-2xl p-4 mb-6 shadow-sm`}>
-          <View style={tw`flex-row items-center justify-between mb-4`}>
-            <Text style={tw`text-white text-base`}>Connect to a new device</Text>
-            <TouchableOpacity onPress={handleAddDevice}>
-              <Ionicons name="add-circle-outline" size={24} color="#ffffff" />
-            </TouchableOpacity>
+        {/* Settings Card */}
+        <View style={tw`bg-white rounded-2xl p-4 mb-8 shadow-lg border border-gray-100`}>
+          <TouchableOpacity
+            onPress={handleAddDevice}
+            style={tw`flex-row items-center justify-between py-2.5 border-b border-gray-200/40`}
+          >
+            <Text style={tw`text-gray-900 text-base font-medium tracking-wide`}>
+              Add Device
+            </Text>
+            <Ionicons name="add-circle" size={24} color="#red-600" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={handleRenameDevice}
+            style={tw`flex-row items-center justify-between py-2.5 border-b border-gray-200/40`}
+          >
+            <Text style={tw`text-gray-900 text-base font-medium tracking-wide`}>
+              Rename
+            </Text>
+            <Ionicons name="create" size={24} color="#red-600" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={handleRemoveDevice}
+            style={tw`flex-row items-center justify-between py-2.5 border-b border-gray-200/40`}
+          >
+            <Text style={tw`text-gray-900 text-base font-medium tracking-wide`}>
+              Remove
+            </Text>
+            <Ionicons name="trash" size={24} color="#red-600" />
+          </TouchableOpacity>
+
+          <View style={tw`flex-row items-center justify-between py-2.5 border-b border-gray-200/40`}>
+            <Text style={tw`text-gray-900 text-base font-medium tracking-wide`}>
+              Signal
+            </Text>
+            <Ionicons name="wifi" size={24} color="#yellow-600" />
           </View>
 
-          <View style={tw`flex-row items-center justify-between mb-4`}>
-            <Text style={tw`text-white text-base`}>Rename the device</Text>
-            <TouchableOpacity onPress={handleRenameDevice}>
-              <Ionicons name="create-outline" size={24} color="#ffffff" />
-            </TouchableOpacity>
-          </View>
-
-          <View style={tw`flex-row items-center justify-between mb-4`}>
-            <Text style={tw`text-white text-base`}>Remove the device</Text>
-            <TouchableOpacity onPress={handleRemoveDevice}>
-              <Ionicons name="trash-outline" size={24} color="#ffffff" />
-            </TouchableOpacity>
-          </View>
-
-          <View style={tw`flex-row items-center justify-between mb-4`}>
-            <Text style={tw`text-white text-base`}>Signal strength</Text>
-            <Ionicons name="wifi" size={24} color="#ffffff" />
-          </View>
-
-          <View style={tw`flex-row items-center justify-between`}>
-            <Text style={tw`text-white text-base`}>Battery level</Text>
-            <Ionicons name="battery-half" size={24} color="#ffffff" />
+          <View style={tw`flex-row items-center justify-between py-2.5`}>
+            <Text style={tw`text-gray-900 text-base font-medium tracking-wide`}>
+              Battery
+            </Text>
+            <Ionicons name="battery-half" size={24} color="#yellow-600" />
           </View>
         </View>
 
         {/* Exit Button */}
-        <TouchableOpacity
-          onPress={handleExit}
-          style={tw`w-40 bg-red-700 rounded-full px-4 py-2 items-center shadow-md mb-4 self-center`}
-        >
-          <Text style={tw`text-white text-base font-semibold`}>Exit</Text>
-        </TouchableOpacity>
+        <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
+          <TouchableOpacity
+            onPress={handleExit}
+            style={tw`w-44 bg-red-600 rounded-full py-3 items-center shadow-xl self-center`}
+          >
+            <Text style={tw`text-white text-base font-semibold tracking-widest`}>
+              Exit
+            </Text>
+          </TouchableOpacity>
+        </Animated.View>
 
         {/* Bottom Navigation Bar */}
-        <View style={tw`absolute bottom-0 left-0 right-0 flex-row justify-around items-center bg-white py-3 border-t border-gray-200 shadow-md`}>
+        <View style={tw`absolute bottom-0 left-0 right-0 flex-row justify-around items-center bg-white py-3 border-t border-gray-100 shadow-md rounded-t-2xl`}>
           <TouchableOpacity onPress={() => router.push('/')} style={tw`items-center`}>
-            <Ionicons name="home-outline" size={24} color="#000" />
-            <Text style={tw`text-xs text-gray-900`}>Home</Text>
+            <Ionicons name="home" size={26} color="#red-600" />
+            <Text style={tw`text-xs text-gray-900 font-medium tracking-wide mt-1`}>Home</Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => router.push('/devices')} style={tw`items-center`}>
-            <Ionicons name="hardware-chip-outline" size={24} color="#000" />
-            <Text style={tw`text-xs text-gray-900`}>Devices</Text>
+            <Ionicons name="hardware-chip" size={26} color="#red-600" />
+            <Text style={tw`text-xs text-gray-900 font-medium tracking-wide mt-1`}>Devices</Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => router.push('/news')} style={tw`items-center`}>
-            <View style={tw`w-12 h-12 bg-red-600 rounded-full items-center justify-center`}>
-              <Ionicons name="add" size={24} color="#fff" />
+            <View style={tw`w-12 h-12 bg-red-600 rounded-full items-center justify-center shadow-md`}>
+              <Ionicons name="add" size={28} color="#fff" />
             </View>
-            <Text style={tw`text-xs text-gray-900`}>News</Text>
+            <Text style={tw`text-xs text-gray-900 font-medium tracking-wide mt-1`}>News</Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => router.push('/settings')} style={tw`items-center`}>
-            <Ionicons name="chatbubble-outline" size={24} color="#000" />
-            <Text style={tw`text-xs text-gray-900`}>Settings</Text>
+            <Ionicons name="settings" size={26} color="#red-600" />
+            <Text style={tw`text-xs text-gray-900 font-medium tracking-wide mt-1`}>Settings</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </Animated.View>
     </SafeAreaView>
   );
 }

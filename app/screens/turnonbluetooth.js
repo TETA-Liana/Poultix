@@ -1,124 +1,381 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
   SafeAreaView,
-  Image,
+  Animated,
+  ImageBackground,
+  Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { LinearGradient } from 'expo-linear-gradient';
+import MaskedView from '@react-native-masked-view/masked-view';
+import * as Haptics from 'expo-haptics';
 import tw from 'twrnc';
+import { BlurView } from 'expo-blur';
 
 export default function ConnectToDeviceScreen() {
   const router = useRouter();
   const [isBluetoothOn, setIsBluetoothOn] = useState(false);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const iconAnim = useRef(new Animated.Value(0)).current;
+  const buttonAnim = useRef(new Animated.Value(0)).current;
+  const menuItemsAnim = useRef([...Array(4)].map(() => new Animated.Value(0))).current;
+  const [activeTab, setActiveTab] = useState('devices');
+  const { width } = Dimensions.get('window');
 
-  // Toggle Bluetooth state (mocked for now)
+  useEffect(() => {
+    // Animate main content
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+      Animated.spring(iconAnim, {
+        toValue: 1,
+        tension: 80,
+        friction: 10,
+        useNativeDriver: true,
+      }),
+      Animated.timing(buttonAnim, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    // Animate menu items with cascading effect
+    menuItemsAnim.forEach((anim, index) => {
+      Animated.spring(anim, {
+        toValue: 1,
+        tension: 80,
+        friction: 10,
+        delay: 300 + (index * 100),
+        useNativeDriver: true,
+      }).start();
+    });
+  }, []);
+
   const handleToggleBluetooth = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
     setIsBluetoothOn(!isBluetoothOn);
-    // In a real app, integrate with a Bluetooth module here
-    // e.g., BleManager.enable() or similar
+    // In a real app, integrate with a Bluetooth module like BleManager
   };
 
-  // Handle back navigation
   const handleBack = () => {
-    router.back(); // Navigate back to the previous screen (e.g., DevicesScreen)
-    // Alternatively, you can navigate to a specific screen like:
-    // router.push('/devices');
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => router.back());
+  };
+
+  const handleNavigation = (path, tabName) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    setActiveTab(tabName);
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => router.push(path));
+  };
+
+  const renderMenuButton = (icon, label, path, tabName, index, special = false) => {
+    const isActive = activeTab === tabName;
+    const buttonStyle = special 
+      ? tw`items-center -mt-8`
+      : tw`items-center px-4`;
+      
+    const textColor = isActive ? 'text-red-500' : 'text-gray-700';
+    const iconColor = isActive ? '#EF4444' : '#6B7280';
+    
+    return (
+      <Animated.View style={{
+        opacity: menuItemsAnim[index],
+        transform: [
+          { 
+            translateY: menuItemsAnim[index].interpolate({
+              inputRange: [0, 1],
+              outputRange: [20, 0]
+            })
+          }
+        ]
+      }}>
+        <TouchableOpacity
+          onPress={() => handleNavigation(path, tabName)}
+          style={buttonStyle}
+          activeOpacity={0.7}
+        >
+          {special ? (
+            <View style={tw`w-16 h-16 rounded-full shadow-2xl overflow-hidden`}>
+              <LinearGradient
+                colors={['#EF4444', '#FF6B6B']}
+                style={tw`flex-1 items-center justify-center`}
+              >
+                <BlurView
+                  intensity={15}
+                  tint="light"
+                  style={tw`flex-1 items-center justify-center w-full h-full`}
+                />
+                <View style={tw`absolute inset-0 flex items-center justify-center`}>
+                  <Ionicons name={icon} size={28} color="#FFFFFF" />
+                </View>
+              </LinearGradient>
+            </View>
+          ) : (
+            <>
+              <View style={tw`relative w-12 h-12 items-center justify-center`}>
+                {isActive && (
+                  <View style={tw`absolute w-10 h-10 bg-red-100 rounded-full opacity-30`} />
+                )}
+                <Ionicons name={icon} size={24} color={iconColor} />
+              </View>
+              <Text style={tw`text-xs font-semibold mt-1 ${textColor}`}>{label}</Text>
+              {isActive && (
+                <View style={tw`h-1 w-6 bg-red-500 rounded-full mt-1`} />
+              )}
+            </>
+          )}
+          {special && (
+            <Text style={tw`text-xs font-semibold mt-2 text-gray-700`}>{label}</Text>
+          )}
+        </TouchableOpacity>
+      </Animated.View>
+    );
   };
 
   return (
-    <SafeAreaView style={tw`flex-1 bg-white`}>
-      <StatusBar style="dark" />
-      <View style={tw`flex-1 px-5 pt-5 relative`}>
-        {/* Background Wave Lines (simulated with a simple View) */}
-        <View style={tw`absolute top-0 left-0 right-0 h-full opacity-10`}>
-          <View style={tw`w-full h-1/2 bg-gray-200 rounded-b-full transform translate-y-1/4`} />
-          <View style={tw`w-full h-1/2 bg-gray-300 rounded-t-full transform -translate-y-1/4`} />
-        </View>
-
-        {/* Back Button */}
-        <TouchableOpacity
-          onPress={handleBack}
-          style={tw`absolute top-5 left-5 z-10`} // Position at top-left
-        >
-          <Ionicons name="arrow-back" size={24} color="#000" />
-        </TouchableOpacity>
-
-        {/* Main Content */}
-        <Text style={tw`text-2xl font-bold text-gray-900 mb-6 text-center`}>
-          Turn on Bluetooth
-        </Text>
-        <View style={tw`flex-1 items-center justify-center`}>
-          <View style={tw`w-40 h-40 bg-yellow-200 rounded-full relative mb-6`}>
-            <View style={tw`w-28 h-28 bg-yellow-100 rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center`}>
-              <Ionicons name="bluetooth" size={40} color="#6B7280" />
-            </View>
-          </View>
-          <Text style={tw`text-gray-500 text-base mb-6 text-center`}>
-            Searching for devices...
-          </Text>
-          <TouchableOpacity
-            onPress={handleToggleBluetooth}
-            style={tw`flex-row items-center bg-red-600 rounded-full px-6 py-2`}
-          >
-            <Text style={tw`text-white text-base font-medium mr-4`}>
-              Turn Bluetooth
-            </Text>
-            <View style={tw`w-20 h-8 bg-white rounded-full flex-row items-center px-1`}>
-              <View
-                style={tw`w-6 h-6 bg-red-600 rounded-full transform ${
-                  isBluetoothOn ? 'translate-x-5' : 'translate-x-0'
-                } transition-transform duration-300`}
+    <ImageBackground
+      source={require('../../assets/images/chicken-farmer.webp')} // Replace with your image
+      style={tw`flex-1`}
+      imageStyle={tw`opacity-5`}
+    >
+      <LinearGradient
+        colors={['#FFFFFF', '#FFF7ED']} // White to light orange-cream gradient
+        style={tw`flex-1`}
+      >
+        <SafeAreaView style={tw`flex-1`}>
+          <StatusBar style="dark" />
+          <View style={tw`flex-1 px-5 pt-5 relative`}>
+            {/* Enhanced Background Elements */}
+            <View style={tw`absolute top-0 left-0 right-0 h-full overflow-hidden`}>
+              <View style={tw`absolute -top-20 -right-20 w-40 h-40 rounded-full bg-yellow-100 opacity-30`} />
+              <View style={tw`absolute top-40 -left-20 w-40 h-40 rounded-full bg-red-100 opacity-20`} />
+              <View style={tw`absolute -bottom-10 right-10 w-60 h-60 rounded-full bg-yellow-50 opacity-30`} />
+              <LinearGradient
+                colors={['#FEF3C7', '#FFFFFF']}
+                style={tw`w-full h-1/2 rounded-b-full transform translate-y-1/4 opacity-10`}
               />
             </View>
-            <Text style={tw`text-white text-base font-medium ml-2`}>
-              {isBluetoothOn ? 'ON' : 'OFF'}
-            </Text>
-          </TouchableOpacity>
-        </View>
 
-        {/* Bottom Navigation Bar */}
-        <View
-          style={tw`absolute bottom-0 left-0 right-0 flex-row justify-around items-center bg-white py-3 border-t border-gray-200 shadow-md`}
-        >
-          <TouchableOpacity
-            onPress={() => router.push('/')} // Navigate to Home
-            style={tw`items-center`}
-          >
-            <Ionicons name="home-outline" size={24} color="#000" />
-            <Text style={tw`text-xs text-gray-900`}>Home</Text>
-          </TouchableOpacity>
+            {/* Back Button */}
+            <TouchableOpacity
+              onPress={handleBack}
+              style={tw`absolute top-5 left-5 z-10 rounded-full overflow-hidden shadow-xl`}
+              hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
+            >
+              <LinearGradient
+                colors={['#EF4444', '#FF6B6B']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={tw`p-3 flex-row items-center justify-center`}
+              >
+                <BlurView
+                  intensity={15}
+                  tint="light"
+                  style={tw`absolute inset-0`}
+                />
+                <Ionicons name="arrow-back" size={24} color="white" style={tw`z-10`} />
+                <Text style={tw`text-white font-semibold text-sm ml-2 z-10`}>Back</Text>
+              </LinearGradient>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={() => router.push('/devices')} // Navigate to Devices
-            style={tw`items-center`}
-          >
-            <Ionicons name="hardware-chip-outline" size={24} color="#000" />
-            <Text style={tw`text-xs text-gray-900`}>Devices</Text>
-          </TouchableOpacity>
+            {/* Main Content */}
+            <Animated.View style={[tw`flex-1 items-center justify-center`, { opacity: fadeAnim }]}>
+              {/* Title with 3D effect */}
+              <View style={tw`mb-10`}>
+                <MaskedView
+                  maskElement={
+                    <Text style={tw`text-4xl font-extrabold tracking-tight text-center leading-tight`}>
+                      Turn on Bluetooth
+                    </Text>
+                  }
+                >
+                  <LinearGradient
+                    colors={['#EF4444', '#FF6B6B']} // Red-orange gradient
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                  >
+                    <Text style={tw`text-4xl font-extrabold tracking-tight text-center leading-tight opacity-0`}>
+                      Turn on Bluetooth
+                    </Text>
+                  </LinearGradient>
+                </MaskedView>
+                <View style={tw`absolute -bottom-2 inset-x-0`}>
+                  <Text style={tw`text-4xl font-extrabold tracking-tight text-center leading-tight text-gray-200 opacity-30 blur-sm`}>
+                    Turn on Bluetooth
+                  </Text>
+                </View>
+              </View>
 
-          <TouchableOpacity
-            onPress={() => router.push('/news')} // Navigate to News
-            style={tw`items-center`}
-          >
-            <View style={tw`w-12 h-12 bg-red-600 rounded-full items-center justify-center`}>
-              <Ionicons name="add" size={24} color="#fff" />
+              {/* Bluetooth Icon with Glow Effect */}
+              <Animated.View
+                style={[
+                  tw`w-44 h-44 rounded-full relative mb-10`,
+                  {
+                    transform: [
+                      {
+                        scale: iconAnim.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [0.8, 1],
+                        }),
+                      },
+                    ],
+                  },
+                ]}
+              >
+                {/* Outer glow */}
+                <View style={tw`absolute inset-0 bg-yellow-200 rounded-full opacity-30`} />
+                
+                {/* Main circle */}
+                <LinearGradient
+                  colors={['#FEF3C7', '#FDE68A']}
+                  style={tw`absolute inset-2 rounded-full shadow-lg`}
+                >
+                  <BlurView
+                    intensity={20}
+                    tint="light"
+                    style={tw`flex-1 rounded-full`}
+                  />
+                </LinearGradient>
+                
+                {/* Inner circle */}
+                <View style={tw`w-32 h-32 rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center z-10 shadow-lg overflow-hidden`}>
+                  <LinearGradient
+                    colors={['#FFFFFF', '#FFF7ED']}
+                    style={tw`absolute inset-0 rounded-full`}
+                  />
+                  <View style={tw`flex-1 w-full h-full items-center justify-center`}>
+                    <Ionicons 
+                      name="bluetooth" 
+                      size={44} 
+                      color={isBluetoothOn ? "#EF4444" : "#6B7280"} 
+                      style={tw`${isBluetoothOn ? 'opacity-100' : 'opacity-70'}`}
+                    />
+                  </View>
+                </View>
+                
+                {/* Pulsing animation for active state */}
+                {isBluetoothOn && (
+                  <View style={tw`absolute inset-0 rounded-full border-2 border-red-400 opacity-20`} />
+                )}
+              </Animated.View>
+
+              <Text style={tw`text-gray-700 text-lg mb-8 text-center font-medium px-10 leading-relaxed`}>
+                {isBluetoothOn 
+                  ? 'Scanning for nearby devices...' 
+                  : 'Enable Bluetooth to connect with your device'}
+              </Text>
+
+              {/* Enhanced Toggle Button */}
+              <Animated.View
+                style={[
+                  tw`flex-row items-center`,
+                  {
+                    opacity: buttonAnim,
+                    transform: [
+                      {
+                        translateY: buttonAnim.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [20, 0],
+                        }),
+                      },
+                    ],
+                  },
+                ]}
+              >
+                <TouchableOpacity
+                  onPress={handleToggleBluetooth}
+                  style={tw`flex-row items-center rounded-full px-7 py-4 shadow-xl overflow-hidden relative`}
+                  activeOpacity={0.9}
+                >
+                  <LinearGradient
+                    colors={['#EF4444', '#FF6B6B']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={tw`absolute inset-0`}
+                  >
+                    <BlurView
+                      intensity={15}
+                      tint="light"
+                      style={tw`flex-1`}
+                    />
+                  </LinearGradient>
+                  <Text style={tw`text-white text-base font-semibold mr-4 z-10`}>
+                    Bluetooth
+                  </Text>
+                  <View style={tw`w-20 h-8 bg-white/90 rounded-full flex-row items-center px-1 z-10 shadow-inner`}>
+                    <Animated.View
+                      style={tw`w-6 h-6 bg-red-600 rounded-full transform ${
+                        isBluetoothOn ? 'translate-x-12' : 'translate-x-0'
+                      } transition-transform duration-300 shadow-md`}
+                    />
+                  </View>
+                  <Text style={tw`text-white text-base font-semibold ml-3 z-10`}>
+                    {isBluetoothOn ? 'ON' : 'OFF'}
+                  </Text>
+                </TouchableOpacity>
+              </Animated.View>
+            </Animated.View>
+
+            {/* Enhanced Bottom Navigation Bar */}
+            <View
+              style={tw`absolute bottom-0 left-0 right-0 z-20`}
+            >
+              {/* Upper curved edge */}
+              <View style={tw`h-4 bg-transparent overflow-hidden`}>
+                <View style={tw`w-full h-8 bg-white rounded-t-full shadow-lg transform translate-y-4`} />
+              </View>
+              
+              {/* Main menu container */}
+              <View style={tw`bg-white py-4 pb-8 shadow-2xl`}>
+                <LinearGradient
+                  colors={['#FFFFFF', '#FFFBF5']}
+                  style={tw`absolute inset-0`}
+                >
+                  <BlurView
+                    intensity={10}
+                    tint="light"
+                    style={tw`flex-1`}
+                  />
+                </LinearGradient>
+                
+                {/* Subtle pattern overlay */}
+                <View style={tw`absolute inset-0 opacity-5`}>
+                  <View style={tw`w-full h-full flex-row`}>
+                    {[...Array(10)].map((_, i) => (
+                      <View key={i} style={tw`flex-1 border-r border-gray-400`} />
+                    ))}
+                  </View>
+                </View>
+                
+                {/* Menu Items */}
+                <View style={tw`flex-row justify-around items-center relative z-10 px-2`}>
+                  {renderMenuButton('home-outline', 'Home', '/', 'home', 0)}
+                  {renderMenuButton('hardware-chip-outline', 'Devices', '/devices', 'devices', 1)}
+                  {renderMenuButton('add-circle', 'Add', '/news', 'news', 2, true)}
+                  {renderMenuButton('settings-outline', 'Settings', '/settings', 'settings', 3)}
+                </View>
+              </View>
             </View>
-            <Text style={tw`text-xs text-gray-900`}>News</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => router.push('/settings')} // Navigate to Settings
-            style={tw`items-center`}
-          >
-            <Ionicons name="chatbubble-outline" size={24} color="#000" />
-            <Text style={tw`text-xs text-gray-900`}>Setting</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </SafeAreaView>
+          </View>
+        </SafeAreaView>
+      </LinearGradient>
+    </ImageBackground>
   );
 }

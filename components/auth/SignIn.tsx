@@ -43,6 +43,19 @@ export default function SignInScreen() {
         password: useRef(null),
     };
 
+    useEffect(() => {
+        const checkUserSignIn = async () => {
+            try {
+                const token = await AsyncStorage.getItem('token');
+                if (token) {
+                    navigation.navigate('Home');
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        checkUserSignIn();
+    }, [])
 
     useEffect(() => {
         // Animate elements when component mounts
@@ -101,8 +114,6 @@ export default function SignInScreen() {
                 password,
             });
 
-            // Handle success (save token, navigate)
-            console.log('Login Successful:', response.data);
             await AsyncStorage.setItem('token', response.data.token);
             setIsLoading(false);
 

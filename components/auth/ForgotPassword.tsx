@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Animated,
+  Alert,
 } from 'react-native';
 import hostConfig from '../../config/hostConfig';
 import { Ionicons } from '@expo/vector-icons';
@@ -35,9 +36,13 @@ export default function ForgotPasswordScreen() {
       const response = await axios.post(hostConfig.host + '/forgotPassword', {
         email,
       });
-      console.log(response);
+
+      if (response.status === 200) {
+        router.navigate('VerifyCode', { email: email });
+      }
     } catch (error) {
       console.error('Error sending email:', error);
+      Alert.alert('Error', 'Failed to send email. Please try again.');
     }
   };
 

@@ -12,7 +12,7 @@ import {
     ImageBackground,
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
@@ -20,6 +20,7 @@ import * as Haptics from 'expo-haptics';
 import tw from 'twrnc';
 import { BlurView } from 'expo-blur';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { NavigationProps } from '@/interfaces/Navigation';
 
 const { width } = Dimensions.get('window');
 
@@ -112,12 +113,10 @@ const AnimatedCard = ({
 
                     <View style={tw`relative z-10 flex-1 justify-between`}>
                         <View style={tw`flex-row items-center justify-between`}>
-                            <LinearGradient
-                                colors={selected ? ['#FFFFFFCC', '#FFFFFF66'] : [`${colors[0]}33`, `${colors[1]}1A`]}
-                                style={tw`rounded-full p-3.5 shadow-lg`}
-                            >
-                                {icon}
-                            </LinearGradient>
+                        <LinearGradient colors={selected ? ['#FFFFFFCC', '#FFFFFF66'] : [`${colors[0]}33`, `${colors[1]}1A`]} style={tw`rounded-full p-3.5 shadow-lg`}>
+    {React.cloneElement(icon, { color: selected ? '#FFF' : colors[0] })}
+</LinearGradient>
+
                             {selected && (
                                 <View style={tw`bg-white/50 p-2 rounded-full border-2 border-white/70 shadow-md`}>
                                     <Ionicons name="checkmark" size={18} color="white" />
@@ -158,7 +157,7 @@ const AnimatedCard = ({
 };
 
 export default function MainReasonScreen() {
-    const router = useRouter();
+    const router = useNavigation<NavigationProps>();
     const [selectedReason, setSelectedReason] = useState<string | null>(null);
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const headerAnim = useRef(new Animated.Value(-60)).current;
@@ -167,7 +166,9 @@ export default function MainReasonScreen() {
         const checkUser = async () => {
             try {
                 const token = await AsyncStorage.getItem('token');
-                console.log('Token:', token);
+                if (!token) {
+                    router.navigate('SignIn');
+                }
             } catch (error) {
                 console.log('Error checking token:', error);
             }
@@ -243,10 +244,7 @@ export default function MainReasonScreen() {
             duration: 500,
             useNativeDriver: true,
         }).start(() => {
-            router.push({
-                pathname: '/screens/home-screen',
-                params: { reason: selectedReason },
-            });
+            router.navigate("Home");
         });
     };
 
@@ -255,7 +253,7 @@ export default function MainReasonScreen() {
             toValue: 0,
             duration: 300,
             useNativeDriver: true,
-        }).start(() => router.back());
+        }).start(() => router.goBack());
     };
 
     const getButtonColors = () => {
@@ -330,30 +328,20 @@ export default function MainReasonScreen() {
                                 Choose your path to unlock a world of tailored brilliance
                             </Text>
 
-                            <ScrollView
-                                showsVerticalScrollIndicator={false}
-                                contentContainerStyle={tw`pb-8`}
-                            >
-                                <View style={tw`flex-row flex-wrap justify-between`}>
-                                    {reasons.map((reason, index) => (
-                                        <View
-                                            key={reason.id}
-                                            style={tw`${index === 0 ? 'w-full' : 'w-[48%]'} ${index % 2 === 0 && index !== 0 ? 'mt-8' : ''}`}
-                                        >
-                                            <AnimatedCard
-                                                title={reason.title}
-                                                icon={reason.icon}
-                                                selected={selectedReason === reason.id}
-                                                onPress={() => setSelectedReason(reason.id)}
-                                                delay={100 + index * 150}
-                                                colors={reason.colors}
-                                                secondaryIcon={reason.secondaryIcon}
-                                                description={reason.description}
-                                            />
-                                        </View>
-                                    ))}
-                                </View>
-                            </ScrollView>
+                            {/* Cards */}
+                            {reasons.map((reason) => (
+                                <AnimatedCard
+                                    key={reason.id}
+                                    title={reason.title}
+                                    icon={reason.icon}
+                                    selected={selectedReason === reason.id}
+                                    onPress={() => setSelectedReason(reason.id)}
+                                    delay={200} // Adjust delay if needed
+                                    colors={reason.colors}
+                                    secondaryIcon={reason.secondaryIcon}
+                                    description={reason.description}
+                                />
+                            ))}
 
                             <TouchableOpacity
                                 onPress={handleContinue}

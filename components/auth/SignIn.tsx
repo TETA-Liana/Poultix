@@ -101,8 +101,6 @@ export default function SignInScreen() {
                 password,
             });
 
-            // Handle success (save token, navigate)
-            console.log('Login Successful:', response.data);
             await AsyncStorage.setItem('token', response.data.token);
             setIsLoading(false);
 

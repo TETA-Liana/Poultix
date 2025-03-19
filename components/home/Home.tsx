@@ -10,7 +10,6 @@ import {
     Dimensions,
     ScrollView,
     ImageBackground,
-    Alert,
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -27,12 +26,12 @@ const { width } = Dimensions.get('window');
 
 interface AnimatedCardProps {
     title: string;
-    icon: string;
+    icon: React.ReactNode;
     selected: boolean;
     onPress: () => void;
     delay: number;
     colors: string[];
-    secondaryIcon?: string;
+    secondaryIcon?: React.ReactNode;
     description?: string;
 }
 
@@ -49,9 +48,25 @@ const AnimatedCard = ({
     const opacityAnim = useRef(new Animated.Value(0)).current;
     const glowAnim = useRef(new Animated.Value(0)).current;
 
+    useEffect(() => {
+        Animated.parallel([
+            Animated.timing(opacityAnim, {
+                toValue: 1,
+                duration: 600,
+                delay: delay,
+                useNativeDriver: true,
+            }),
+            Animated.timing(glowAnim, {
+                toValue: selected ? 1 : 0.5,
+                duration: 600,
+                delay: delay,
+                useNativeDriver: false,
+            }),
+        ]).start();
+    }, [selected, delay]);
 
     const handlePress = () => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
         onPress();
     };
 
@@ -81,7 +96,7 @@ const AnimatedCard = ({
                     colors={selected ? colors : ['#FFFFFF', '#FFF7ED']}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
-                    style={tw`p-6 relative overflow-hidden h-40`} // Fixed height
+                    style={tw`p-6 relative overflow-hidden h-40`}
                 >
                     <Animated.View
                         style={[
@@ -149,11 +164,29 @@ export default function MainReasonScreen() {
 
     useEffect(() => {
         const checkUser = async () => {
-            const token = await AsyncStorage.getItem('token')
-            console.log(token)
-        }
+            try {
+                const token = await AsyncStorage.getItem('token');
+                console.log('Token:', token);
+            } catch (error) {
+                console.log('Error checking token:', error);
+            }
+        };
+        checkUser();
 
-    }, [])
+        Animated.parallel([
+            Animated.timing(fadeAnim, {
+                toValue: 1,
+                duration: 900,
+                useNativeDriver: true,
+            }),
+            Animated.spring(headerAnim, {
+                toValue: 0,
+                tension: 90,
+                friction: 9,
+                useNativeDriver: true,
+            }),
+        ]).start();
+    }, []);
 
     const reasons = [
         {
@@ -198,28 +231,12 @@ export default function MainReasonScreen() {
         },
     ];
 
-    useEffect(() => {
-        Animated.parallel([
-            Animated.timing(fadeAnim, {
-                toValue: 1,
-                duration: 900,
-                useNativeDriver: true,
-            }),
-            Animated.spring(headerAnim, {
-                toValue: 0,
-                tension: 90,
-                friction: 9,
-                useNativeDriver: true,
-            }),
-        ]).start();
-    }, []);
-
     const handleContinue = () => {
         if (!selectedReason) {
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => { });
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
             return;
         }
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => { });
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
         Animated.timing(fadeAnim, {
             toValue: 0,
             duration: 500,
@@ -260,7 +277,6 @@ export default function MainReasonScreen() {
                         style={tw`flex-1`}
                     >
                         <Animated.View style={[tw`flex-1 px-6 py-12`, { opacity: fadeAnim }]}>
-                            {/* Header */}
                             <Animated.View
                                 style={[
                                     tw`flex-row items-center justify-between mb-12`,
@@ -289,7 +305,6 @@ export default function MainReasonScreen() {
                                 </MaskedView>
                             </Animated.View>
 
-                            {/* Title */}
                             <MaskedView
                                 maskElement={
                                     <Text style={tw`text-4xl font-extrabold tracking-tight mb-4 leading-tight`}>
@@ -326,7 +341,6 @@ export default function MainReasonScreen() {
                                 />
                             ))}
 
-                            {/* Button */}
                             <TouchableOpacity
                                 onPress={handleContinue}
                                 style={tw`mt-10 rounded-full overflow-hidden shadow-2xl`}

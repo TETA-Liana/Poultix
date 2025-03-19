@@ -49,7 +49,7 @@ export default function SignUpScreen() {
                 password,
                 role: 'user',
             });
-            console.log(response)
+            navigation.navigate('SignIn')
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 if (error.status === 400) {
@@ -121,7 +121,7 @@ export default function SignUpScreen() {
 
                         {/* Forgot Password - Centered */}
                         <View style={tw`items-center mb-6`}>
-                            <TouchableOpacity 
+                            <TouchableOpacity
                                 onPress={() => navigation.navigate('ForgotPassword')}>
                                 <Text style={tw`text-red-600 text-sm font-semibold`}>
                                     Forgot password?
@@ -140,7 +140,7 @@ export default function SignUpScreen() {
                         <View style={tw`flex-row justify-between mb-5`}>
                             <TouchableOpacity
                                 style={tw`flex-1 h-12 border border-gray-300 rounded-lg flex items-center justify-center mx-2`}
-                                onPress={()=>console.log('Sign in with Google')}
+                                onPress={() => console.log('Sign in with Google')}
                             >
                                 <Ionicons name="logo-google" size={24} color="#000" />
                             </TouchableOpacity>
@@ -152,7 +152,7 @@ export default function SignUpScreen() {
                         {/* Footer: Sign In */}
                         <View style={tw`flex-row justify-center py-5`}>
                             <Text style={tw`text-gray-500 text-sm`}>Already have an account? </Text>
-                            <TouchableOpacity 
+                            <TouchableOpacity
                                 onPress={() => navigation.navigate('SignIn')}>
                                 <Text style={tw`text-red-600 text-sm font-semibold`}>Sign In</Text>
                             </TouchableOpacity>

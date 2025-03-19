@@ -166,7 +166,9 @@ export default function MainReasonScreen() {
         const checkUser = async () => {
             try {
                 const token = await AsyncStorage.getItem('token');
-                console.log('Token:', token);
+                if (!token) {
+                    router.navigate('SignIn');
+                }
             } catch (error) {
                 console.log('Error checking token:', error);
             }

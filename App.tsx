@@ -1,5 +1,5 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import React, { useEffect } from 'react';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Home from './components/home/Home';
 import News from './components/home/News';
@@ -8,7 +8,6 @@ import SignIn from './components/auth/SignIn';
 import SignUp from './components/auth/SignUp';
 import ForgotPassword from './components/auth/ForgotPassword';
 import VerifyCode from './components/auth/VerifyCode';
-import VerifyYou from './components/auth/VerifyYou';
 import GoogleSignIn from './components/auth/GoogleSignIn';
 import BtSettings from './components/bluetooth/BtSettings';
 import BtResult from './components/bluetooth/BtResult';
@@ -19,6 +18,8 @@ import FarmOverview from './components/farmer/FarmOverview';
 const Stack = createStackNavigator();
 
 const App = () => {
+
+
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -27,7 +28,6 @@ const App = () => {
         <Stack.Screen name="SignUp" component={SignUp} />
         <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
         <Stack.Screen name="VerifyCode" component={VerifyCode} />
-        <Stack.Screen name="VerifyYou" component={VerifyYou} />
         <Stack.Screen name="GoogleSignIn" component={GoogleSignIn} />
 
         {/* Home Screens */}

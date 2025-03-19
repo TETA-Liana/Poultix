@@ -4,7 +4,7 @@ export type RootStackParamList = {
     SignIn: undefined;
     SignUp: undefined;
     ForgotPassword: undefined;
-    VerifyCode: undefined;
+    VerifyCode: { email: string };
     VerifyYou: undefined;
     GoogleSignIn: undefined;
     Home: undefined;
@@ -14,7 +14,7 @@ export type RootStackParamList = {
     BtResult: undefined;
     Pairing: undefined;
     FarmerHome: undefined;
-    FarmOverview: { farmId: number }; // Example with parameters
+    FarmOverview: { farmId: number };
 };
 
 export type NavigationProps = StackNavigationProp<RootStackParamList>;

@@ -18,7 +18,6 @@ import hostConfig from '../../config/hostConfig';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
-import MaskedView from '@react-native-masked-view/masked-view';
 import * as Haptics from 'expo-haptics';
 import tw from 'twrnc';
 import AsyncStorage from '@react-native-async-storage/async-storage';

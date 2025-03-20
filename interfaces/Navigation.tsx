@@ -15,6 +15,7 @@ export type RootStackParamList = {
     Pairing: undefined;
     FarmerHome: undefined;
     FarmOverview: undefined;
+    PhReader:undefined
 };
 
 export type NavigationProps = StackNavigationProp<RootStackParamList>;

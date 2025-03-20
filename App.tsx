@@ -14,6 +14,7 @@ import BtResult from './components/bluetooth/BtResult';
 import Pairing from './components/bluetooth/Pairing';
 import FarmerHome from './components/farmer/FarmerHome';
 import FarmOverview from './components/farmer/FarmOverview';
+import ChickenPHReadingsScreen from './components/bluetooth/phreadings';
 
 const Stack = createStackNavigator();
 
@@ -41,6 +42,7 @@ const App = () => {
         <Stack.Screen name="BtSettings" component={BtSettings} />
         <Stack.Screen name="BtResult" component={BtResult} />
         <Stack.Screen name="Pairing" component={Pairing} />
+        <Stack.Screen name="PhReader" component={ChickenPHReadingsScreen}/>
 
         {/* Farmer Screens */}
         <Stack.Screen name="FarmerHome" component={FarmerHome} />

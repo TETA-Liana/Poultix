@@ -16,9 +16,10 @@ import * as Haptics from 'expo-haptics';
 import tw from 'twrnc';
 import { BlurView } from 'expo-blur';
 import { useNavigation } from '@react-navigation/native';
+import { NavigationProps } from '@/interfaces/Navigation';
 
 export default function ConnectToDeviceScreen() {
-    const router = useNavigation()
+    const router = useNavigation<NavigationProps>()
     const [isBluetoothOn, setIsBluetoothOn] = useState(false);
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const iconAnim = useRef(new Animated.Value(0)).current;

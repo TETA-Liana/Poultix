@@ -10,14 +10,13 @@ import {
 import axios from 'axios'
 import hostConfig from '../../config/hostConfig';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import tw from 'twrnc';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
-import { NavigationProps } from '@/interfaces/Navigation';
 
 export default function FarmOverviewScreen() {
-    const router = useNavigation<NavigationProps>()
+    const router = useRouter();
     const [farmOverview, setFarmOverview] = useState({
         chickens: 0,
         sick: 0,
@@ -40,7 +39,7 @@ export default function FarmOverviewScreen() {
             catch (error) {
                 if (axios.isAxiosError(error)) {
                     if (error?.response?.status === 401) {
-                        router.navigate('SignIn')
+                        router.push('/sign-in')
                     }
                 }
             }
@@ -94,7 +93,7 @@ export default function FarmOverviewScreen() {
                     {/* Weather Check Button */}
                     <TouchableOpacity
                         style={tw`bg-red-700 rounded-lg px-4 py-2 w-40 mb-6  justify-between flew-row self-end`}
-                        onPress={() => router.navigate('WeatherCheck')}
+                        onPress={() => router.push('/')}
                     >
                         <Text style={tw`text-white text-sm font-medium`}>
                             check weather conditions at the farm
@@ -109,7 +108,7 @@ export default function FarmOverviewScreen() {
                         </Text>
                         <TouchableOpacity
                             style={tw`bg-yellow-600 rounded-2xl p-4 mb-3 flex-row items-center justify-between`}
-                            onPress={() => router.navigate('StoolAnalysis')}
+                            onPress={() => router.push('/stool-analysis')}
                         >
                             <Text style={tw`text-white text-base`}>stool analysis</Text>
                             <TouchableOpacity
@@ -120,7 +119,7 @@ export default function FarmOverviewScreen() {
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={tw`bg-yellow-600 rounded-2xl p-4 mb-3 flex-row items-center justify-between`}
-                            onPress={() => router.navigate('ChatWithAI')}
+                            onPress={() => router.push('/chatbot')}
                         >
                             <Text style={tw`text-white text-base`}>chat with AI</Text>
                             <TouchableOpacity
@@ -131,7 +130,7 @@ export default function FarmOverviewScreen() {
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={tw`bg-yellow-600 rounded-2xl p-4 flex-row items-center justify-between`}
-                            onPress={() => router.navigate('Pharmacies')}
+                            onPress={() => router.push('/pharmacies')}
                         >
                             <Text style={tw`text-white text-base`}>pharmacies around</Text>
                             <TouchableOpacity
@@ -150,21 +149,21 @@ export default function FarmOverviewScreen() {
                         style={tw`flex-row justify-around items-center bg-white py-3 border-t border-gray-200 shadow-md mb-6`}
                     >
                         <TouchableOpacity
-                            onPress={() => router.navigate('Home')}
+                            onPress={() => router.push('/')}
                             style={tw`items-center`}
                         >
                             <Ionicons name="home-outline" size={24} color="#000" />
                             <Text style={tw`text-xs text-gray-900`}>Home</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            onPress={() => router.navigate('Devices')}
+                            onPress={() => router.push('/screens/devices')}
                             style={tw`items-center`}
                         >
                             <Ionicons name="hardware-chip-outline" size={24} color="#000" />
                             <Text style={tw`text-xs text-gray-900`}>Devices</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            onPress={() => router.navigate('News')}
+                            onPress={() => router.push('/news')}
                             style={tw`items-center`}
                         >
                             <View style={tw`w-12 h-12 bg-red-600 rounded-full items-center justify-center`}>
@@ -173,7 +172,7 @@ export default function FarmOverviewScreen() {
                             <Text style={tw`text-xs text-gray-900`}>News</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            onPress={() => router.navigate('Settings')}
+                            onPress={() => router.push('/settings')}
                             style={tw`items-center`}
                         >
                             <Ionicons name="chatbubble-outline" size={24} color="#000" />

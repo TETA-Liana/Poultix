@@ -8,7 +8,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   Animated,
-  Alert,
 } from 'react-native';
 import hostConfig from '../../config/hostConfig';
 import { Ionicons } from '@expo/vector-icons';
@@ -36,13 +35,9 @@ export default function ForgotPasswordScreen() {
       const response = await axios.post(hostConfig.host + '/forgotPassword', {
         email,
       });
-
-      if (response.status === 200) {
-        router.navigate('VerifyCode', { email: email });
-      }
+      console.log(response);
     } catch (error) {
       console.error('Error sending email:', error);
-      Alert.alert('Error', 'Failed to send email. Please try again.');
     }
   };
 
@@ -56,7 +51,7 @@ export default function ForgotPasswordScreen() {
           {/* Back Button */}
           <TouchableOpacity
             onPress={() => router.goBack()}
-            style={tw`h-12 w-12 items-center justify-center rounded-full bg-gray-100 shadow-md`}
+            style={tw`h-12 w-12 items-center justify-center rounded-full bg-gray-100 shadow-md text-red-600`}
           >
             <Ionicons name="arrow-back" size={26} color="#000" />
           </TouchableOpacity>
@@ -83,8 +78,14 @@ export default function ForgotPasswordScreen() {
           {/* Email Input */}
           <View style={tw`mt-10`}>
             <View style={tw`relative`}>
+              <Ionicons
+                name="mail-outline"
+                size={20}
+                color="#64748B"
+                style={tw`absolute left-4 top-1/2 transform -translate-y-1/2`}
+              />
               <TextInput
-                style={tw`h-14 px-5 bg-gray-50 rounded-xl border border-gray-200 text-lg text-gray-800 shadow-sm`}
+                style={tw`h-14 px-12 bg-gray-50 rounded-xl border border-gray-200 text-lg text-gray-800 shadow-sm`}
                 placeholder="johndoe@example.com"
                 value={email}
                 onChangeText={setEmail}
@@ -92,17 +93,11 @@ export default function ForgotPasswordScreen() {
                 autoCapitalize="none"
                 placeholderTextColor="#aaa"
               />
-              <Ionicons
-                name="mail-outline"
-                size={20}
-                color="#red-600"
-                style={tw`absolute right-4 top-1/2 transform -translate-y-1/2`}
-              />
             </View>
 
             {/* Send Email Button */}
             <TouchableOpacity
-              style={tw`h-14 bg-yellow-600 rounded-xl items-center justify-center mt-6 shadow-lg`}
+              style={tw`h-14 bg-amber-500 rounded-xl items-center justify-center mt-6 shadow-lg`}
               activeOpacity={0.85}
               onPress={handleSendEmail}
             >
@@ -111,16 +106,6 @@ export default function ForgotPasswordScreen() {
               </Text>
             </TouchableOpacity>
           </View>
-
-          {/* Footer Link */}
-          <TouchableOpacity
-            onPress={() => router.goBack()}
-            style={tw`mt-8 items-center`}
-          >
-            <Text style={tw`text-gray-500 text-sm`}>
-              Back to <Text style={tw`text-red-600 font-semibold`}>Login</Text>
-            </Text>
-          </TouchableOpacity>
         </Animated.View>
       </KeyboardAvoidingView>
     </SafeAreaView>

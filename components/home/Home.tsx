@@ -12,7 +12,7 @@ import {
     ImageBackground,
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
@@ -20,9 +20,8 @@ import * as Haptics from 'expo-haptics';
 import tw from 'twrnc';
 import { BlurView } from 'expo-blur';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { NavigationProps } from '@/interfaces/Navigation';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 interface AnimatedCardProps {
     title: string;
@@ -46,7 +45,7 @@ const AnimatedCard = ({
     description
 }: AnimatedCardProps) => {
     const opacityAnim = useRef(new Animated.Value(0)).current;
-    const glowAnim = useRef(new Animated.Value(0)).current;
+    const scaleAnim = useRef(new Animated.Value(0.95)).current;
 
     useEffect(() => {
         Animated.parallel([
@@ -56,82 +55,71 @@ const AnimatedCard = ({
                 delay: delay,
                 useNativeDriver: true,
             }),
-            Animated.timing(glowAnim, {
-                toValue: selected ? 1 : 0.5,
-                duration: 600,
+            Animated.spring(scaleAnim, {
+                toValue: 1,
+                friction: 8,
+                tension: 40,
                 delay: delay,
-                useNativeDriver: false,
+                useNativeDriver: true,
             }),
         ]).start();
     }, [selected, delay]);
 
     const handlePress = () => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
         onPress();
     };
-
-    const borderGradient = glowAnim.interpolate({
-        inputRange: [0, 1],
-        outputRange: ['rgba(255,255,255,0)', 'rgba(255,255,255,0.4)'],
-    });
 
     return (
         <Animated.View
             style={[
-                tw`rounded-3xl overflow-hidden mb-5`,
+                tw`rounded-3xl overflow-hidden mb-6 shadow-lg`,
                 {
                     opacity: opacityAnim,
+                    transform: [{ scale: scaleAnim }],
                     shadowColor: colors[0],
-                    shadowOpacity: glowAnim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [0.1, 0.3],
-                    }),
-                    shadowRadius: 25,
-                    elevation: selected ? 20 : 6,
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 8,
+                    elevation: selected ? 12 : 6,
                 },
             ]}
         >
-            <TouchableOpacity onPress={handlePress} activeOpacity={1}>
+            <TouchableOpacity onPress={handlePress} activeOpacity={0.95}>
                 <LinearGradient
-                    colors={selected ? colors : ['#FFFFFF', '#FFF7ED']}
+                    colors={selected ? colors : ['#F8FAFC', '#F1F5F9']}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
-                    style={tw`p-6 relative overflow-hidden h-40`}
+                    style={tw`p-5 relative overflow-hidden h-44`}
                 >
-                    <Animated.View
-                        style={[
-                            tw`absolute inset-0 rounded-3xl`,
-                            { borderWidth: 1.5, borderColor: borderGradient },
-                        ]}
-                    >
-                        <BlurView
-                            intensity={selected ? 25 : 8}
-                            tint="light"
-                            style={tw`flex-1`}
-                        />
-                    </Animated.View>
-
+                    <BlurView
+                        intensity={selected ? 30 : 10}
+                        tint="light"
+                        style={tw`absolute inset-0 rounded-3xl`}
+                    />
+                    
                     <View style={tw`relative z-10 flex-1 justify-between`}>
                         <View style={tw`flex-row items-center justify-between`}>
-                        <LinearGradient colors={selected ? ['#FFFFFFCC', '#FFFFFF66'] : [`${colors[0]}33`, `${colors[1]}1A`]} style={tw`rounded-full p-3.5 shadow-lg`}>
-    {React.cloneElement(icon, { color: selected ? '#FFF' : colors[0] })}
-</LinearGradient>
-
+                            <LinearGradient
+                                colors={selected ? ['#FFFFFFDD', '#FFFFFF88'] : [`${colors[0]}44`, `${colors[1]}22`]}
+                                style={tw`rounded-full p-3 shadow-md`}
+                            >
+                                {icon}
+                            </LinearGradient>
                             {selected && (
-                                <View style={tw`bg-white/50 p-2 rounded-full border-2 border-white/70 shadow-md`}>
-                                    <Ionicons name="checkmark" size={18} color="white" />
+                                <View style={tw`bg-white/60 p-2 rounded-full border-2 border-white/80`}>
+                                    <Ionicons name="checkmark-circle" size={20} color={colors[0]} />
                                 </View>
                             )}
                         </View>
 
-                        <View style={tw`mt-2`}>
-                            <Text style={tw`text-xl font-extrabold tracking-tight ${selected ? 'text-white' : 'text-gray-900'}`}>
+                        <View style={tw`mt-3`}>
+                            <Text style={tw`text-xl font-bold tracking-tight ${selected ? 'text-white' : 'text-gray-900'}`}>
                                 {title}
                             </Text>
                             <Text
-                                style={tw`text-sm mt-2 ${selected ? 'text-white/90' : 'text-gray-700'} leading-5 font-medium`}
+                                style={tw`text-sm mt-2 ${selected ? 'text-white/90' : 'text-gray-600'} leading-5 font-medium`}
                                 numberOfLines={2}
-                                ellipsizeMode="tail"
                             >
                                 {description}
                             </Text>
@@ -139,16 +127,16 @@ const AnimatedCard = ({
                     </View>
 
                     {selected && (
-                        <>
+                        <View style={tw`absolute inset-0 overflow-hidden rounded-3xl`}>
+                            <LinearGradient
+                                colors={['rgba(255,255,255,0.2)', 'rgba(255,255,255,0)']}
+                                style={tw`absolute bottom-0 left-0 w-32 h-32 rounded-tr-full`}
+                            />
                             <LinearGradient
                                 colors={['rgba(255,255,255,0.15)', 'rgba(255,255,255,0)']}
-                                style={tw`absolute bottom-0 left-0 w-24 h-24 rounded-tr-full`}
+                                style={tw`absolute top-0 right-0 w-24 h-24 rounded-bl-full`}
                             />
-                            <LinearGradient
-                                colors={['rgba(255,255,255,0.1)', 'rgba(255,255,255,0)']}
-                                style={tw`absolute top-0 right-0 w-20 h-20 rounded-bl-full`}
-                            />
-                        </>
+                        </View>
                     )}
                 </LinearGradient>
             </TouchableOpacity>
@@ -157,18 +145,16 @@ const AnimatedCard = ({
 };
 
 export default function MainReasonScreen() {
-    const router = useNavigation<NavigationProps>();
+    const router = useRouter();
     const [selectedReason, setSelectedReason] = useState<string | null>(null);
     const fadeAnim = useRef(new Animated.Value(0)).current;
-    const headerAnim = useRef(new Animated.Value(-60)).current;
+    const headerAnim = useRef(new Animated.Value(-80)).current;
 
     useEffect(() => {
         const checkUser = async () => {
             try {
                 const token = await AsyncStorage.getItem('token');
-                if (!token) {
-                    router.navigate('SignIn');
-                }
+                console.log('Token:', token);
             } catch (error) {
                 console.log('Error checking token:', error);
             }
@@ -178,13 +164,13 @@ export default function MainReasonScreen() {
         Animated.parallel([
             Animated.timing(fadeAnim, {
                 toValue: 1,
-                duration: 900,
+                duration: 800,
                 useNativeDriver: true,
             }),
             Animated.spring(headerAnim, {
                 toValue: 0,
-                tension: 90,
-                friction: 9,
+                tension: 100,
+                friction: 10,
                 useNativeDriver: true,
             }),
         ]).start();
@@ -195,41 +181,41 @@ export default function MainReasonScreen() {
             id: 'news',
             title: 'Disease Insights',
             description: 'Real-time alerts & research updates',
-            colors: ['#EF4444', '#FF6B6B'],
-            icon: <Ionicons name="newspaper" size={28} color={selectedReason === 'news' ? '#FFF' : '#EF4444'} />,
-            secondaryIcon: <MaterialCommunityIcons name="newspaper-variant" size={52} color="#FFF" />,
+            colors: ['#FF6B6B', '#FF8787'],
+            icon: <Ionicons name="newspaper" size={30} color={selectedReason === 'news' ? '#FFF' : '#FF6B6B'} />,
+            secondaryIcon: <MaterialCommunityIcons name="newspaper-variant" size={54} color="#FFF" />,
         },
         {
             id: 'detection',
             title: 'Early Warning',
             description: 'Detect issues before they escalate',
-            colors: ['#5E60CE', '#787CFF'],
-            icon: <Ionicons name="eye" size={28} color={selectedReason === 'detection' ? '#FFF' : '#5E60CE'} />,
-            secondaryIcon: <MaterialCommunityIcons name="radar" size={52} color="#FFF" />,
+            colors: ['#4EA8DE', '#74C2E1'],
+            icon: <Ionicons name="eye" size={30} color={selectedReason === 'detection' ? '#FFF' : '#4EA8DE'} />,
+            secondaryIcon: <MaterialCommunityIcons name="radar" size={54} color="#FFF" />,
         },
         {
             id: 'connecting',
             title: 'Community Hub',
             description: 'Connect with farming experts',
-            colors: ['#40C9A2', '#65D4B5'],
-            icon: <Ionicons name="people" size={28} color={selectedReason === 'connecting' ? '#FFF' : '#40C9A2'} />,
-            secondaryIcon: <MaterialCommunityIcons name="handshake" size={52} color="#FFF" />,
+            colors: ['#2DD4BF', '#5EEAD4'],
+            icon: <Ionicons name="people" size={30} color={selectedReason === 'connecting' ? '#FFF' : '#2DD4BF'} />,
+            secondaryIcon: <MaterialCommunityIcons name="handshake" size={54} color="#FFF" />,
         },
         {
             id: 'veterinarian',
             title: 'Vet Suite',
             description: 'Advanced tools for professionals',
-            colors: ['#9B5DE5', '#C68FFF'],
-            icon: <Ionicons name="medkit" size={28} color={selectedReason === 'veterinarian' ? '#FFF' : '#9B5DE5'} />,
-            secondaryIcon: <MaterialCommunityIcons name="medical-bag" size={52} color="#FFF" />,
+            colors: ['#A78BFA', '#C4B5FD'],
+            icon: <Ionicons name="medkit" size={30} color={selectedReason === 'veterinarian' ? '#FFF' : '#A78BFA'} />,
+            secondaryIcon: <MaterialCommunityIcons name="medical-bag" size={54} color="#FFF" />,
         },
         {
             id: 'explore',
             title: 'Discovery Mode',
             description: 'Experience Poultix’s potential',
-            colors: ['#00B4D8', '#48CAE4'],
-            icon: <Ionicons name="compass" size={28} color={selectedReason === 'explore' ? '#FFF' : '#00B4D8'} />,
-            secondaryIcon: <MaterialCommunityIcons name="telescope" size={52} color="#FFF" />,
+            colors: ['#22D3EE', '#67E8F9'],
+            icon: <Ionicons name="compass" size={30} color={selectedReason === 'explore' ? '#FFF' : '#22D3EE'} />,
+            secondaryIcon: <MaterialCommunityIcons name="telescope" size={54} color="#FFF" />,
         },
     ];
 
@@ -244,7 +230,10 @@ export default function MainReasonScreen() {
             duration: 500,
             useNativeDriver: true,
         }).start(() => {
-            router.navigate("Home");
+            router.push({
+                pathname: '/screens/home-screen',
+                params: { reason: selectedReason },
+            });
         });
     };
 
@@ -253,11 +242,11 @@ export default function MainReasonScreen() {
             toValue: 0,
             duration: 300,
             useNativeDriver: true,
-        }).start(() => router.goBack());
+        }).start(() => router.back());
     };
 
     const getButtonColors = () => {
-        if (!selectedReason) return ['#FFF7ED', '#FFEDE1'];
+        if (!selectedReason) return ['#E2E8F0', '#CBD5E1'];
         const selected = reasons.find(r => r.id === selectedReason) || reasons[0];
         return [selected.colors[0], selected.colors[1]];
     };
@@ -266,10 +255,10 @@ export default function MainReasonScreen() {
         <ImageBackground
             source={require('../../assets/images/chicken.webp')}
             style={tw`flex-1`}
-            imageStyle={tw`opacity-10`}
+            imageStyle={tw`opacity-15`}
         >
             <LinearGradient
-                colors={['rgba(255,255,255,0.98)', 'rgba(255,247,237,0.95)']}
+                colors={['rgba(255,255,255,0.95)', 'rgba(240,248,255,0.92)']}
                 style={tw`flex-1`}
             >
                 <SafeAreaView style={tw`flex-1`}>
@@ -278,100 +267,106 @@ export default function MainReasonScreen() {
                         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                         style={tw`flex-1`}
                     >
-                        <Animated.View style={[tw`flex-1 px-6 py-12`, { opacity: fadeAnim }]}>
-                            <Animated.View
-                                style={[
-                                    tw`flex-row items-center justify-between mb-12`,
-                                    { transform: [{ translateY: headerAnim }] },
-                                ]}
-                            >
-                                <TouchableOpacity
-                                    onPress={handleBack}
-                                    style={tw`p-3 bg-white/90 rounded-full shadow-xl`}
-                                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                        <ScrollView
+                            showsVerticalScrollIndicator={false}
+                            contentContainerStyle={tw`flex-grow pb-12`}
+                            bounces={true}
+                        >
+                            <Animated.View style={[tw`flex-1 px-5 pt-8 pb-12`, { opacity: fadeAnim }]}>
+                                <Animated.View
+                                    style={[
+                                        tw`flex-row items-center justify-between mb-10`,
+                                        { transform: [{ translateY: headerAnim }] },
+                                    ]}
                                 >
-                                    <Ionicons name="chevron-back" size={26} color="#431407" />
-                                </TouchableOpacity>
+                                    <TouchableOpacity
+                                        onPress={handleBack}
+                                        style={tw`p-3 bg-white/95 rounded-full shadow-lg`}
+                                    >
+                                        <Ionicons name="chevron-back" size={28} color="#1E293B" />
+                                    </TouchableOpacity>
+                                    <MaskedView
+                                        maskElement={
+                                            <Text style={tw`text-2xl font-extrabold tracking-tight`}>Poultix</Text>
+                                        }
+                                    >
+                                        <LinearGradient
+                                            colors={['#FF6B6B', '#A78BFA', '#22D3EE']}
+                                            start={{ x: 0, y: 0 }}
+                                            end={{ x: 1, y: 1 }}
+                                        >
+                                            <Text style={tw`text-2xl font-extrabold tracking-tight opacity-0`}>Poultix</Text>
+                                        </LinearGradient>
+                                    </MaskedView>
+                                </Animated.View>
+
                                 <MaskedView
                                     maskElement={
-                                        <Text style={tw`text-xl font-extrabold tracking-tight`}>Poultix</Text>
+                                        <Text style={tw`text-4xl font-extrabold tracking-tight mb-4 leading-tight`}>
+                                            Discover Your{'\n'}Poultix Journey
+                                        </Text>
                                     }
                                 >
                                     <LinearGradient
-                                        colors={['#EF4444', '#FF6B6B', '#9B5DE5']}
+                                        colors={['#FF6B6B', '#A78BFA', '#22D3EE']}
                                         start={{ x: 0, y: 0 }}
                                         end={{ x: 1, y: 1 }}
                                     >
-                                        <Text style={tw`text-xl font-extrabold tracking-tight opacity-0`}>Poultix</Text>
+                                        <Text style={tw`text-4xl font-extrabold tracking-tight mb-4 leading-tight opacity-0`}>
+                                            Discover Your{'\n'}Poultix Journey
+                                        </Text>
                                     </LinearGradient>
                                 </MaskedView>
-                            </Animated.View>
+                                <Text style={tw`text-gray-600 mb-8 text-base leading-6 font-medium`}>
+                                    Select your path to explore a world of vibrant possibilities
+                                </Text>
 
-                            <MaskedView
-                                maskElement={
-                                    <Text style={tw`text-4xl font-extrabold tracking-tight mb-4 leading-tight`}>
-                                        Embark on Your{'\n'}Poultix Journey
-                                    </Text>
-                                }
-                            >
-                                <LinearGradient
-                                    colors={['#EF4444', '#FF6B6B', '#9B5DE5']}
-                                    start={{ x: 0, y: 0 }}
-                                    end={{ x: 1, y: 1 }}
+                                <View style={tw`flex-row flex-wrap justify-between`}>
+                                    {reasons.map((reason, index) => (
+                                        <View
+                                            key={reason.id}
+                                            style={tw`w-full mb-2`}
+                                        >
+                                            <AnimatedCard
+                                                title={reason.title}
+                                                icon={reason.icon}
+                                                selected={selectedReason === reason.id}
+                                                onPress={() => setSelectedReason(reason.id)}
+                                                delay={100 + index * 100}
+                                                colors={reason.colors}
+                                                secondaryIcon={reason.secondaryIcon}
+                                                description={reason.description}
+                                            />
+                                        </View>
+                                    ))}
+                                </View>
+
+                                <TouchableOpacity
+                                    onPress={handleContinue}
+                                    style={tw`mt-8 rounded-full overflow-hidden shadow-xl`}
+                                    activeOpacity={0.9}
                                 >
-                                    <Text style={tw`text-4xl font-extrabold tracking-tight mb-4 leading-tight opacity-0`}>
-                                        Embark on Your{'\n'}Poultix Journey
-                                    </Text>
-                                </LinearGradient>
-                            </MaskedView>
-                            <Text style={tw`text-gray-700 mb-10 text-base leading-6 font-medium opacity-90`}>
-                                Choose your path to unlock a world of tailored brilliance
-                            </Text>
-
-                            {/* Cards */}
-                            {reasons.map((reason) => (
-                                <AnimatedCard
-                                    key={reason.id}
-                                    title={reason.title}
-                                    icon={reason.icon}
-                                    selected={selectedReason === reason.id}
-                                    onPress={() => setSelectedReason(reason.id)}
-                                    delay={200} // Adjust delay if needed
-                                    colors={reason.colors}
-                                    secondaryIcon={reason.secondaryIcon}
-                                    description={reason.description}
-                                />
-                            ))}
-
-                            <TouchableOpacity
-                                onPress={handleContinue}
-                                style={tw`mt-10 rounded-full overflow-hidden shadow-2xl`}
-                                activeOpacity={0.9}
-                            >
-                                <LinearGradient
-                                    colors={getButtonColors()}
-                                    start={{ x: 0, y: 0 }}
-                                    end={{ x: 1, y: 1 }}
-                                    style={tw`py-4 flex-row items-center justify-center relative`}
-                                >
-                                    <BlurView
-                                        intensity={selectedReason ? 20 : 0}
-                                        tint="light"
-                                        style={tw`absolute inset-0`}
-                                    />
                                     <LinearGradient
-                                        colors={['rgba(255,255,255,0.25)', 'rgba(255,255,255,0)']}
-                                        style={tw`absolute top-0 left-0 w-full h-1`}
-                                    />
-                                    <Text style={tw`text-white font-extrabold text-lg tracking-tight mr-2 relative z-10`}>
-                                        {selectedReason ? 'Start Your Adventure' : 'Choose Your Path'}
-                                    </Text>
-                                    {selectedReason && (
-                                        <Ionicons name="arrow-forward" size={24} color="white" style={tw`relative z-10`} />
-                                    )}
-                                </LinearGradient>
-                            </TouchableOpacity>
-                        </Animated.View>
+                                        colors={getButtonColors()}
+                                        start={{ x: 0, y: 0 }}
+                                        end={{ x: 1, y: 1 }}
+                                        style={tw`py-4 flex-row items-center justify-center relative`}
+                                    >
+                                        <BlurView
+                                            intensity={selectedReason ? 25 : 5}
+                                            tint="light"
+                                            style={tw`absolute inset-0`}
+                                        />
+                                        <Text style={tw`text-white font-bold text-lg tracking-tight mr-3 relative z-10`}>
+                                            {selectedReason ? 'Begin Journey' : 'Select a Path'}
+                                        </Text>
+                                        {selectedReason && (
+                                            <Ionicons name="arrow-forward" size={24} color="white" style={tw`relative z-10`} />
+                                        )}
+                                    </LinearGradient>
+                                </TouchableOpacity>
+                            </Animated.View>
+                        </ScrollView>
                     </KeyboardAvoidingView>
                 </SafeAreaView>
             </LinearGradient>

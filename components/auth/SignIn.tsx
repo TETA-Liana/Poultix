@@ -22,7 +22,6 @@ import tw from 'twrnc';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { NavigationProps } from '@/interfaces/Navigation';
-
 export default function SignInScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -30,33 +29,15 @@ export default function SignInScreen() {
     const [isEmailFocused, setIsEmailFocused] = useState(false);
     const [isPasswordFocused, setIsPasswordFocused] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const slideAnim = useRef(new Animated.Value(30)).current;
     const buttonScale = useRef(new Animated.Value(1)).current;
-
-
     const navigation = useNavigation<NavigationProps>()
     const { width } = Dimensions.get('window');
     const inputRefs = {
         email: useRef(null),
         password: useRef(null),
     };
-
-    useEffect(() => {
-        const checkUserSignIn = async () => {
-            try {
-                const token = await AsyncStorage.getItem('token');
-                if (token) {
-                    navigation.navigate('Home');
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        }
-        checkUserSignIn();
-    }, [])
-
     useEffect(() => {
         // Animate elements when component mounts
         Animated.parallel([
@@ -72,17 +53,14 @@ export default function SignInScreen() {
             }),
         ]).start();
     }, []);
-
     const handleBack = () => {
         Vibration.vibrate(20);
         navigation.goBack();
     };
-
     const handleSignUp = () => {
         Vibration.vibrate(20);
         navigation.navigate('SignUp');
     };
-
     const animateButton = () => {
         Animated.sequence([
             Animated.timing(buttonScale, {
@@ -97,13 +75,11 @@ export default function SignInScreen() {
             }),
         ]).start();
     };
-
     const handleSignIn = async () => {
         if (!email || !password) {
             Alert.alert('Error', 'Please enter email and password');
             return;
         }
-
         try {
             Vibration.vibrate(20);
             animateButton();
@@ -114,6 +90,8 @@ export default function SignInScreen() {
                 password,
             });
 
+            // Handle success (save token, navigate)
+            console.log('Login Successful:', response.data);
             await AsyncStorage.setItem('token', response.data.token);
             setIsLoading(false);
 
@@ -129,20 +107,17 @@ export default function SignInScreen() {
             setIsLoading(false);
         }
     };
-
     const handleForgotPassword = () => {
         Vibration.vibrate(20);
         // Navigate to forgot password screen
         navigation.navigate('ForgotPassword');
     };
-
     const handleSocialSignIn = (provider: string) => {
         Vibration.vibrate(20);
         animateButton();
         console.log(`Sign in with ${provider}`);
         // Implement social sign-in logic
     };
-
     return (
         <SafeAreaView style={tw`flex-1 bg-white`}>
             <StatusBar style="dark" />

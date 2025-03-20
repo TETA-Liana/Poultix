@@ -9,13 +9,14 @@ import {
     Animated,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import tw from 'twrnc';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useNavigation } from '@react-navigation/native';
+import { NavigationProps } from '@/interfaces/Navigation';
 
 export default function FarmerScreen() {
-    const router = useRouter();
+    const router =useNavigation<NavigationProps>()
     const fadeAnim = React.useRef(new Animated.Value(0)).current;
 
     React.useEffect(() => {
@@ -61,7 +62,7 @@ export default function FarmerScreen() {
                             <Text style={tw`text-xl font-semibold text-gray-800`}>
                                 Upcoming Visit
                             </Text>
-                            <TouchableOpacity onPress={() => router.push('/schedule')}>
+                            <TouchableOpacity onPress={() => router.navigate('Schedule')}>
                                 <Text style={tw`text-orange-600 text-sm font-semibold`}>View All</Text>
                             </TouchableOpacity>
                         </View>
@@ -95,7 +96,7 @@ export default function FarmerScreen() {
                                 <TouchableOpacity
                                     key={location}
                                     style={tw`flex-1 bg-white p-4 rounded-xl shadow-sm border border-orange-100 active:bg-orange-50`}
-                                    onPress={() => router.push(`/location/${location.toLowerCase()}`)}
+                                    onPress={() => router.navigate('Schedule')}
                                 >
                                     <Text style={tw`text-gray-800 text-sm font-semibold text-center`}>
                                         {location}

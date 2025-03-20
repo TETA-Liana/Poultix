@@ -20,6 +20,8 @@ import * as Haptics from 'expo-haptics';
 import tw from 'twrnc';
 import { BlurView } from 'expo-blur';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+import { NavigationProps } from '@/interfaces/Navigation';
 
 const { width, height } = Dimensions.get('window');
 
@@ -145,7 +147,7 @@ const AnimatedCard = ({
 };
 
 export default function MainReasonScreen() {
-    const router = useRouter();
+    const router = useNavigation<NavigationProps>();
     const [selectedReason, setSelectedReason] = useState<string | null>(null);
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const headerAnim = useRef(new Animated.Value(-80)).current;
@@ -230,10 +232,7 @@ export default function MainReasonScreen() {
             duration: 500,
             useNativeDriver: true,
         }).start(() => {
-            router.push({
-                pathname: '/screens/home-screen',
-                params: { reason: selectedReason },
-            });
+            router.navigate('FarmOverview');
         });
     };
 
@@ -242,7 +241,7 @@ export default function MainReasonScreen() {
             toValue: 0,
             duration: 300,
             useNativeDriver: true,
-        }).start(() => router.back());
+        }).start(() => router.goBack());
     };
 
     const getButtonColors = () => {

@@ -39,9 +39,7 @@ export default function FarmOverviewScreen() {
             }
             catch (error) {
                 if (axios.isAxiosError(error)) {
-                    if (error?.response?.status === 401) {
-                        router.navigate('SignIn')
-                    }
+                    console.log(error.response?.data)
                 }
             }
         }
@@ -157,7 +155,7 @@ export default function FarmOverviewScreen() {
                             <Text style={tw`text-xs text-gray-900`}>Home</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            onPress={() => router.navigate('Devices')}
+                            onPress={() => router.navigate('Pairing')}
                             style={tw`items-center`}
                         >
                             <Ionicons name="hardware-chip-outline" size={24} color="#000" />

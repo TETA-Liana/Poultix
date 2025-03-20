@@ -9,16 +9,16 @@ import {
     Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import * as Haptics from 'expo-haptics';
 import tw from 'twrnc';
 import { BlurView } from 'expo-blur';
+import { useNavigation } from '@react-navigation/native';
 
 export default function ConnectToDeviceScreen() {
-    const router = useRouter();
+    const router = useNavigation()
     const [isBluetoothOn, setIsBluetoothOn] = useState(false);
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const iconAnim = useRef(new Animated.Value(0)).current;
@@ -72,7 +72,7 @@ export default function ConnectToDeviceScreen() {
             toValue: 0,
             duration: 300,
             useNativeDriver: true,
-        }).start(() => router.back());
+        }).start(() => router.goBack());
     };
 
     const handleNavigation = (path: string, tabName:string) => {
@@ -82,7 +82,7 @@ export default function ConnectToDeviceScreen() {
             toValue: 0,
             duration: 300,
             useNativeDriver: true,
-        }).start(() => router.push(path));
+        }).start(() => router.navigate(path));
     };
 
     const renderMenuButton = (icon: any, label: string, path: string, tabName: string, index: number, special = false) => {
@@ -365,10 +365,10 @@ export default function ConnectToDeviceScreen() {
 
                                 {/* Menu Items */}
                                 <View style={tw`flex-row justify-around items-center relative z-10 px-2`}>
-                                    {renderMenuButton('home-outline', 'Home', '/', 'home', 0)}
-                                    {renderMenuButton('hardware-chip-outline', 'Devices', '/devices', 'devices', 1)}
-                                    {renderMenuButton('add-circle', 'Add', '/news', 'news', 2, true)}
-                                    {renderMenuButton('settings-outline', 'Settings', '/settings', 'settings', 3)}
+                                    {renderMenuButton('home-outline', 'Home', 'Home', 'home', 0)}
+                                    {renderMenuButton('hardware-chip-outline', 'Devices', 'Pairing', 'devices', 1)}
+                                    {renderMenuButton('add-circle', 'Add', 'News', 'news', 2, true)}
+                                    {renderMenuButton('settings-outline', 'Settings', 'Settings', 'settings', 3)}
                                 </View>
                             </View>
                         </View>

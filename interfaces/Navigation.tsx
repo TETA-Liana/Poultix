@@ -14,7 +14,7 @@ export type RootStackParamList = {
     BtResult: undefined;
     Pairing: undefined;
     FarmerHome: undefined;
-    FarmOverview: { farmId: number };
+    FarmOverview: undefined;
 };
 
 export type NavigationProps = StackNavigationProp<RootStackParamList>;

@@ -32,7 +32,7 @@ export default function ConnectToDeviceScreen() {
     const [scanning, setScanning] = useState(false);
     const [devices, setDevices] = useState<any>([]);
     const [connectedDevice, setConnectedDevice] = useState<any>(null);
-    const [deviceData, setDeviceData] = useState<string>(null);
+    const [deviceData, setDeviceData] = useState<string>('');
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const iconAnim = useRef(new Animated.Value(0)).current;
     const buttonAnim = useRef(new Animated.Value(0)).current;
@@ -106,7 +106,7 @@ export default function ConnectToDeviceScreen() {
 
     const handleDiscoverPeripheral = (peripheral: any) => {
         if (peripheral.name) {
-            setDevices((prev) => {
+            setDevices((prev: any) => {
                 if (!prev.some((d) => d.id === peripheral.id)) {
                     return [...prev, peripheral];
                 }

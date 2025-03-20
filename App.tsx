@@ -15,6 +15,7 @@ import Pairing from './components/bluetooth/Pairing';
 import FarmerHome from './components/farmer/FarmerHome';
 import FarmOverview from './components/farmer/FarmOverview';
 import ChickenPHReadingsScreen from './components/bluetooth/phreadings';
+import SettingsScreen from './components/home/Settings';
 
 const Stack = createStackNavigator();
 
@@ -34,6 +35,7 @@ const App = () => {
         {/* Home Screens */}
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="News" component={News} />
+        <Stack.Screen name="Profile" component={SettingsScreen} />
 
         {/* AI Screen */}
         <Stack.Screen name="AiScreen" component={AiScreen} />

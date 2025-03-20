@@ -57,13 +57,14 @@ export default function ConnectToDeviceScreen() {
                 delay: 300 + (index * 100),
                 useNativeDriver: true,
             }).start();
-        });
+        }); 
     }, []);
 
     const handleToggleBluetooth = () => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => { });
         setIsBluetoothOn(!isBluetoothOn);
-        // In a real app, integrate with a Bluetooth module like BleManager
+    
+
     };
 
     const handleBack = () => {
@@ -72,10 +73,10 @@ export default function ConnectToDeviceScreen() {
             toValue: 0,
             duration: 300,
             useNativeDriver: true,
-        }).start(() => router.goBack());
+        }).start(() => router.navigate('PhReader'));
     };
 
-    const handleNavigation = (path: string, tabName:string) => {
+    const handleNavigation = (path: string, tabName: string) => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
         setActiveTab(tabName);
         Animated.timing(fadeAnim, {
@@ -218,7 +219,7 @@ export default function ConnectToDeviceScreen() {
                                 </MaskedView>
                                 <View style={tw`absolute -bottom-2 inset-x-0`}>
                                     <Text style={tw`text-4xl font-extrabold tracking-tight text-center leading-tight text-gray-200 opacity-30 blur-sm`}>
-                                        Turn on Bluetooth
+                                        Turn on Bluetooth    router.navigate('PhReader')
                                     </Text>
                                 </View>
                             </View>
@@ -285,7 +286,7 @@ export default function ConnectToDeviceScreen() {
                             {/* Enhanced Toggle Button */}
                             <Animated.View
                                 style={[
-                                    tw`flex-row items-center`,
+                                    tw`flex-row items-center`,    
                                     {
                                         opacity: buttonAnim,
                                         transform: [

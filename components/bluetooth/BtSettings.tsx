@@ -7,12 +7,14 @@ import {
     Animated,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import tw from 'twrnc';
+import { useNavigation } from '@react-navigation/native';
+import { NavigationProps } from '@/interfaces/Navigation';
 
 export default function BluetoothSettingsScreen() {
-    const router = useRouter();
+    const router = useNavigation<NavigationProps>()
     const { deviceId } = useLocalSearchParams();
 
     // Animation states
@@ -37,7 +39,7 @@ export default function BluetoothSettingsScreen() {
     }, []);
 
     const handleAddDevice = () => {
-        router.push('/screens/connect-device');
+        console.log('Add device');
     };
 
     const handleExit = () => {
@@ -47,7 +49,7 @@ export default function BluetoothSettingsScreen() {
             useNativeDriver: true,
         }).start(() => {
             buttonScale.setValue(1);
-            router.back();
+            router.goBack();
         });
     };
 
@@ -61,8 +63,7 @@ export default function BluetoothSettingsScreen() {
 
     const handleDisconnect = () => {
         console.log('Disconnect device');
-        router.back();
-    };
+        router.goBack();  };
 
     return (
         <SafeAreaView style={tw`flex-1 bg-white`}>
@@ -158,24 +159,24 @@ export default function BluetoothSettingsScreen() {
 
                 {/* Bottom Navigation Bar */}
                 <View style={tw`absolute bottom-0 left-0 right-0 flex-row justify-around items-center bg-white py-3 border-t border-gray-100 shadow-md rounded-t-2xl`}>
-                    <TouchableOpacity onPress={() => router.push('/')} style={tw`items-center`}>
+                    <TouchableOpacity onPress={() => router.navigate('Home')} style={tw`items-center`}>
                         <Ionicons name="home" size={26} color="#red-600" />
                         <Text style={tw`text-xs text-gray-900 font-medium tracking-wide mt-1`}>Home</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={() => router.push('/devices')} style={tw`items-center`}>
+                    <TouchableOpacity onPress={() => router.navigate('Pairing')} style={tw`items-center`}>
                         <Ionicons name="hardware-chip" size={26} color="#red-600" />
                         <Text style={tw`text-xs text-gray-900 font-medium tracking-wide mt-1`}>Devices</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={() => router.push('/news')} style={tw`items-center`}>
+                    <TouchableOpacity onPress={() => router.navigate('News')} style={tw`items-center`}>
                         <View style={tw`w-12 h-12 bg-red-600 rounded-full items-center justify-center shadow-md`}>
                             <Ionicons name="add" size={28} color="#fff" />
                         </View>
                         <Text style={tw`text-xs text-gray-900 font-medium tracking-wide mt-1`}>News</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={() => router.push('/settings')} style={tw`items-center`}>
+                    <TouchableOpacity onPress={() => router.navigate('Settings')} style={tw`items-center`}>
                         <Ionicons name="settings" size={26} color="#red-600" />
                         <Text style={tw`text-xs text-gray-900 font-medium tracking-wide mt-1`}>Settings</Text>
                     </TouchableOpacity>

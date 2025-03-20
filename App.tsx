@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Home from './components/home/Home';
 import News from './components/home/News';

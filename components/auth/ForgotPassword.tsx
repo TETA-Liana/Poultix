@@ -8,12 +8,13 @@ import {
   KeyboardAvoidingView,
   Platform,
   Animated,
+  Alert,
 } from 'react-native';
 import hostConfig from '../../config/hostConfig';
 import { Ionicons } from '@expo/vector-icons';
 import tw from 'twrnc';
 import axios from 'axios';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation ,} from '@react-navigation/native';
 import { NavigationProps } from '@/interfaces/Navigation';
 
 export default function ForgotPasswordScreen() {
@@ -35,9 +36,14 @@ export default function ForgotPasswordScreen() {
       const response = await axios.post(hostConfig.host + '/forgotPassword', {
         email,
       });
-      console.log(response);
+      Alert.alert('Success', response.data.message);
+      router.navigate('VerifyCode', { email });
     } catch (error) {
-      console.error('Error sending email:', error);
+      if(axios.isAxiosError(error)) {
+        if(error.response){
+          Alert.alert('Error', error.response.data.message);
+        }
+      }
     }
   };
 

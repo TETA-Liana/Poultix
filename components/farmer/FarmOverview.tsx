@@ -12,6 +12,7 @@ import {
   Platform,
   ActivityIndicator,
   RefreshControl,
+  Alert,
 } from 'react-native';
 import axios from 'axios';
 import hostConfig from '../../config/hostConfig';
@@ -117,11 +118,16 @@ export default function FarmOverviewScreen() {
       });
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        setError(error.response?.data?.message || 'Failed to fetch farm data');
-        console.error('Axios error:', error.response?.data);
+        if (!error.response) setError('Network error. Please check your connection.');
+        else {
+          await AsyncStorage.removeItem('token');
+          Alert.alert('Error', error.response.data.message);
+          if (error.response.data.message == 'Token expired') {
+            router.navigate('SignIn');
+          }
+        }
       } else {
         setError('Network error. Please check your connection.');
-        console.error('Error fetching farm overview:', error);
       }
     } finally {
       if (showLoader) setLoading(false);
@@ -194,7 +200,7 @@ export default function FarmOverviewScreen() {
   );
 
   const handleNavigation = (path: string) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
     Animated.timing(fadeAnim, {
       toValue: 0.5,
       duration: 200,

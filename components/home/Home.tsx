@@ -10,16 +10,28 @@ import {
     Dimensions,
     ScrollView,
     ImageBackground,
+    Alert,
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import * as Haptics from 'expo-haptics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { NavigationProps } from '@/interfaces/Navigation';
 
 const { width, height } = Dimensions.get('window');
 
-const AnimatedCard = ({ title, icon, selected, onPress, delay, colors, description }) => {
+interface AnimatedCardProps {
+    title: string;
+    icon: JSX.Element;
+    selected: boolean;
+    onPress: () => void;
+    delay: number;
+    colors: string[];
+    description: string;
+}
+
+const AnimatedCard = ({ title, icon, selected, onPress, delay, colors, description }: AnimatedCardProps) => {
     const opacityAnim = useRef(new Animated.Value(0)).current;
     const scaleAnim = useRef(new Animated.Value(0.9)).current;
 
@@ -64,10 +76,10 @@ const AnimatedCard = ({ title, icon, selected, onPress, delay, colors, descripti
                 }}
                 style={{ padding: 20 }}
             >
-                <View style={{ 
-                    flexDirection: 'row', 
-                    justifyContent: 'space-between', 
-                    alignItems: 'center' 
+                <View style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
                 }}>
                     <View style={{
                         backgroundColor: selected ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.05)',
@@ -119,8 +131,8 @@ const AnimatedCard = ({ title, icon, selected, onPress, delay, colors, descripti
 };
 
 export default function MainReasonScreen() {
-    const router = useNavigation();
-    const [selectedReason, setSelectedReason] = useState(null);
+    const router = useNavigation<NavigationProps>();
+    const [selectedReason, setSelectedReason] = useState('');
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const headerAnim = useRef(new Animated.Value(-100)).current;
 
@@ -128,9 +140,11 @@ export default function MainReasonScreen() {
         const checkUser = async () => {
             try {
                 const token = await AsyncStorage.getItem('token');
-                console.log('Token:', token);
+                if (!token) {
+                    router.navigate('SignIn');
+                }
             } catch (error) {
-                console.log('Error checking token:', error);
+                Alert.alert('Error', 'An error occurred while checking user');
             }
         };
         checkUser();
@@ -184,6 +198,8 @@ export default function MainReasonScreen() {
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
             return;
         }
+
+
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         Animated.timing(fadeAnim, {
             toValue: 0,

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     View,
     Text,
@@ -11,25 +11,39 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import tw from 'twrnc';
+import { useAuthRequest } from 'expo-auth-session';
 
 export default function SignInWithGoogleScreen() {
     const router = useRouter();
+    const [request, response, promptAsync] = useAuthRequest({
+        clientId: 'YOUR_WEB_CLIENT_ID', // Replace with your Web client ID
+        redirectUri: 'https://auth.expo.io/@your-username/your-app-slug', // Use the correct redirect URL
+    });
 
     const handleBack = () => {
         router.back();
     };
 
-    const handleSignIn = () => {
-        // Add logic for Google Sign-In (e.g., using @react-native-google-signin/google-signin)
-        console.log('Signing in with Google for Liana Teata');
-        
-        // Navigate to the home screen or another screen after sign-in
+    const handleSignIn = async () => {
+        try {
+            const result = await promptAsync();
+            if (result?.type === 'success') {
+                const { id_token, access_token } = result.params;
+                console.log('User Info:', { id_token, access_token });
+
+                // You can now use these tokens to fetch user data from Google
+                // or authenticate the user in your backend
+            } else {
+                console.log('Sign-in failed', result);
+            }
+        } catch (error) {
+            console.log('Sign-in error', error);
+        }
     };
 
     const handleChooseAnotherAccount = () => {
-        // Add logic to show other Google accounts (e.g., trigger Google Sign-In flow again)
+        // You can trigger the sign-in flow again if needed
         console.log('Choosing another account');
-        // For now, we'll simulate by logging; in a real app, this would trigger the Google Sign-In flow again
     };
 
     return (
@@ -47,7 +61,7 @@ export default function SignInWithGoogleScreen() {
 
                     {/* Title */}
                     <Text style={tw`text-2xl font-semibold text-red-700 mb-6 text-center`}>
-                        Sign in with google
+                        Sign in with Google
                     </Text>
 
                     {/* Account Selection */}
@@ -66,7 +80,7 @@ export default function SignInWithGoogleScreen() {
                             style={tw`w-full bg-gray-100 rounded-lg p-4 flex-row items-center border border-gray-300`}
                         >
                             <Ionicons name="person-add-outline" size={40} color="#6B7280" style={tw`mr-4`} />
-                            <Text style={tw`text-red-700 text-lg`}>choose another account</Text>
+                            <Text style={tw`text-red-700 text-lg`}>Choose another account</Text>
                         </TouchableOpacity>
                     </View>
 

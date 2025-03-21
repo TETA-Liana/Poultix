@@ -25,7 +25,8 @@ export default function SignUpScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    
+    const [isVeterinary, setIsVeterinary] = useState(false); // New state for terms and conditions
+
     const navigation = useNavigation<NavigationProps>();
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const slideAnim = useRef(new Animated.Value(20)).current;
@@ -59,15 +60,16 @@ export default function SignUpScreen() {
     }, []);
 
     const handleSignUp = async () => {
+
+
         try {
             const response = await axios.post(`${hostConfig.host}/registerUser`, {
                 names: name,
                 email,
                 password,
-                role: 'user',
+                role: isVeterinary ? 'veterinary' : 'user',
             });
-            console.log('Sign up successful:', response.data);
-            // Add navigation to next screen or success message here
+            navigation.navigate('SignIn')
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 console.log('Sign up error:', error.response?.data);
@@ -92,10 +94,10 @@ export default function SignUpScreen() {
                         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                         style={tw`flex-1`}
                     >
-                        <Animated.View 
+                        <Animated.View
                             style={[
                                 tw`flex-1 p-6`,
-                                { 
+                                {
                                     opacity: fadeAnim,
                                     transform: [{ translateY: slideAnim }]
                                 }
@@ -170,7 +172,7 @@ export default function SignUpScreen() {
                                 </View>
 
                                 {/* Forgot Password */}
-                                <TouchableOpacity 
+                                <TouchableOpacity
                                     onPress={() => navigation.navigate('ForgotPassword')}
                                     style={tw`self-end mb-6`}
                                 >
@@ -179,8 +181,30 @@ export default function SignUpScreen() {
                                     </Text>
                                 </TouchableOpacity>
 
+                                {/* Terms and Conditions Toggle */}
+                                <View style={tw`flex-row items-center mb-6`}>
+                                    <TouchableOpacity
+                                        style={tw`flex-row items-center`}
+                                        onPress={() => setIsVeterinary(!isVeterinary)}
+                                    >
+                                        <View
+                                            style={[
+                                                tw`w-6 h-6 rounded-full border-2 border-gray-400 items-center justify-center`,
+                                                isVeterinary && tw`bg-amber-600`
+                                            ]}
+                                        >
+                                            {isVeterinary && (
+                                                <View style={tw`w-3 h-3 rounded-full bg-white`} />
+                                            )}
+                                        </View>
+                                        <Text style={tw`ml-2 text-gray-600 text-sm`}>
+                                            Are you a veterinarian?
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+
                                 {/* Sign Up Button */}
-                                <TouchableOpacity 
+                                <TouchableOpacity
                                     style={tw`rounded-xl overflow-hidden shadow-lg`}
                                     onPress={handleSignUp}
                                 >
@@ -231,7 +255,7 @@ export default function SignUpScreen() {
                                     <Text style={tw`text-gray-600 text-sm font-medium`}>
                                         Already have an account?{' '}
                                     </Text>
-                                    <TouchableOpacity 
+                                    <TouchableOpacity
                                         onPress={() => navigation.navigate('SignIn')}
                                     >
                                         <Text style={tw`text-amber-600 text-sm font-semibold`}>

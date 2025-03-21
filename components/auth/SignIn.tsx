@@ -23,11 +23,7 @@ import tw from 'twrnc';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 
-// Define navigation props type
-type NavigationProps = {
-    navigate: (screen: string) => void;
-    goBack: () => void;
-};
+import { NavigationProps } from '@/interfaces/Navigation';
 
 export default function SignInScreen() {
     const [email, setEmail] = useState('');
@@ -60,6 +56,17 @@ export default function SignInScreen() {
     };
 
     useEffect(() => {
+        const checkUserSignIn = async () => {
+            try {
+                const token = await AsyncStorage.getItem('token');
+                if (token) {
+                    navigation.navigate('Home');
+                }
+            } catch (error) {
+                console.error('Error checking token:', error);
+            }
+        };
+        checkUserSignIn();
         // Animate elements when component mounts
         Animated.parallel([
             Animated.timing(fadeAnim, {
@@ -132,8 +139,8 @@ export default function SignInScreen() {
         if (!password.trim()) {
             setPasswordError('Password is required');
             isValid = false;
-        } else if (password.trim().length < 6) {
-            setPasswordError('Password must be at least 6 characters');
+        } else if (password.trim().length < 4) {
+            setPasswordError('Password must be at least 4 characters');
             isValid = false;
         }
 
@@ -189,7 +196,9 @@ export default function SignInScreen() {
         Vibration.vibrate(20);
         animateButton();
         console.log(`Sign in with ${provider}`);
-        // Implement social sign-in logic
+        if (provider === 'Google') {
+            navigation.navigate('GoogleSignIn');
+        }
     };
 
     // Enhanced styles

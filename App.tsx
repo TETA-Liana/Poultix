@@ -15,6 +15,8 @@ import Pairing from './components/bluetooth/Pairing';
 import FarmerHome from './components/farmer/FarmerHome';
 import FarmOverview from './components/farmer/FarmOverview';
 import ChickenPHReadingsScreen from './components/bluetooth/phreadings';
+import SettingsScreen from './components/home/Settings';
+import CreateNewPasswordScreen from './components/auth/CreateNewPassword';
 
 const Stack = createStackNavigator();
 
@@ -30,10 +32,13 @@ const App = () => {
         <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
         <Stack.Screen name="VerifyCode" component={VerifyCode} />
         <Stack.Screen name="GoogleSignIn" component={GoogleSignIn} />
+        <Stack.Screen name="CreateNewPassword" component={CreateNewPasswordScreen} />
+
 
         {/* Home Screens */}
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="News" component={News} />
+        <Stack.Screen name="Settings" component={SettingsScreen} />
 
         {/* AI Screen */}
         <Stack.Screen name="AiScreen" component={AiScreen} />

@@ -17,13 +17,16 @@ import FarmOverview from './components/farmer/FarmOverview';
 import ChickenPHReadingsScreen from './components/bluetooth/phreadings';
 import SettingsScreen from './components/home/Settings';
 import CreateNewPasswordScreen from './components/auth/CreateNewPassword';
+import PageNotFound from './errors/PageNotFound';
 
 const Stack = createStackNavigator();
 
 const App = () => {
+
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
+
         {/* Authentication Screens */}
         <Stack.Screen name="SignIn" component={SignIn} />
         <Stack.Screen name="SignUp" component={SignUp} />
@@ -45,11 +48,12 @@ const App = () => {
         <Stack.Screen name="BtSettings" component={BtSettings} />
         <Stack.Screen name="BtResult" component={BtResult} />
         <Stack.Screen name="Pairing" component={Pairing} />
-        <Stack.Screen name="PhReader" component={ChickenPHReadingsScreen}/>
+        <Stack.Screen name="PhReader" component={ChickenPHReadingsScreen} />
 
         {/* Farmer Screens */}
         <Stack.Screen name="FarmerHome" component={FarmerHome} />
         <Stack.Screen name="FarmOverview" component={FarmOverview} />
+        <Stack.Screen name='*' component={PageNotFound} />
       </Stack.Navigator>
     </NavigationContainer>
   );

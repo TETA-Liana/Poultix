@@ -295,8 +295,8 @@ export default function farmDataScreen() {
                 >
                   <ScrollView
                     horizontal
-                    showsHorizontalScrollIndicator={true}
-                    contentContainerStyle={tw`pb-2`}
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={tw`p-2`}
                   >
                     {notifications.map((notification) => (
                       <TouchableOpacity

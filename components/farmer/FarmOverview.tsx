@@ -27,24 +27,27 @@ import { NavigationProps } from '@/interfaces/Navigation';
 import { BlurView } from 'expo-blur';
 import { SharedElement } from 'react-navigation-shared-element';
 import { AnimatePresence, MotiView } from 'moti';
+import { FarmData } from '@/interfaces/Farm';
 
 const { width } = Dimensions.get('window');
 const isPad = width >= 768;
 const isLargePhone = width >= 428;
 
-export default function FarmOverviewScreen() {
+export default function farmDataScreen() {
   const router = useNavigation<NavigationProps>();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [farmName, setFarmName] = useState("Sunrise Farm");
-  const [farmOverview, setFarmOverview] = useState({
-    chickens: 0,
-    sick: 0,
-    healthy: 0,
-    atRisk: 0,
-    lastUpdated: new Date(),
-  });
+  const [farmData, setFarmData] = useState<FarmData>({
+    _id: '0',
+    farmName: 'loading',
+    chickens: {
+      healthyChickens: 0,
+      sickChickens: 0,
+      riskChickens: 0
+    },
+    locations: 'loading'
+  })
+  const totalChickens = farmData.chickens.healthyChickens + farmData.chickens.sickChickens + farmData.chickens.riskChickens
   const [weatherPreview, setWeatherPreview] = useState({
     temp: 24,
     condition: 'sunny',
@@ -63,15 +66,8 @@ export default function FarmOverviewScreen() {
   const chartAnim = useRef(new Animated.Value(0)).current;
   const buttonAnim = useRef(new Animated.Value(0)).current;
   const notificationAnim = useRef(new Animated.Value(0)).current;
-  const headerScaleAnim = useRef(new Animated.Value(1)).current;
   const scrollY = useRef(new Animated.Value(0)).current;
 
-  // Derived values for parallax and scaling effects
-  const headerOpacity = scrollY.interpolate({
-    inputRange: [0, 100],
-    outputRange: [1, 0.8],
-    extrapolate: 'clamp',
-  });
 
   const headerScale = scrollY.interpolate({
     inputRange: [0, 100],
@@ -81,54 +77,46 @@ export default function FarmOverviewScreen() {
 
   // Card health colors based on farm status
   const healthColors = useMemo(() => {
-    const sickPercentage = farmOverview.chickens ? (farmOverview.sick / farmOverview.chickens) * 100 : 0;
+    const sickPercentage = farmData.chickens ? (farmData.chickens.sickChickens / totalChickens) * 100 : 0;
     return {
       primary: sickPercentage > 20 ? '#EF4444' : sickPercentage > 10 ? '#F59E0B' : '#10B981',
       secondary: sickPercentage > 20 ? '#FF6B6B' : sickPercentage > 10 ? '#FBBF24' : '#34D399',
       background: sickPercentage > 20 ? '#FEF2F2' : sickPercentage > 10 ? '#FEF3C7' : '#ECFDF5',
     };
-  }, [farmOverview]);
+  }, [farmData]);
 
-  const fetchFarmOverview = async (showLoader = true) => {
+  const fetchfarmData = async (showLoader = true) => {
     if (showLoader) setLoading(true);
-    setError(null);
-
     try {
-      const token = await AsyncStorage.getItem('token');
-      if (!token) throw new Error('No token found');
-
-      const response = await axios.get(`${hostConfig.host}/userFarms`, {
+      const token = await AsyncStorage.getItem('token')
+      const response = await axios.get(hostConfig.host + '/userFarm', {
         headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      setFarmName(response.data.farmName || "Sunrise Farm");
-      // setFarmOverview({
-      //   chickens: response.data.chickens ,
-      //   sick: response.data.sick ,
-      //   healthy: response.data.healthy ,
-      //   atRisk: response.data.atRisk,
-      //   lastUpdated: new Date(),
-      // });
+          Authorization: 'Bearer ' + token
+        }
+      })
+      setFarmData(response.data)
 
       setWeatherPreview({
         temp: Math.floor(Math.random() * 20) + 15,
         condition: ['sunny', 'cloudy', 'rainy'][Math.floor(Math.random() * 3)],
         humidity: Math.floor(Math.random() * 30) + 50,
-      });
+      })
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        if (!error.response) setError('Network error. Please check your connection.');
-        else {
-          await AsyncStorage.removeItem('token');
-          Alert.alert('Error', error.response.data.message);
-          if (error.response.data.message == 'Token expired') {
-            router.navigate('SignIn');
-          }
+        if (!error.response) {
+          Alert.alert('Network error', 'Please check your connection.');
+          return
         }
+
+
+        if (error.response.status == 401) {
+          await AsyncStorage.removeItem('token');
+          router.navigate('SignIn');
+          return
+        }
+        Alert.alert('Error occured', error.response.data.message)
       } else {
-        setError('Network error. Please check your connection.');
+        Alert.alert('Network error', ' Please check your connection.');
       }
     } finally {
       if (showLoader) setLoading(false);
@@ -138,11 +126,10 @@ export default function FarmOverviewScreen() {
 
   const onRefresh = () => {
     setRefreshing(true);
-    fetchFarmOverview(false);
+    fetchfarmData(false);
   };
 
   useEffect(() => {
-    fetchFarmOverview();
 
     Animated.sequence([
       Animated.timing(fadeAnim, {
@@ -183,20 +170,12 @@ export default function FarmOverviewScreen() {
         }),
       ]),
     ]).start();
-
-    const intervalId = setInterval(() => {
-      setFarmOverview(prev => ({
-        ...prev,
-        atRisk: Math.max(0, prev.atRisk + Math.floor(Math.random() * 3) - 1),
-      }));
-    }, 30000);
-
-    return () => clearInterval(intervalId);
+    fetchfarmData()
   }, []);
 
   useFocusEffect(
     React.useCallback(() => {
-      fetchFarmOverview(false);
+      fetchfarmData(false);
     }, [])
   );
 
@@ -229,14 +208,11 @@ export default function FarmOverviewScreen() {
     }
   };
 
-  const healthyPercentage = farmOverview.chickens ? (farmOverview.healthy / farmOverview.chickens) * 100 : 0;
-  const sickPercentage = farmOverview.chickens ? (farmOverview.sick / farmOverview.chickens) * 100 : 0;
-  const atRiskPercentage = farmOverview.chickens ? (farmOverview.atRisk / farmOverview.chickens) * 100 : 0;
+  const healthyPercentage = farmData.chickens ? (farmData.chickens.healthyChickens / totalChickens) * 100 : 0;
+  const sickPercentage = farmData.chickens ? (farmData.chickens.sickChickens / totalChickens) * 100 : 0;
+  const atRiskPercentage = farmData.chickens ? (farmData.chickens.riskChickens / totalChickens) * 100 : 0;
 
-  const formatDate = (date: Date | null) => {
-    if (!date) return 'Not available';
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  };
+
 
   if (loading) {
     return (
@@ -263,21 +239,6 @@ export default function FarmOverviewScreen() {
         <SafeAreaView style={tw`flex-1`}>
           <StatusBar style="dark" backgroundColor="transparent" translucent />
 
-          {error && (
-            <MotiView
-              from={{ opacity: 0, translateY: -20 }}
-              animate={{ opacity: 1, translateY: 0 }}
-              transition={{ type: 'timing', duration: 300 }}
-              style={tw`mx-4 mt-2 bg-red-50 px-4 py-3 rounded-xl border border-red-200 flex-row items-center`}
-            >
-              <Ionicons name="alert-circle" size={22} color="#EF4444" style={tw`mr-2`} />
-              <Text style={tw`flex-1 text-red-600 font-medium text-sm`}>{error}</Text>
-              <TouchableOpacity onPress={() => setError(null)}>
-                <Ionicons name="close-circle" size={22} color="#6B7280" />
-              </TouchableOpacity>
-            </MotiView>
-          )}
-
           <Animated.ScrollView
             showsVerticalScrollIndicator={false}
             contentContainerStyle={tw`pb-28`}
@@ -303,9 +264,6 @@ export default function FarmOverviewScreen() {
             >
               {/* Header */}
               <View style={tw`flex-row justify-between items-center mb-2`}>
-                <Text style={tw`text-gray-500 font-medium`}>
-                  {farmOverview.lastUpdated ? `Last updated: ${formatDate(farmOverview.lastUpdated)}` : 'Loading data...'}
-                </Text>
                 <TouchableOpacity
                   style={tw`p-2 rounded-full bg-gray-100`}
                   onPress={() => handleNavigation('Settings')}
@@ -315,10 +273,10 @@ export default function FarmOverviewScreen() {
               </View>
 
               <Text style={tw`text-4xl font-extrabold tracking-tight mb-2 leading-tight text-[#EF4444]`}>
-                {farmName}
+                {farmData.farmName}
               </Text>
 
-              <Text style={tw`text-gray-500 text-lg mb-8`}>Your farm at a glance</Text>
+              <Text style={tw`text-gray-500 text-lg mb-8`}>Your farm at a {farmData.locations}</Text>
 
               {/* Notifications */}
               {notifications.length > 0 && (
@@ -337,16 +295,16 @@ export default function FarmOverviewScreen() {
                 >
                   <ScrollView
                     horizontal
-                    showsHorizontalScrollIndicator={false}
+                    showsHorizontalScrollIndicator={true}
                     contentContainerStyle={tw`pb-2`}
                   >
                     {notifications.map((notification) => (
                       <TouchableOpacity
                         key={notification.id}
-                        style={tw`mr-3 p-3 bg-white rounded-xl border border-gray-100 shadow-sm flex-row items-center max-w-[${isPad ? '300px' : '260px'}]`}
-                        onPress={() => {
-                          setNotifications((prev) => prev.filter((n) => n.id !== notification.id));
-                        }}
+                        style={tw`mr-3 p-3 w-96 bg-white rounded-xl border border-gray-100 shadow-sm flex-row items-center max-w-[${isPad ? '300px' : '260px'}]`}
+                      // onPress={() => {
+                      //   setNotifications((prev) => prev.filter((n) => n.id !== notification.id));
+                      // }}
                       >
                         <View
                           style={tw`mr-3 p-2 rounded-full bg-${notification.type === 'alert' ? 'red-100' : 'blue-100'}`}
@@ -393,7 +351,7 @@ export default function FarmOverviewScreen() {
                     {/* Card Header */}
                     <View style={tw`flex-row items-center justify-between mb-6 z-10 relative`}>
                       <View style={tw`flex-row items-center`}>
-                        <FontAwesome5 name="chicken" size={20} color="white" style={tw`mr-3`} />
+                        <FontAwesome5 name='' size={20} color="white" style={tw`mr-3`} />
                         <Text style={tw`text-white text-xl font-bold`}>Farm Overview</Text>
                       </View>
                       <TouchableOpacity
@@ -459,7 +417,7 @@ export default function FarmOverviewScreen() {
                           />
                           <View style={tw`absolute flex items-center justify-center`}>
                             <Text style={tw`text-white text-2xl font-bold`}>
-                              {formatNumber(farmOverview.chickens)}
+                              {totalChickens}
                             </Text>
                             <Text style={tw`text-white/80 text-xs`}>chickens</Text>
                           </View>
@@ -470,17 +428,17 @@ export default function FarmOverviewScreen() {
                         <View style={tw`flex-row items-center mb-3`}>
                           <View style={tw`w-3 h-3 rounded-full bg-green-500 mr-2`} />
                           <Text style={tw`text-white text-base font-medium`}>Healthy:</Text>
-                          <Text style={tw`text-white font-bold ml-auto`}>{farmOverview.healthy}</Text>
+                          <Text style={tw`text-white font-bold ml-auto`}>{farmData.chickens.healthyChickens}</Text>
                         </View>
                         <View style={tw`flex-row items-center mb-3`}>
                           <View style={tw`w-3 h-3 rounded-full bg-yellow-500 mr-2`} />
                           <Text style={tw`text-white text-base font-medium`}>At Risk:</Text>
-                          <Text style={tw`text-white font-bold ml-auto`}>{farmOverview.atRisk}</Text>
+                          <Text style={tw`text-white font-bold ml-auto`}>{farmData.chickens.riskChickens}</Text>
                         </View>
                         <View style={tw`flex-row items-center`}>
                           <View style={tw`w-3 h-3 rounded-full bg-red-500 mr-2`} />
                           <Text style={tw`text-white text-base font-medium`}>Sick:</Text>
-                          <Text style={tw`text-white font-bold ml-auto`}>{farmOverview.sick}</Text>
+                          <Text style={tw`text-white font-bold ml-auto`}>{farmData.chickens.sickChickens}</Text>
                         </View>
                       </View>
                     </View>

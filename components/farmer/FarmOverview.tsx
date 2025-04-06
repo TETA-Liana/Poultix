@@ -39,10 +39,10 @@ export default function FarmOverviewScreen() {
   const [error, setError] = useState<string | null>(null);
   const [farmName, setFarmName] = useState("Sunrise Farm");
   const [farmOverview, setFarmOverview] = useState({
-    chickens: 150,
-    sick: 5,
-    healthy: 130,
-    atRisk: 15,
+    chickens: 0,
+    sick: 0,
+    healthy: 0,
+    atRisk: 0,
     lastUpdated: new Date(),
   });
   const [weatherPreview, setWeatherPreview] = useState({
@@ -50,6 +50,7 @@ export default function FarmOverviewScreen() {
     condition: 'sunny',
     humidity: 65,
   });
+
   const [notifications, setNotifications] = useState([
     { id: 1, type: 'alert', message: 'Increased risk of heat stress today' },
     { id: 2, type: 'info', message: 'Feeding schedule updated' },
@@ -103,13 +104,13 @@ export default function FarmOverviewScreen() {
       });
 
       setFarmName(response.data.farmName || "Sunrise Farm");
-      setFarmOverview({
-        chickens: response.data.chickens || 150,
-        sick: response.data.sick || 5,
-        healthy: response.data.healthy || 130,
-        atRisk: response.data.atRisk || 15,
-        lastUpdated: new Date(),
-      });
+      // setFarmOverview({
+      //   chickens: response.data.chickens ,
+      //   sick: response.data.sick ,
+      //   healthy: response.data.healthy ,
+      //   atRisk: response.data.atRisk,
+      //   lastUpdated: new Date(),
+      // });
 
       setWeatherPreview({
         temp: Math.floor(Math.random() * 20) + 15,
@@ -724,7 +725,7 @@ export default function FarmOverviewScreen() {
           {/* Bottom Navigation Bar */}
           <Animated.View
             style={[
-              tw`absolute bottom-0 left-0 right-0 py-4 px-2 z-10`,
+              tw`fixed bottom-0 left-0 right-0 py-4 px-2 z-10`,
               {
                 opacity: navAnim,
                 transform: [

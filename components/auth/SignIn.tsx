@@ -59,8 +59,8 @@ export default function SignInScreen() {
         const checkUserSignIn = async () => {
             try {
                 const token = await AsyncStorage.getItem('token');
-                if (token) {
-                    navigation.navigate('Home');
+                if (token && token != null) {
+                    navigation.navigate('FarmerHome');
                 }
             } catch (error) {
                 console.error('Error checking token:', error);
@@ -166,18 +166,15 @@ export default function SignInScreen() {
             await AsyncStorage.setItem('userEmail', email.trim());
 
             setIsLoading(false);
-            navigation.navigate('Home');
+            navigation.navigate('FarmerHome');
         } catch (error) {
             setIsLoading(false);
             if (axios.isAxiosError(error)) {
+                console.log(error.response?.data)
                 if (!error.response) {
                     Alert.alert('Network Error', 'Please check your internet connection');
-                } else if (error.response.status === 401) {
-                    Alert.alert('Authentication Failed', 'Invalid email or password');
-                } else if (error.response.status === 429) {
-                    Alert.alert('Too Many Attempts', 'Please try again later');
-                } else {
-                    Alert.alert('Login Failed', error.response.data?.message || 'Something went wrong');
+                } else if (error.response.status === 400) {
+                    Alert.alert('Authentication Failed', error.response.data.message);
                 }
             } else {
                 Alert.alert('Error', 'An unexpected error occurred');
@@ -325,6 +322,7 @@ export default function SignInScreen() {
                                         ref={inputRefs.password}
                                         style={styles.inputField}
                                         placeholder="Enter your password"
+                                        autoCapitalize='none'
                                         value={password}
                                         onChangeText={(text) => {
                                             setPassword(text);

@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
     View,
     Text,
@@ -7,6 +7,7 @@ import {
     ScrollView,
     Image,
     Animated,
+    Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
@@ -14,18 +15,58 @@ import tw from 'twrnc';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import { NavigationProps } from '@/interfaces/Navigation';
+import axios from 'axios';
+import hostConfig from '@/config/hostConfig';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+interface FarmerData {
+    _id: string,
+    email: string,
+    names: string
+}
 
 export default function FarmerScreen() {
-    const router =useNavigation<NavigationProps>()
-    const fadeAnim = React.useRef(new Animated.Value(0)).current;
+    const router = useNavigation<NavigationProps>()
+    const fadeAnim = useRef(new Animated.Value(0)).current;
+    const [farmerData, setFarmerData] = useState<FarmerData | null>(null)
+    const [farmData, setFarmData] = useState()
 
-    React.useEffect(() => {
+    useEffect(() => {
         Animated.timing(fadeAnim, {
             toValue: 1,
             duration: 800,
             useNativeDriver: true,
         }).start();
     }, []);
+
+
+    useEffect(() => {
+        const fetchFarmerData = async () => {
+            try {
+                const token = await AsyncStorage.getItem('token')
+                const response = await axios.get(hostConfig.host + '/loggedInFarmer', {
+                    headers: {
+                        Authorization: 'Bearer ' + token
+                    }
+                })
+                setFarmerData(response.data)
+            } catch (error) {
+                if (axios.isAxiosError(error)) {
+                    if (!error.response) {
+                        Alert.alert('Network Error', 'Please try again later')
+                        return
+                    }
+                    if (error.response.status == 401) {
+                        await AsyncStorage.removeItem('token')
+                        router.navigate('SignIn')
+                        return
+                    }
+                    Alert.alert('Error', error.response.data.message)
+                }
+            }
+        }
+        fetchFarmerData()
+    }, [])
 
     return (
         <SafeAreaView style={tw`flex-1 bg-white`}>
@@ -40,7 +81,7 @@ export default function FarmerScreen() {
                         <View style={tw`flex-row justify-between items-center`}>
                             <View>
                                 <Text style={tw`text-2xl font-extrabold text-white tracking-tight`}>
-                                    Umutoni Raissa
+                                    {farmerData && farmerData.names ? farmerData.names : 'loading'}
                                 </Text>
                                 <Text style={tw`text-orange-100 text-sm mt-1 font-medium opacity-90`}>
                                     Farmer • Female, 25
@@ -48,7 +89,7 @@ export default function FarmerScreen() {
                             </View>
                             <View style={tw`relative`}>
                                 <Image
-                                    source={{ uri: 'https://via.placeholder.com/50' }}
+                                    source={{ uri: '/logo.png' }}
                                     style={tw`w-14 h-14 rounded-full border-3 border-white shadow-sm`}
                                 />
                                 <View style={tw`absolute -bottom-1 -right-1 w-4 h-4 bg-orange-300 rounded-full border-2 border-white`}></View>
@@ -68,7 +109,7 @@ export default function FarmerScreen() {
                         </View>
                         <View style={tw`flex-row items-center bg-orange-50 p-4 rounded-xl`}>
                             <Image
-                                source={{ uri: 'https://via.placeholder.com/50' }}
+                                source={{ uri: '/assets/logo.png' }}
                                 style={tw`w-12 h-12 rounded-full mr-4 border border-orange-200`}
                             />
                             <View style={tw`flex-1`}>
@@ -113,7 +154,7 @@ export default function FarmerScreen() {
                                 style={tw`bg-white rounded-xl p-4 mb-3 shadow-sm flex-row items-center border border-orange-100`}
                             >
                                 <Image
-                                    source={{ uri: 'https://via.placeholder.com/50' }}
+                                    source={{ uri: '../../assets/logo.png' }}
                                     style={tw`w-12 h-12 rounded-full mr-3 border border-orange-200`}
                                 />
                                 <View style={tw`flex-1`}>

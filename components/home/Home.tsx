@@ -7,19 +7,17 @@ import {
     KeyboardAvoidingView,
     Platform,
     Animated,
-    Dimensions,
     ScrollView,
     ImageBackground,
     Alert,
 } from 'react-native';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import * as Haptics from 'expo-haptics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationProps } from '@/interfaces/Navigation';
 
-const { width, height } = Dimensions.get('window');
 
 interface AnimatedCardProps {
     title: string;
@@ -130,9 +128,10 @@ const AnimatedCard = ({ title, icon, selected, onPress, delay, colors, descripti
     );
 };
 
+
 export default function MainReasonScreen() {
     const router = useNavigation<NavigationProps>();
-    const [selectedReason, setSelectedReason] = useState('');
+    const [selectedReason, setSelectedReason] = useState<'News' | 'Diseases' | 'Connecting' | 'PhReader' | 'FarmOverview' | null>(null);
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const headerAnim = useRef(new Animated.Value(-100)).current;
 
@@ -161,35 +160,35 @@ export default function MainReasonScreen() {
             title: 'Disease Insights',
             description: 'Real-time alerts & research updates',
             colors: ['#FF6B6B', '#FF8787'],
-            icon: <Ionicons name="newspaper" size={32} color={selectedReason === 'news' ? '#FFF' : '#FF6B6B'} />,
+            icon: <Ionicons name="newspaper" size={32} color={selectedReason === 'News' ? '#FFF' : '#FF6B6B'} />,
         },
         {
             id: 'detection',
             title: 'Early Warning',
             description: 'Detect issues before they escalate',
             colors: ['#4EA8DE', '#74C2E1'],
-            icon: <Ionicons name="eye" size={32} color={selectedReason === 'detection' ? '#FFF' : '#4EA8DE'} />,
+            icon: <Ionicons name="eye" size={32} color={selectedReason === 'News' ? '#FFF' : '#4EA8DE'} />,
         },
         {
             id: 'connecting',
             title: 'Community Hub',
             description: 'Connect with farming experts',
             colors: ['#2DD4BF', '#5EEAD4'],
-            icon: <Ionicons name="people" size={32} color={selectedReason === 'connecting' ? '#FFF' : '#2DD4BF'} />,
+            icon: <Ionicons name="people" size={32} color={selectedReason === 'Connecting' ? '#FFF' : '#2DD4BF'} />,
         },
         {
             id: 'veterinarian',
             title: 'Vet Suite',
             description: 'Advanced tools for professionals',
             colors: ['#A78BFA', '#C4B5FD'],
-            icon: <Ionicons name="medkit" size={32} color={selectedReason === 'veterinarian' ? '#FFF' : '#A78BFA'} />,
+            icon: <Ionicons name="medkit" size={32} color={selectedReason === 'PhReader' ? '#FFF' : '#A78BFA'} />,
         },
         {
-            id: 'explore',
+            id: 'FarmOverview',
             title: 'Discovery Mode',
             description: 'Experience Poultix’s potential',
             colors: ['#22D3EE', '#67E8F9'],
-            icon: <Ionicons name="compass" size={32} color={selectedReason === 'explore' ? '#FFF' : '#22D3EE'} />,
+            icon: <Ionicons name="compass" size={32} color={selectedReason === 'FarmOverview' ? '#FFF' : '#22D3EE'} />,
         },
     ];
 
@@ -205,7 +204,7 @@ export default function MainReasonScreen() {
             toValue: 0,
             duration: 400,
             useNativeDriver: true,
-        }).start(() => router.navigate('FarmOverview'));
+        }).start(() => router.navigate(selectedReason));
     };
 
     const getButtonStyle = () => ({
@@ -225,7 +224,7 @@ export default function MainReasonScreen() {
 
     return (
         <ImageBackground
-            source={require('../../assets/images/chicken.webp')}
+            source={require('@/assets/images/chicken.webp')}
             style={{ flex: 1 }}
         >
             <SafeAreaView style={{ flex: 1, backgroundColor: 'rgba(255,255,255,0.9)' }}>

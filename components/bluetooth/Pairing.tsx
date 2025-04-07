@@ -186,11 +186,11 @@ export default function ConnectToDeviceScreen() {
                                 ]}
                             >
                                 {/* Outer glow */}
-                                <View style={tw`absolute inset-0 bg-yellow-200 rounded-full opacity-30`} />
+                                <View style={tw`absolute inset-0 bg-red-200 rounded-full opacity-30`} />
 
                                 {/* Main circle */}
                                 <LinearGradient
-                                    colors={['#FEF3C7', '#FDE68A']}
+                                    colors={['#FEA3C7', '#FDA68A']}
                                     style={tw`absolute inset-2 rounded-full shadow-lg`}
                                 >
                                     <BlurView
@@ -251,7 +251,7 @@ export default function ConnectToDeviceScreen() {
                                     activeOpacity={0.9}
                                 >
                                     <LinearGradient
-                                        colors={['#EF4444', '#FF6B6B']}
+                                        colors={['#FF7111', '#FF9111']}
                                         start={{ x: 0, y: 0 }}
                                         end={{ x: 1, y: 1 }}
                                         style={tw`absolute inset-0`}
@@ -267,7 +267,7 @@ export default function ConnectToDeviceScreen() {
                                     </Text>
                                     <View style={tw`w-20 h-8 bg-white/90 rounded-full flex-row items-center px-1 z-10 shadow-inner`}>
                                         <Animated.View
-                                            style={tw`w-6 h-6 bg-red-600 rounded-full transform ${isBluetoothOn ? 'translate-x-12' : 'translate-x-0'
+                                            style={tw`w-6 h-6 bg-orange-400 rounded-full transform ${isBluetoothOn ? 'translate-x-12' : 'translate-x-0'
                                                 } transition-transform duration-300 shadow-md`}
                                         />
                                     </View>

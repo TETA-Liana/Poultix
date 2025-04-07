@@ -24,6 +24,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 
 import { NavigationProps } from '@/interfaces/Navigation';
+import TopNavigation from '../navigation/TopNavigation';
 
 export default function SignInScreen() {
     const [email, setEmail] = useState('');
@@ -201,14 +202,14 @@ export default function SignInScreen() {
     // Enhanced styles
     const styles = {
         container: tw`flex-1 bg-white`,
-        scrollContent: tw`flex-grow`,
+        scrollContent: tw`flex-grow mt-20`,
         mainContent: [
             tw`flex-1 px-7 pt-4`,
             { opacity: fadeAnim, transform: [{ translateY: slideAnim }] },
         ],
         backButton: tw`w-12 h-12 items-center justify-center rounded-full bg-gray-50 shadow-sm mt-2`,
         headerContainer: tw`mt-10 mb-10`,
-        headerTitle: tw`text-3xl font-bold text-orange-500`,
+        headerTitle: tw`text-3xl font-bold text-orange-600 text-center`,
         headerSubtitle: tw`text-gray-500 mt-2 text-base`,
         formContainer: [tw`space-y-6`, { transform: [{ translateX: shakeAnim }] }],
         inputLabel: tw`text-gray-700 font-medium mb-2 ml-1`,
@@ -220,9 +221,9 @@ export default function SignInScreen() {
         ],
         iconContainer: tw`pl-4 pr-2`,
         inputField: tw`flex-1 h-14 text-base text-gray-800`,
-        errorText: tw`text-red-500 ml-1 mt-1 text-xs`,
+        errorText: tw`text-orange-600 ml-1 mt-1 text-xs`,
         forgotPasswordContainer: tw`items-end mb-7 mt-1`,
-        forgotPasswordText: tw`text-orange-500 font-medium`,
+        forgotPasswordText: tw`text-orange-600 font-medium`,
         signInButton: tw`h-14 rounded-xl overflow-hidden shadow-md mb-2`,
         buttonContent: tw`w-full h-full items-center justify-center`,
         buttonText: tw`text-white font-semibold text-lg`,
@@ -240,193 +241,178 @@ export default function SignInScreen() {
         socialButtonText: tw`ml-2 font-medium text-gray-700`,
         signUpContainer: tw`flex-row justify-center mt-auto mb-6 pt-8`,
         signUpText: tw`text-gray-500 text-base`,
-        signUpLinkText: tw`text-orange-500 font-semibold text-base`,
+        signUpLinkText: tw`text-orange-600 font-semibold text-base`,
     };
 
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar style="dark" />
-            <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                style={tw`flex-1`}
-            >
-                <ScrollView
-                    contentContainerStyle={styles.scrollContent}
-                    showsVerticalScrollIndicator={false}
-                    keyboardShouldPersistTaps="handled"
-                >
-                    <Animated.View style={styles.mainContent}>
-                        {/* Back Button */}
-                        <TouchableOpacity
-                            onPress={handleBack}
-                            style={styles.backButton}
-                            activeOpacity={0.7}
-                        >
-                            <Ionicons name="chevron-back" size={24} color="#FFA500" />
-                        </TouchableOpacity>
 
-                        {/* Header */}
-                        <View style={styles.headerContainer}>
-                            <Text style={styles.headerTitle}>Welcome Back</Text>
-                            <Text style={styles.headerSubtitle}>
-                                Sign in to your account to continue
-                            </Text>
+            <TopNavigation />
+            <ScrollView
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
+                keyboardShouldPersistTaps="handled"
+            >
+                <Animated.View style={styles.mainContent}>
+
+                    {/* Header */}
+                    <View style={styles.headerContainer}>
+                        <Text style={styles.headerTitle}>Welcome Back</Text>
+                    </View>
+
+                    {/* Form */}
+                    <Animated.View style={styles.formContainer}>
+                        {/* Email Input */}
+                        <View style={tw`mb-6`}>
+                            <Text style={styles.inputLabel}>Email</Text>
+                            <View style={styles.inputContainer(isEmailFocused, !!emailError)}>
+                                <View style={styles.iconContainer}>
+                                    <Ionicons
+                                        name="mail-outline"
+                                        size={22}
+                                        color={emailError ? '#EF4444' : isEmailFocused ? 'orange' : '#9CA3AF'}
+                                    />
+                                </View>
+                                <TextInput
+                                    ref={inputRefs.email}
+                                    style={styles.inputField}
+                                    placeholder="Enter your email"
+                                    value={email}
+                                    onChangeText={(text) => {
+                                        setEmail(text);
+                                        if (emailError) setEmailError('');
+                                    }}
+                                    keyboardType="email-address"
+                                    autoCapitalize="none"
+                                    placeholderTextColor="#9CA3AF"
+                                    onFocus={() => setIsEmailFocused(true)}
+                                    onBlur={() => setIsEmailFocused(false)}
+                                    returnKeyType="next"
+                                    onSubmitEditing={() => inputRefs.password.current?.focus()}
+                                />
+                            </View>
+                            {emailError && <Text style={styles.errorText}>{emailError}</Text>}
                         </View>
 
-                        {/* Form */}
-                        <Animated.View style={styles.formContainer}>
-                            {/* Email Input */}
-                            <View style={tw`mb-6`}>
-                                <Text style={styles.inputLabel}>Email</Text>
-                                <View style={styles.inputContainer(isEmailFocused, !!emailError)}>
-                                    <View style={styles.iconContainer}>
-                                        <Ionicons
-                                            name="mail-outline"
-                                            size={22}
-                                            color={emailError ? '#EF4444' : isEmailFocused ? '#FFA500' : '#9CA3AF'}
-                                        />
-                                    </View>
-                                    <TextInput
-                                        ref={inputRefs.email}
-                                        style={styles.inputField}
-                                        placeholder="Enter your email"
-                                        value={email}
-                                        onChangeText={(text) => {
-                                            setEmail(text);
-                                            if (emailError) setEmailError('');
-                                        }}
-                                        keyboardType="email-address"
-                                        autoCapitalize="none"
-                                        placeholderTextColor="#9CA3AF"
-                                        onFocus={() => setIsEmailFocused(true)}
-                                        onBlur={() => setIsEmailFocused(false)}
-                                        returnKeyType="next"
-                                        onSubmitEditing={() => inputRefs.password.current?.focus()}
+                        {/* Password Input */}
+                        <View style={tw`mb-4`}>
+                            <Text style={styles.inputLabel}>Password</Text>
+                            <View style={styles.inputContainer(isPasswordFocused, !!passwordError)}>
+                                <View style={styles.iconContainer}>
+                                    <Ionicons
+                                        name="lock-closed-outline"
+                                        size={22}
+                                        color={passwordError ? '#EF4444' : isPasswordFocused ? 'orange' : '#9CA3AF'}
                                     />
                                 </View>
-                                {emailError && <Text style={styles.errorText}>{emailError}</Text>}
-                            </View>
-
-                            {/* Password Input */}
-                            <View style={tw`mb-4`}>
-                                <Text style={styles.inputLabel}>Password</Text>
-                                <View style={styles.inputContainer(isPasswordFocused, !!passwordError)}>
-                                    <View style={styles.iconContainer}>
-                                        <Ionicons
-                                            name="lock-closed-outline"
-                                            size={22}
-                                            color={passwordError ? '#EF4444' : isPasswordFocused ? '#FFA500' : '#9CA3AF'}
-                                        />
-                                    </View>
-                                    <TextInput
-                                        ref={inputRefs.password}
-                                        style={styles.inputField}
-                                        placeholder="Enter your password"
-                                        autoCapitalize='none'
-                                        value={password}
-                                        onChangeText={(text) => {
-                                            setPassword(text);
-                                            if (passwordError) setPasswordError('');
-                                        }}
-                                        secureTextEntry={!showPassword}
-                                        placeholderTextColor="#9CA3AF"
-                                        onFocus={() => setIsPasswordFocused(true)}
-                                        onBlur={() => setIsPasswordFocused(false)}
-                                        returnKeyType="done"
-                                        onSubmitEditing={handleSignIn}
+                                <TextInput
+                                    ref={inputRefs.password}
+                                    style={styles.inputField}
+                                    placeholder="Enter your password"
+                                    autoCapitalize='none'
+                                    value={password}
+                                    onChangeText={(text) => {
+                                        setPassword(text);
+                                        if (passwordError) setPasswordError('');
+                                    }}
+                                    secureTextEntry={!showPassword}
+                                    placeholderTextColor="#9CA3AF"
+                                    onFocus={() => setIsPasswordFocused(true)}
+                                    onBlur={() => setIsPasswordFocused(false)}
+                                    returnKeyType="done"
+                                    onSubmitEditing={handleSignIn}
+                                />
+                                <TouchableOpacity
+                                    onPress={() => setShowPassword(!showPassword)}
+                                    style={tw`px-4`}
+                                    activeOpacity={0.7}
+                                >
+                                    <Ionicons
+                                        name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                                        size={22}
+                                        color={isPasswordFocused ? 'orange' : '#9CA3AF'}
                                     />
-                                    <TouchableOpacity
-                                        onPress={() => setShowPassword(!showPassword)}
-                                        style={tw`px-4`}
-                                        activeOpacity={0.7}
-                                    >
-                                        <Ionicons
-                                            name={showPassword ? 'eye-off-outline' : 'eye-outline'}
-                                            size={22}
-                                            color={isPasswordFocused ? '#FFA500' : '#9CA3AF'}
-                                        />
-                                    </TouchableOpacity>
-                                </View>
-                                {passwordError && <Text style={styles.errorText}>{passwordError}</Text>}
+                                </TouchableOpacity>
                             </View>
+                            {passwordError && <Text style={styles.errorText}>{passwordError}</Text>}
+                        </View>
 
-                            {/* Forgot Password */}
+                        {/* Forgot Password */}
+                        <TouchableOpacity
+                            onPress={handleForgotPassword}
+                            style={styles.forgotPasswordContainer}
+                            activeOpacity={0.7}
+                        >
+                            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+                        </TouchableOpacity>
+
+                        {/* Sign In Button */}
+                        <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
                             <TouchableOpacity
-                                onPress={handleForgotPassword}
-                                style={styles.forgotPasswordContainer}
-                                activeOpacity={0.7}
+                                onPress={handleSignIn}
+                                style={styles.signInButton}
+                                activeOpacity={0.9}
+                                disabled={isLoading}
                             >
-                                <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+                                <LinearGradient
+                                    colors={['#FF6500', '#FF4C00']}
+                                    start={{ x: 0, y: 0 }}
+                                    end={{ x: 1, y: 0 }}
+                                    style={styles.buttonContent}
+                                >
+                                    {isLoading ? (
+                                        <View style={styles.loadingContainer}>
+                                            <ActivityIndicator size="small" color="white" />
+                                            <Text style={styles.loadingText}>Signing In...</Text>
+                                        </View>
+                                    ) : (
+                                        <Text style={styles.buttonText}>Sign In</Text>
+                                    )}
+                                </LinearGradient>
                             </TouchableOpacity>
-
-                            {/* Sign In Button */}
-                            <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
-                                <TouchableOpacity
-                                    onPress={handleSignIn}
-                                    style={styles.signInButton}
-                                    activeOpacity={0.9}
-                                    disabled={isLoading}
-                                >
-                                    <LinearGradient
-                                        colors={['#FFA500', '#FF8C00']}
-                                        start={{ x: 0, y: 0 }}
-                                        end={{ x: 1, y: 0 }}
-                                        style={styles.buttonContent}
-                                    >
-                                        {isLoading ? (
-                                            <View style={styles.loadingContainer}>
-                                                <ActivityIndicator size="small" color="white" />
-                                                <Text style={styles.loadingText}>Signing In...</Text>
-                                            </View>
-                                        ) : (
-                                            <Text style={styles.buttonText}>Sign In</Text>
-                                        )}
-                                    </LinearGradient>
-                                </TouchableOpacity>
-                            </Animated.View>
-
-                            {/* OR Divider */}
-                            <View style={styles.dividerContainer}>
-                                <View style={styles.dividerLine} />
-                                <Text style={styles.dividerText}>OR CONTINUE WITH</Text>
-                                <View style={styles.dividerLine} />
-                            </View>
-
-                            {/* Social Sign In - Buttons with improved spacing */}
-                            <View style={styles.socialContainer}>
-                                <TouchableOpacity
-                                    onPress={() => handleSocialSignIn('Google')}
-                                    style={styles.socialButton('Google')}
-                                    activeOpacity={0.8}
-                                >
-                                    <View style={styles.socialButtonContent}>
-                                        <FontAwesome name="google" size={20} color="#DB4437" />
-                                        <Text style={styles.socialButtonText}>Google</Text>
-                                    </View>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    onPress={() => handleSocialSignIn('Apple')}
-                                    style={styles.socialButton('Apple')}
-                                    activeOpacity={0.8}
-                                >
-                                    <View style={styles.socialButtonContent}>
-                                        <FontAwesome name="apple" size={22} color="#000" />
-                                        <Text style={styles.socialButtonText}>Apple</Text>
-                                    </View>
-                                </TouchableOpacity>
-                            </View>
                         </Animated.View>
 
-                        {/* Sign Up Link */}
-                        <View style={styles.signUpContainer}>
-                            <Text style={styles.signUpText}>Don't have an account? </Text>
-                            <TouchableOpacity onPress={handleSignUp} activeOpacity={0.7}>
-                                <Text style={styles.signUpLinkText}>Sign Up</Text>
+                        {/* OR Divider */}
+                        <View style={styles.dividerContainer}>
+                            <View style={styles.dividerLine} />
+                            <Text style={styles.dividerText}>OR CONTINUE WITH</Text>
+                            <View style={styles.dividerLine} />
+                        </View>
+
+                        {/* Social Sign In - Buttons with improved spacing */}
+                        <View style={styles.socialContainer}>
+                            <TouchableOpacity
+                                onPress={() => handleSocialSignIn('Google')}
+                                style={styles.socialButton('Google')}
+                                activeOpacity={0.8}
+                            >
+                                <View style={styles.socialButtonContent}>
+                                    <FontAwesome name="google" size={20} color="#DB4437" />
+                                    <Text style={styles.socialButtonText}>Google</Text>
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => handleSocialSignIn('Apple')}
+                                style={styles.socialButton('Apple')}
+                                activeOpacity={0.8}
+                            >
+                                <View style={styles.socialButtonContent}>
+                                    <FontAwesome name="apple" size={22} color="#000" />
+                                    <Text style={styles.socialButtonText}>Apple</Text>
+                                </View>
                             </TouchableOpacity>
                         </View>
                     </Animated.View>
-                </ScrollView>
-            </KeyboardAvoidingView>
+
+                    {/* Sign Up Link */}
+                    <View style={styles.signUpContainer}>
+                        <Text style={styles.signUpText}>Don't have an account? </Text>
+                        <TouchableOpacity onPress={handleSignUp} activeOpacity={0.7}>
+                            <Text style={styles.signUpLinkText}>Sign Up</Text>
+                        </TouchableOpacity>
+                    </View>
+                </Animated.View>
+            </ScrollView>
         </SafeAreaView>
     );
 }

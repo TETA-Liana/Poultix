@@ -140,11 +140,11 @@ export default function FarmerScreen() {
         <SafeAreaView style={tw`flex-1 bg-white`}>
             <TopNavigation />
             <ScrollView showsVerticalScrollIndicator={false}
-                style={{ marginBottom: 100 }}>
+                style={tw`mt-15 mb-20`}>
                 <Animated.View style={[tw`flex-1 px-5 pt-12 pb-8`, { opacity: fadeAnim }]}>
                     {/* Profile Section */}
                     <LinearGradient
-                        colors={['#F97316', '#EA580C']}
+                        colors={['#F95316', '#EB580C']}
                         style={tw`rounded-2xl p-6 mb-6 shadow-lg`}
                     >
                         <View style={tw`flex-row justify-between items-center`}>
@@ -163,7 +163,7 @@ export default function FarmerScreen() {
                                     source={require('@/assets/logo.png')}
                                     style={tw`w-14 h-14 rounded-full border-3 border-white shadow-sm`}
                                 />
-                                <View style={tw`absolute -bottom-1 -right-1 w-4 h-4 bg-orange-300 rounded-full border-2 border-white`}></View>
+                                <View style={tw`absolute bottom-0 right-1 w-4 h-4 bg-orange-400 rounded-full border-2 border-white`}/>
                             </View>
                         </View>
                     </LinearGradient>
@@ -171,7 +171,7 @@ export default function FarmerScreen() {
                     {/* Upcoming Schedule Section */}
                     <View style={tw`bg-white rounded-2xl p-5 mb-6 shadow-md border border-orange-100`}>
                         <View style={tw`flex-row justify-between items-center mb-4`}>
-                            <Text style={tw`text-xl font-semibold text-gray-800`}>
+                            <Text style={tw`text-xl font-bold text-gray-800`}>
                                 Upcoming Visit
                             </Text>
                             <TouchableOpacity onPress={() => router.navigate('Schedule')}>
@@ -198,8 +198,8 @@ export default function FarmerScreen() {
                                 </TouchableOpacity>
                             </View>
                         ) : (
-                            <View style={tw`flex-row items-center bg-orange-50 p-4 rounded-xl`}>
-                                <Text>  There are no upcoming visits</Text>
+                            <View style={tw`flex-row items-center p-4 rounded-xl`}>
+                                <Text style={tw`font-semibold`}>  There are no upcoming visits</Text>
                             </View>
                         )}
                     </View>

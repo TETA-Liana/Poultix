@@ -9,6 +9,7 @@ import {
     Platform,
     Animated,
     ImageBackground,
+    ScrollView,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -89,7 +90,7 @@ export default function SignUpScreen() {
                 colors={['rgba(255,245,235,0.95)', 'rgba(240,248,255,0.95)']}
                 style={tw`flex-1`}
             >
-                <SafeAreaView style={tw`flex-1`}>
+                <ScrollView style={tw`flex-1`}>
                     <KeyboardAvoidingView
                         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                         style={tw`flex-1`}
@@ -266,7 +267,7 @@ export default function SignUpScreen() {
                             </View>
                         </Animated.View>
                     </KeyboardAvoidingView>
-                </SafeAreaView>
+                </ScrollView>
             </LinearGradient>
         </ImageBackground>
     );

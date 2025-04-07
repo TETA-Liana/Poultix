@@ -12,6 +12,7 @@ import { StatusBar } from 'expo-status-bar';
 import tw from 'twrnc';
 import { useNavigation } from '@react-navigation/native';
 import { NavigationProps } from '@/interfaces/Navigation';
+import BottomNavigation from '../navigation/BottomNavigator';
 
 export default function BluetoothSettingsScreen() {
     const router = useNavigation<NavigationProps>()
@@ -63,7 +64,8 @@ export default function BluetoothSettingsScreen() {
 
     const handleDisconnect = () => {
         console.log('Disconnect device');
-        router.goBack();  };
+        router.goBack();
+    };
 
     return (
         <SafeAreaView style={tw`flex-1 bg-white`}>
@@ -158,29 +160,7 @@ export default function BluetoothSettingsScreen() {
                 </Animated.View>
 
                 {/* Bottom Navigation Bar */}
-                <View style={tw`absolute bottom-0 left-0 right-0 flex-row justify-around items-center bg-white py-3 border-t border-gray-100 shadow-md rounded-t-2xl`}>
-                    <TouchableOpacity onPress={() => router.navigate('Home')} style={tw`items-center`}>
-                        <Ionicons name="home" size={26} color="#red-600" />
-                        <Text style={tw`text-xs text-gray-900 font-medium tracking-wide mt-1`}>Home</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => router.navigate('Pairing')} style={tw`items-center`}>
-                        <Ionicons name="hardware-chip" size={26} color="#red-600" />
-                        <Text style={tw`text-xs text-gray-900 font-medium tracking-wide mt-1`}>Devices</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => router.navigate('News')} style={tw`items-center`}>
-                        <View style={tw`w-12 h-12 bg-red-600 rounded-full items-center justify-center shadow-md`}>
-                            <Ionicons name="add" size={28} color="#fff" />
-                        </View>
-                        <Text style={tw`text-xs text-gray-900 font-medium tracking-wide mt-1`}>News</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => router.navigate('Settings')} style={tw`items-center`}>
-                        <Ionicons name="settings" size={26} color="#red-600" />
-                        <Text style={tw`text-xs text-gray-900 font-medium tracking-wide mt-1`}>Settings</Text>
-                    </TouchableOpacity>
-                </View>
+                <BottomNavigation />
             </Animated.View>
         </SafeAreaView>
     );

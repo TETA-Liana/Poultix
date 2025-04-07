@@ -17,6 +17,8 @@ import tw from 'twrnc';
 import { BlurView } from 'expo-blur';
 import { useNavigation } from '@react-navigation/native';
 import { NavigationProps } from '@/interfaces/Navigation';
+import BottomNavigation from '../navigation/BottomNavigator';
+import TopNavigation from '../navigation/TopNavigation';
 
 export default function ConnectToDeviceScreen() {
     const router = useNavigation<NavigationProps>()
@@ -58,14 +60,13 @@ export default function ConnectToDeviceScreen() {
                 delay: 300 + (index * 100),
                 useNativeDriver: true,
             }).start();
-        }); 
+        });
     }, []);
 
     const handleToggleBluetooth = () => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => { });
         setIsBluetoothOn(!isBluetoothOn);
-    
-
+        router.navigate('BtResult')
     };
 
     const handleBack = () => {
@@ -153,77 +154,20 @@ export default function ConnectToDeviceScreen() {
 
     return (
         <ImageBackground
-            source={require('../../assets/images/chicken-farmer.webp')} // Replace with your image
+            source={require('@/assets/images/chicken-farmer.webp')}
             style={tw`flex-1`}
-            imageStyle={tw`opacity-5`}
+            imageStyle={tw``}
         >
             <LinearGradient
                 colors={['#FFFFFF', '#FFF7ED']} // White to light orange-cream gradient
                 style={tw`flex-1`}
             >
                 <SafeAreaView style={tw`flex-1`}>
-                    <StatusBar style="dark" />
-                    <View style={tw`flex-1 px-5 pt-5 relative`}>
-                        {/* Enhanced Background Elements */}
-                        <View style={tw`absolute top-0 left-0 right-0 h-full overflow-hidden`}>
-                            <View style={tw`absolute -top-20 -right-20 w-40 h-40 rounded-full bg-yellow-100 opacity-30`} />
-                            <View style={tw`absolute top-40 -left-20 w-40 h-40 rounded-full bg-red-100 opacity-20`} />
-                            <View style={tw`absolute -bottom-10 right-10 w-60 h-60 rounded-full bg-yellow-50 opacity-30`} />
-                            <LinearGradient
-                                colors={['#FEF3C7', '#FFFFFF']}
-                                style={tw`w-full h-1/2 rounded-b-full transform translate-y-1/4 opacity-10`}
-                            />
-                        </View>
-
-                        {/* Back Button */}
-                        <TouchableOpacity
-                            onPress={handleBack}
-                            style={tw`absolute top-5 left-5 z-10 rounded-full overflow-hidden shadow-xl`}
-                            hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
-                        >
-                            <LinearGradient
-                                colors={['#EF4444', '#FF6B6B']}
-                                start={{ x: 0, y: 0 }}
-                                end={{ x: 1, y: 1 }}
-                                style={tw`p-3 flex-row items-center justify-center`}
-                            >
-                                <BlurView
-                                    intensity={15}
-                                    tint="light"
-                                    style={tw`absolute inset-0`}
-                                />
-                                <Ionicons name="arrow-back" size={24} color="white" style={tw`z-10`} />
-                                <Text style={tw`text-white font-semibold text-sm ml-2 z-10`}>Back</Text>
-                            </LinearGradient>
-                        </TouchableOpacity>
-
+                    <TopNavigation />
+                    <View style={tw`flex-1 px-5 relative`}>
                         {/* Main Content */}
                         <Animated.View style={[tw`flex-1 items-center justify-center`, { opacity: fadeAnim }]}>
-                            {/* Title with 3D effect */}
-                            <View style={tw`mb-10`}>
-                                <MaskedView
-                                    maskElement={
-                                        <Text style={tw`text-4xl font-extrabold tracking-tight text-center leading-tight`}>
-                                            Turn on Bluetooth
-                                        </Text>
-                                    }
-                                >
-                                    <LinearGradient
-                                        colors={['#EF4444', '#FF6B6B']} // Red-orange gradient
-                                        start={{ x: 0, y: 0 }}
-                                        end={{ x: 1, y: 1 }}
-                                    >
-                                        <Text style={tw`text-4xl font-extrabold tracking-tight text-center leading-tight opacity-0`}>
-                                            Turn on Bluetooth
-                                        </Text>
-                                    </LinearGradient>
-                                </MaskedView>
-                                <View style={tw`absolute -bottom-2 inset-x-0`}>
-                                    <Text style={tw`text-4xl font-extrabold tracking-tight text-center leading-tight text-gray-200 opacity-30 blur-sm`}>
-                                        Turn on Bluetooth    router.navigate('PhReader')
-                                    </Text>
-                                </View>
-                            </View>
+
 
                             {/* Bluetooth Icon with Glow Effect */}
                             <Animated.View
@@ -242,11 +186,11 @@ export default function ConnectToDeviceScreen() {
                                 ]}
                             >
                                 {/* Outer glow */}
-                                <View style={tw`absolute inset-0 bg-yellow-200 rounded-full opacity-30`} />
+                                <View style={tw`absolute inset-0 bg-red-200 rounded-full opacity-30`} />
 
                                 {/* Main circle */}
                                 <LinearGradient
-                                    colors={['#FEF3C7', '#FDE68A']}
+                                    colors={['#FEA3C7', '#FDA68A']}
                                     style={tw`absolute inset-2 rounded-full shadow-lg`}
                                 >
                                     <BlurView
@@ -287,7 +231,7 @@ export default function ConnectToDeviceScreen() {
                             {/* Enhanced Toggle Button */}
                             <Animated.View
                                 style={[
-                                    tw`flex-row items-center`,    
+                                    tw`flex-row items-center`,
                                     {
                                         opacity: buttonAnim,
                                         transform: [
@@ -307,7 +251,7 @@ export default function ConnectToDeviceScreen() {
                                     activeOpacity={0.9}
                                 >
                                     <LinearGradient
-                                        colors={['#EF4444', '#FF6B6B']}
+                                        colors={['#FF7111', '#FF9111']}
                                         start={{ x: 0, y: 0 }}
                                         end={{ x: 1, y: 1 }}
                                         style={tw`absolute inset-0`}
@@ -323,7 +267,7 @@ export default function ConnectToDeviceScreen() {
                                     </Text>
                                     <View style={tw`w-20 h-8 bg-white/90 rounded-full flex-row items-center px-1 z-10 shadow-inner`}>
                                         <Animated.View
-                                            style={tw`w-6 h-6 bg-red-600 rounded-full transform ${isBluetoothOn ? 'translate-x-12' : 'translate-x-0'
+                                            style={tw`w-6 h-6 bg-orange-400 rounded-full transform ${isBluetoothOn ? 'translate-x-12' : 'translate-x-0'
                                                 } transition-transform duration-300 shadow-md`}
                                         />
                                     </View>
@@ -334,46 +278,8 @@ export default function ConnectToDeviceScreen() {
                             </Animated.View>
                         </Animated.View>
 
-                        {/* Enhanced Bottom Navigation Bar */}
-                        <View
-                            style={tw`absolute bottom-0 left-0 right-0 z-20`}
-                        >
-                            {/* Upper curved edge */}
-                            <View style={tw`h-4 bg-transparent overflow-hidden`}>
-                                <View style={tw`w-full h-8 bg-white rounded-t-full shadow-lg transform translate-y-4`} />
-                            </View>
-
-                            {/* Main menu container */}
-                            <View style={tw`bg-white py-4 pb-8 shadow-2xl`}>
-                                <LinearGradient
-                                    colors={['#FFFFFF', '#FFFBF5']}
-                                    style={tw`absolute inset-0`}
-                                >
-                                    <BlurView
-                                        intensity={10}
-                                        tint="light"
-                                        style={tw`flex-1`}
-                                    />
-                                </LinearGradient>
-
-                                {/* Subtle pattern overlay */}
-                                <View style={tw`absolute inset-0 opacity-5`}>
-                                    <View style={tw`w-full h-full flex-row`}>
-                                        {[...Array(10)].map((_, i) => (
-                                            <View key={i} style={tw`flex-1 border-r border-gray-400`} />
-                                        ))}
-                                    </View>
-                                </View>
-
-                                {/* Menu Items */}
-                                <View style={tw`flex-row justify-around items-center relative z-10 px-2`}>
-                                    {renderMenuButton('home-outline', 'Home', 'Home', 'home', 0)}
-                                    {renderMenuButton('hardware-chip-outline', 'Devices', 'Pairing', 'devices', 1)}
-                                    {renderMenuButton('add-circle', 'Add', 'News', 'news', 2, true)}
-                                    {renderMenuButton('settings-outline', 'Settings', 'Settings', 'settings', 3)}
-                                </View>
-                            </View>
-                        </View>
+                        {/* Bottom Navigation Bar */}
+                        <BottomNavigation />
                     </View>
                 </SafeAreaView>
             </LinearGradient>

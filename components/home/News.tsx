@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import {
   View,
   Text,
@@ -7,19 +7,25 @@ import {
   ScrollView,
   Image,
   Animated,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import tw from 'twrnc';
-import { LinearGradient } from 'expo-linear-gradient';
+} from 'react-native'
+import { Ionicons } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import tw from 'twrnc'
+import { LinearGradient } from 'expo-linear-gradient'
+import BottomNavigation from '../navigation/BottomNavigator'
+import TopNavigation from '../navigation/TopNavigation'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function News() {
-  const router = useRouter();
-  const fadeAnim = React.useRef(new Animated.Value(0)).current;
-  const scaleAnim = React.useRef(new Animated.Value(0.95)).current;
+  const router = useRouter()
+  const fadeAnim = React.useRef(new Animated.Value(0)).current
+  const scaleAnim = React.useRef(new Animated.Value(0.95)).current
 
   React.useEffect(() => {
+    const what = async () => {
+      await AsyncStorage.removeItem('token')
+    }
+    what()
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
@@ -32,13 +38,14 @@ export default function News() {
         tension: 40,
         useNativeDriver: true,
       }),
-    ]).start();
-  }, []);
+    ]).start()
+  }, [])
 
   return (
     <SafeAreaView style={tw`flex-1 bg-white`}>
-      <StatusBar style="dark" backgroundColor="transparent" translucent />
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <TopNavigation />
+      <ScrollView showsVerticalScrollIndicator={false}
+        style={tw`my-20 `}>
         <Animated.View style={[tw`flex-1 px-5 pt-12 pb-8`, { opacity: fadeAnim, transform: [{ scale: scaleAnim }] }]}>
           {/* Profile Section */}
           <LinearGradient
@@ -171,6 +178,8 @@ export default function News() {
           </View>
         </Animated.View>
       </ScrollView>
+      {/* Bottom navigation */}
+      <BottomNavigation />
     </SafeAreaView>
-  );
+  )
 }

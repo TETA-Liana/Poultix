@@ -14,6 +14,7 @@ import { StatusBar } from 'expo-status-bar';
 import tw from 'twrnc';
 import { LinearGradient } from 'expo-linear-gradient';
 import BottomNavigation from '../navigation/BottomNavigator';
+import TopNavigation from '../navigation/TopNavigation';
 
 export default function News() {
   const router = useRouter();
@@ -38,8 +39,9 @@ export default function News() {
 
   return (
     <SafeAreaView style={tw`flex-1 bg-white`}>
-      <StatusBar style="dark" backgroundColor="transparent" translucent />
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <TopNavigation />
+      <ScrollView showsVerticalScrollIndicator={false}
+      style={tw`my-20 `}>
         <Animated.View style={[tw`flex-1 px-5 pt-12 pb-8`, { opacity: fadeAnim, transform: [{ scale: scaleAnim }] }]}>
           {/* Profile Section */}
           <LinearGradient
@@ -173,7 +175,7 @@ export default function News() {
         </Animated.View>
       </ScrollView>
       {/* Bottom navigation */}
-      <BottomNavigation/>
+      <BottomNavigation />
     </SafeAreaView>
   );
 }

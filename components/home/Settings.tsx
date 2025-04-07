@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react'
 import {
   View,
   Text,
@@ -10,25 +10,26 @@ import {
   ImageBackground,
   Switch,
   Platform,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { StatusBar } from 'expo-status-bar';
-import { LinearGradient } from 'expo-linear-gradient';
-import * as Haptics from 'expo-haptics';
-import tw from 'twrnc';
-import { useNavigation } from '@react-navigation/native';
-import { NavigationProps } from '@/interfaces/Navigation';
-import { BlurView } from 'expo-blur';
-import BottomNavigation from '../navigation/BottomNavigator';
+} from 'react-native'
+import { Ionicons } from '@expo/vector-icons'
+import { StatusBar } from 'expo-status-bar'
+import { LinearGradient } from 'expo-linear-gradient'
+import * as Haptics from 'expo-haptics'
+import tw from 'twrnc'
+import { useNavigation } from '@react-navigation/native'
+import { NavigationProps } from '@/interfaces/Navigation'
+import { BlurView } from 'expo-blur'
+import BottomNavigation from '../navigation/BottomNavigator'
+import TopNavigation from '../navigation/TopNavigation'
 
 export default function SettingsScreen() {
-  const router = useNavigation<NavigationProps>();
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const router = useNavigation<NavigationProps>()
+  const [isDarkMode, setIsDarkMode] = useState(false)
 
   // Animations
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const cardAnim = useRef(new Animated.Value(0)).current;
-  const navAnim = useRef(new Animated.Value(0)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current
+  const cardAnim = useRef(new Animated.Value(0)).current
+  const navAnim = useRef(new Animated.Value(0)).current
 
   useEffect(() => {
     Animated.sequence([
@@ -50,22 +51,22 @@ export default function SettingsScreen() {
           useNativeDriver: true,
         }),
       ]),
-    ]).start();
-  }, []);
+    ]).start()
+  }, [])
 
   const handleNavigation = (path: string) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { })
     Animated.timing(fadeAnim, {
       toValue: 0.5,
       duration: 200,
       useNativeDriver: true,
-    }).start(() => router.navigate(path));
-  };
+    }).start(() => router.navigate(path))
+  }
 
   const toggleDarkMode = () => {
-    setIsDarkMode((prev) => !prev);
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
-  };
+    setIsDarkMode((prev) => !prev)
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { })
+  }
 
   return (
     <ImageBackground
@@ -78,21 +79,9 @@ export default function SettingsScreen() {
         style={tw`flex-1`}
       >
         <SafeAreaView style={tw`flex-1`}>
-          <StatusBar style="dark" backgroundColor="transparent" translucent />
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={tw`pb-28`}>
+          <TopNavigation />
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={tw`pb-35 mt-15`}>
             <Animated.View style={[tw`flex-1 px-5 pt-12`, { opacity: fadeAnim }]}>
-              {/* Header */}
-              <View style={tw`flex-row justify-between items-center mb-6`}>
-                <Text style={tw`text-gray-500 text-sm`}>
-                  {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </Text>
-                <TouchableOpacity onPress={() => handleNavigation('Search')}>
-                  <Ionicons name="search-outline" size={24} color="#6B7280" />
-                </TouchableOpacity>
-              </View>
-
-              <Text style={tw`text-4xl font-extrabold text-[#EF4444] mb-8`}>Settings</Text>
-
               {/* Profile Section */}
               <Animated.View
                 style={[
@@ -111,7 +100,7 @@ export default function SettingsScreen() {
                 ]}
               >
                 <Image
-                  source={{ uri: 'https://randomuser.me/api/portraits/women/44.jpg' }} // Replace with actual user image
+                  source={require('@/assets/logo.png')} // Replace with actual user image
                   style={tw`w-16 h-16 rounded-full mr-4 border-2 border-[#EF4444]`}
                 />
                 <View style={tw`flex-1`}>
@@ -144,6 +133,7 @@ export default function SettingsScreen() {
                   { icon: 'pie-chart-outline', title: 'Data and storage', path: 'DataAndStorage' },
                   { icon: 'lock-closed-outline', title: 'Privacy and security', path: 'PrivacyAndSecurity' },
                   { icon: 'information-circle-outline', title: 'About', path: 'About' },
+                  { icon: 'log-out', title: 'Logout', path: 'About' },
                 ].map((item, index) => (
                   <Animated.View
                     key={item.title}
@@ -186,5 +176,5 @@ export default function SettingsScreen() {
         </SafeAreaView>
       </LinearGradient>
     </ImageBackground>
-  );
+  )
 }

@@ -29,6 +29,7 @@ import { SharedElement } from 'react-navigation-shared-element';
 import { AnimatePresence, MotiView } from 'moti';
 import { FarmData } from '@/interfaces/Farm';
 import BottomNavigation from '../navigation/BottomNavigator';
+import TopNavigation from '../navigation/TopNavigation';
 
 const { width } = Dimensions.get('window');
 const isPad = width >= 768;
@@ -238,8 +239,7 @@ export default function farmDataScreen() {
         style={tw`flex-1`}
       >
         <SafeAreaView style={tw`flex-1`}>
-          <StatusBar style="dark" backgroundColor="transparent" translucent />
-
+          <TopNavigation />
           <Animated.ScrollView
             showsVerticalScrollIndicator={false}
             contentContainerStyle={tw`pb-28`}

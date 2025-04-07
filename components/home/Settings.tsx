@@ -19,6 +19,7 @@ import tw from 'twrnc';
 import { useNavigation } from '@react-navigation/native';
 import { NavigationProps } from '@/interfaces/Navigation';
 import { BlurView } from 'expo-blur';
+import BottomNavigation from '../navigation/BottomNavigator';
 
 export default function SettingsScreen() {
   const router = useNavigation<NavigationProps>();
@@ -53,7 +54,7 @@ export default function SettingsScreen() {
   }, []);
 
   const handleNavigation = (path: string) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
     Animated.timing(fadeAnim, {
       toValue: 0.5,
       duration: 200,
@@ -63,7 +64,7 @@ export default function SettingsScreen() {
 
   const toggleDarkMode = () => {
     setIsDarkMode((prev) => !prev);
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
   };
 
   return (
@@ -181,70 +182,7 @@ export default function SettingsScreen() {
           </ScrollView>
 
           {/* Bottom Navigation Bar */}
-          <Animated.View
-            style={[
-              tw`absolute bottom-0 left-0 right-0 py-4 px-2 z-10`,
-              {
-                opacity: navAnim,
-                transform: [
-                  {
-                    translateY: navAnim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [50, 0],
-                    }),
-                  },
-                ],
-              },
-            ]}
-          >
-            <BlurView intensity={Platform.OS === 'ios' ? 60 : 40} tint="light" style={tw`absolute inset-0 rounded-t-3xl`}>
-              <View style={tw`flex-1 bg-white/70 rounded-t-3xl border-t border-gray-200/50`} />
-            </BlurView>
-
-            <View style={tw`flex-row justify-around items-center px-4`}>
-              {[
-                { name: 'Home', icon: 'home-outline', path: 'Home' },
-                { name: 'Devices', icon: 'hardware-chip-outline', path: 'Pairing' },
-                { name: null, icon: 'add', path: 'AddMenu', isPrimary: true },
-                { name: 'News', icon: 'newspaper-outline', path: 'News', isActive: true },
-                { name: 'Messages', icon: 'chatbubble-outline', path: 'Messages' },
-              ].map((item, index) => (
-                <TouchableOpacity
-                  key={item.name || `tab-${index}`}
-                  onPress={() => handleNavigation(item.path)}
-                  style={tw`${item.isPrimary ? '-mt-6' : ''} items-center relative`}
-                  activeOpacity={0.8}
-                >
-                  {item.isPrimary ? (
-                    <View style={tw`w-14 h-14 rounded-full shadow-lg items-center justify-center border-2 border-white bg-[#EF4444]`}>
-                      <BlurView intensity={20} tint="light" style={tw`absolute inset-0 rounded-full`} />
-                      <Ionicons name={item.icon} size={30} color="#FFFFFF" style={tw`z-10`} />
-                    </View>
-                  ) : (
-                    <>
-                      <View style={tw`${item.isActive ? `bg-[#EF4444]/10 p-2 rounded-full` : 'p-2'}`}>
-                        <Ionicons
-                          name={item.isActive ? item.icon.replace('-outline', '') : item.icon}
-                          size={24}
-                          color={item.isActive ? '#EF4444' : '#6B7280'}
-                        />
-                      </View>
-                      <Text
-                        style={tw`text-xs mt-1 ${item.isActive ? `text-[#EF4444] font-medium` : 'text-gray-600'}`}
-                      >
-                        {item.name}
-                      </Text>
-                      {item.name === 'Messages' && (
-                        <View style={tw`absolute -top-1 -right-1 w-5 h-5 rounded-full bg-[#EF4444] items-center justify-center`}>
-                          <Text style={tw`text-white text-xs font-bold`}>1</Text>
-                        </View>
-                      )}
-                    </>
-                  )}
-                </TouchableOpacity>
-              ))}
-            </View>
-          </Animated.View>
+          <BottomNavigation />
         </SafeAreaView>
       </LinearGradient>
     </ImageBackground>

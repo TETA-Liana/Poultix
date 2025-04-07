@@ -17,6 +17,7 @@ import tw from 'twrnc';
 import { BlurView } from 'expo-blur';
 import { useNavigation } from '@react-navigation/native';
 import { NavigationProps } from '@/interfaces/Navigation';
+import BottomNavigation from '../navigation/BottomNavigator';
 
 export default function ConnectToDeviceScreen() {
     const router = useNavigation<NavigationProps>()
@@ -58,14 +59,13 @@ export default function ConnectToDeviceScreen() {
                 delay: 300 + (index * 100),
                 useNativeDriver: true,
             }).start();
-        }); 
+        });
     }, []);
 
     const handleToggleBluetooth = () => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => { });
         setIsBluetoothOn(!isBluetoothOn);
-    
-
+        router.navigate('BtResult')
     };
 
     const handleBack = () => {
@@ -153,7 +153,7 @@ export default function ConnectToDeviceScreen() {
 
     return (
         <ImageBackground
-            source={require('../../assets/images/chicken-farmer.webp')} // Replace with your image
+            source={require('@/assets/images/chicken-farmer.webp')} // Replace with your image
             style={tw`flex-1`}
             imageStyle={tw`opacity-5`}
         >
@@ -218,11 +218,6 @@ export default function ConnectToDeviceScreen() {
                                         </Text>
                                     </LinearGradient>
                                 </MaskedView>
-                                <View style={tw`absolute -bottom-2 inset-x-0`}>
-                                    <Text style={tw`text-4xl font-extrabold tracking-tight text-center leading-tight text-gray-200 opacity-30 blur-sm`}>
-                                        Turn on Bluetooth    router.navigate('PhReader')
-                                    </Text>
-                                </View>
                             </View>
 
                             {/* Bluetooth Icon with Glow Effect */}
@@ -287,7 +282,7 @@ export default function ConnectToDeviceScreen() {
                             {/* Enhanced Toggle Button */}
                             <Animated.View
                                 style={[
-                                    tw`flex-row items-center`,    
+                                    tw`flex-row items-center`,
                                     {
                                         opacity: buttonAnim,
                                         transform: [
@@ -334,46 +329,8 @@ export default function ConnectToDeviceScreen() {
                             </Animated.View>
                         </Animated.View>
 
-                        {/* Enhanced Bottom Navigation Bar */}
-                        <View
-                            style={tw`absolute bottom-0 left-0 right-0 z-20`}
-                        >
-                            {/* Upper curved edge */}
-                            <View style={tw`h-4 bg-transparent overflow-hidden`}>
-                                <View style={tw`w-full h-8 bg-white rounded-t-full shadow-lg transform translate-y-4`} />
-                            </View>
-
-                            {/* Main menu container */}
-                            <View style={tw`bg-white py-4 pb-8 shadow-2xl`}>
-                                <LinearGradient
-                                    colors={['#FFFFFF', '#FFFBF5']}
-                                    style={tw`absolute inset-0`}
-                                >
-                                    <BlurView
-                                        intensity={10}
-                                        tint="light"
-                                        style={tw`flex-1`}
-                                    />
-                                </LinearGradient>
-
-                                {/* Subtle pattern overlay */}
-                                <View style={tw`absolute inset-0 opacity-5`}>
-                                    <View style={tw`w-full h-full flex-row`}>
-                                        {[...Array(10)].map((_, i) => (
-                                            <View key={i} style={tw`flex-1 border-r border-gray-400`} />
-                                        ))}
-                                    </View>
-                                </View>
-
-                                {/* Menu Items */}
-                                <View style={tw`flex-row justify-around items-center relative z-10 px-2`}>
-                                    {renderMenuButton('home-outline', 'Home', 'Home', 'home', 0)}
-                                    {renderMenuButton('hardware-chip-outline', 'Devices', 'Pairing', 'devices', 1)}
-                                    {renderMenuButton('add-circle', 'Add', 'News', 'news', 2, true)}
-                                    {renderMenuButton('settings-outline', 'Settings', 'Settings', 'settings', 3)}
-                                </View>
-                            </View>
-                        </View>
+                        {/* Bottom Navigation Bar */}
+                        <BottomNavigation/>
                     </View>
                 </SafeAreaView>
             </LinearGradient>

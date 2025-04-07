@@ -28,6 +28,7 @@ import { BlurView } from 'expo-blur';
 import { SharedElement } from 'react-navigation-shared-element';
 import { AnimatePresence, MotiView } from 'moti';
 import { FarmData } from '@/interfaces/Farm';
+import BottomNavigation from '../navigation/BottomNavigator';
 
 const { width } = Dimensions.get('window');
 const isPad = width >= 768;
@@ -680,98 +681,9 @@ export default function farmDataScreen() {
             </Animated.View>
           </Animated.ScrollView>
 
-          {/* Bottom Navigation Bar */}
-          <Animated.View
-            style={[
-              tw`fixed bottom-0 left-0 right-0 py-4 px-2 z-10`,
-              {
-                opacity: navAnim,
-                transform: [
-                  {
-                    translateY: navAnim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [50, 0],
-                    }),
-                  },
-                ],
-              },
-            ]}
-          >
-            <BlurView intensity={Platform.OS === 'ios' ? 60 : 40} tint="light" style={tw`absolute inset-0 rounded-t-3xl`}>
-              <View style={tw`flex-1 bg-white/70 rounded-t-3xl border-t border-gray-200/50`} />
-            </BlurView>
 
-            <View style={tw`flex-row justify-around items-center px-4`}>
-              {[
-                { name: 'Home', icon: 'home', path: 'Home', isActive: true },
-                { name: 'Devices', icon: 'hardware-chip-outline', path: 'Pairing' },
-                { name: null, icon: 'add', path: 'AddMenu', isPrimary: true },
-                { name: 'Activity', icon: 'pulse-outline', path: 'Activity' },
-                { name: 'Profile', icon: 'person-outline', path: 'Profile' },
-              ].map((item, index) => (
-                <TouchableOpacity
-                  key={item.name || `tab-${index}`}
-                  onPress={() => handleNavigation(item.path)}
-                  style={tw`${item.isPrimary ? '-mt-6' : ''} items-center relative`}
-                  activeOpacity={0.8}
-                >
-                  {item.isPrimary ? (
-                    <Animated.View
-                      style={{
-                        transform: [
-                          {
-                            scale: buttonAnim.interpolate({
-                              inputRange: [0, 1],
-                              outputRange: [0.8, 1],
-                            }),
-                          },
-                        ],
-                      }}
-                    >
-                      <View style={tw`w-14 h-14 rounded-full shadow-lg items-center justify-center border-2 border-white bg-[#EF4444]`}>
-                        <BlurView intensity={20} tint="light" style={tw`absolute inset-0 rounded-full`} />
-                        <Ionicons name={item.icon} size={30} color="#FFFFFF" style={tw`z-10`} />
-                      </View>
-                    </Animated.View>
-                  ) : (
-                    <>
-                      <View style={tw`${item.isActive ? `bg-[#EF4444]/10 p-2 rounded-full` : 'p-2'}`}>
-                        <Ionicons
-                          name={item.isActive ? item.icon.replace('-outline', '') : item.icon}
-                          size={24}
-                          color={item.isActive ? '#EF4444' : '#6B7280'}
-                        />
-                      </View>
-                      <Text
-                        style={tw`text-xs mt-1 ${item.isActive ? `text-[#EF4444] font-medium` : 'text-gray-600'}`}
-                      >
-                        {item.name}
-                      </Text>
-                      {!item.isActive && index % 2 === 0 && (
-                        <Animated.View
-                          style={{
-                            opacity: navAnim,
-                            transform: [
-                              {
-                                scale: navAnim.interpolate({
-                                  inputRange: [0, 1],
-                                  outputRange: [0, 1],
-                                }),
-                              },
-                            ],
-                          }}
-                        >
-                          <View style={tw`absolute -top-1 -right-1 w-5 h-5 rounded-full bg-[#EF4444] items-center justify-center`}>
-                            <Text style={tw`text-white text-xs font-bold`}>1</Text>
-                          </View>
-                        </Animated.View>
-                      )}
-                    </>
-                  )}
-                </TouchableOpacity>
-              ))}
-            </View>
-          </Animated.View>
+          {/* Bottom Navigation Bar */}
+          <BottomNavigation />
         </SafeAreaView>
       </LinearGradient>
     </ImageBackground>

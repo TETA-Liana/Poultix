@@ -21,6 +21,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FarmerData } from '@/interfaces/Farmer';
 import { FarmData } from '@/interfaces/Farm';
 import { Schedule } from '@/interfaces/Schedule';
+import BottomNavigation from '../navigation/BottomNavigator';
 
 
 export default function FarmerScreen() {
@@ -137,7 +138,8 @@ export default function FarmerScreen() {
     return (
         <SafeAreaView style={tw`flex-1 bg-white`}>
             <StatusBar style="dark" backgroundColor="transparent" translucent />
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView showsVerticalScrollIndicator={false}
+                style={{ marginBottom: 100 }}>
                 <Animated.View style={[tw`flex-1 px-5 pt-12 pb-8`, { opacity: fadeAnim }]}>
                     {/* Profile Section */}
                     <LinearGradient
@@ -278,6 +280,9 @@ export default function FarmerScreen() {
                     </View>
                 </Animated.View>
             </ScrollView>
+            {/* Bottom Navigation */}
+
+            <BottomNavigation />
         </SafeAreaView>
     );
 }

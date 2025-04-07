@@ -13,6 +13,7 @@ import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import tw from 'twrnc';
 import { LinearGradient } from 'expo-linear-gradient';
+import BottomNavigation from '../navigation/BottomNavigator';
 
 export default function News() {
   const router = useRouter();
@@ -171,6 +172,8 @@ export default function News() {
           </View>
         </Animated.View>
       </ScrollView>
+      {/* Bottom navigation */}
+      <BottomNavigation/>
     </SafeAreaView>
   );
 }

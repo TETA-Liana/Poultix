@@ -18,7 +18,6 @@ import axios from 'axios';
 import hostConfig from '../../config/hostConfig';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
-import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import tw from 'twrnc';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -26,7 +25,6 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NavigationProps } from '@/interfaces/Navigation';
 import { BlurView } from 'expo-blur';
 import { SharedElement } from 'react-navigation-shared-element';
-import { AnimatePresence, MotiView } from 'moti';
 import { FarmData } from '@/interfaces/Farm';
 import BottomNavigation from '../navigation/BottomNavigator';
 import TopNavigation from '../navigation/TopNavigation';
@@ -106,7 +104,7 @@ export default function farmDataScreen() {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (!error.response) {
-          Alert.alert('Network error', 'Please check your connection.');
+          router.navigate("NetworkError")
           return
         }
 
@@ -294,7 +292,7 @@ export default function farmDataScreen() {
                   <TouchableOpacity
                     key={notification.id}
                     style={tw`mr-3 p-3 w-96 bg-white rounded-xl border border-gray-100 shadow-sm flex-row items-center max-w-[${isPad ? '300px' : '260px'}]`}
-              
+
                   >
                     <View
                       style={tw`mr-3 p-2 rounded-full bg-${notification.type === 'alert' ? 'red-100' : 'blue-100'}`}

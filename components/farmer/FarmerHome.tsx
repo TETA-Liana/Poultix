@@ -10,7 +10,6 @@ import {
     Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { StatusBar } from 'expo-status-bar';
 import tw from 'twrnc';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
@@ -69,7 +68,7 @@ export default function FarmerScreen() {
             } catch (error) {
                 if (axios.isAxiosError(error)) {
                     if (!error.response) {
-                        Alert.alert('Network Error', 'Please try again later')
+                        router.navigate("NetworkError")
                         return
                     }
                     if (error.response.status == 401) {
@@ -77,7 +76,7 @@ export default function FarmerScreen() {
                         router.navigate('SignIn')
                         return
                     }
-                    Alert.alert('Error', error.response.data.message)
+
                 }
             }
         }
@@ -94,7 +93,8 @@ export default function FarmerScreen() {
             } catch (error) {
                 if (axios.isAxiosError(error)) {
                     if (!error.response) {
-                        Alert.alert('Network Error', 'Please try again later')
+                        router.navigate("NetworkError")
+
                         return
                     }
                     if (error.response.status == 401) {
@@ -119,7 +119,7 @@ export default function FarmerScreen() {
             } catch (error) {
                 if (axios.isAxiosError(error)) {
                     if (!error.response) {
-                        Alert.alert('Network Error', 'Please try again later')
+                        router.navigate("NetworkError")
                         return
                     }
                     if (error.response.status == 401) {
@@ -163,7 +163,7 @@ export default function FarmerScreen() {
                                     source={require('@/assets/logo.png')}
                                     style={tw`w-14 h-14 rounded-full border-3 border-white shadow-sm`}
                                 />
-                                <View style={tw`absolute bottom-0 right-1 w-4 h-4 bg-orange-400 rounded-full border-2 border-white`}/>
+                                <View style={tw`absolute bottom-0 right-1 w-4 h-4 bg-orange-400 rounded-full border-2 border-white`} />
                             </View>
                         </View>
                     </LinearGradient>

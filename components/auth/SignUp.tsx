@@ -66,13 +66,13 @@ export default function SignUpScreen() {
                 names: name,
                 email,
                 password,
-                role: isVeterinary ? 'veterinary' : 'user',
+                role: isVeterinary ? 'veterinary' : 'farmer',
             })
             console.log(response)
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 if (!error.response) {
-                    Alert.alert('Networ error', 'Try reloading the page')
+                    navigation.navigate("NetworkError")
                     return
                 }
                 Alert.alert('Sign up error:', error.response.data.message)

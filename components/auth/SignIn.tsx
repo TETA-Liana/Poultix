@@ -190,7 +190,7 @@ export default function SignInScreen() {
     // Enhanced styles
     const styles = {
         container: tw`flex-1 bg-white`,
-        scrollContent: tw`flex-grow mt-20`,
+        scrollContent: tw`flex-grow py-10`,
         mainContent: [
             tw`flex-1 px-7 pt-4`,
             { opacity: fadeAnim, transform: [{ translateY: slideAnim }] },

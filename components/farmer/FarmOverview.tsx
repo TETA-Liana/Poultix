@@ -165,6 +165,7 @@ export default function FarmDataScreen() {
   );
 
   const handleNavigation = (path: string) => {
+    console.log(path)
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
     Animated.timing(fadeAnim, {
       toValue: 0.5,
@@ -415,7 +416,7 @@ export default function FarmDataScreen() {
             >
               <TouchableOpacity
                 style={tw`bg-white p-4 h-full justify-between`}
-                onPress={() => handleNavigation('StoolAnalysis')}
+                onPress={() => handleNavigation('PhReader')}
                 activeOpacity={0.9}
               >
                 <View style={tw`flex-row items-center justify-between`}>
@@ -438,7 +439,7 @@ export default function FarmDataScreen() {
                 title: 'Stool Analysis',
                 description: 'Scan and analyze chicken stool samples',
                 icon: 'mic-circle-outline',
-                path: 'StoolAnalysis',
+                path: 'PhReader',
                 bgColor: 'bg-purple-50',
                 iconColor: 'text-purple-600',
                 borderColor: 'border-purple-100',

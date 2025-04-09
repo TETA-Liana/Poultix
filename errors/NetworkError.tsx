@@ -10,17 +10,13 @@ import { NavigationProps } from '@/interfaces/Navigation';
 export default function NetworkErrorScreen() {
     const router = useNavigation<NavigationProps>()
     const onRetry = async () => {
-
         try {
             const response = await axios.get(hostConfig.host + '/ping')
             if (response.status == 200) router.navigate('FarmerHome')
         } catch (error) {
-            if (axios.isAxiosError(error)) {
-                if (!error.response) Alert.alert('Network Error', 'Make sure you are connected to internet and try agan.')
-            }
+            if (axios.isAxiosError(error)) if (!error.response) Alert.alert('Network Error!', 'Make sure you are connected to internet and try agan.')
         }
     }
-
 
     return (
         <SafeAreaView style={styles.container}>
@@ -30,7 +26,6 @@ export default function NetworkErrorScreen() {
             <TouchableOpacity
                 style={styles.button}
                 onPress={() => { onRetry() }}>
-
                 <Text style={styles.buttonText}>Retry</Text>
             </TouchableOpacity>
         </SafeAreaView>

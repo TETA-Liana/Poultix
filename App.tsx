@@ -18,6 +18,7 @@ import ChickenPHReadingsScreen from './components/bluetooth/phreadings';
 import SettingsScreen from './components/home/Settings';
 import CreateNewPasswordScreen from './components/auth/CreateNewPassword';
 import PageNotFound from './errors/PageNotFound';
+import NetworkErrorScreen from './errors/NetworkError';
 
 const Stack = createStackNavigator();
 
@@ -54,6 +55,10 @@ const App = () => {
         <Stack.Screen name="FarmerHome" component={FarmerHome} />
         <Stack.Screen name="FarmOverview" component={FarmOverview} />
         <Stack.Screen name='*' component={PageNotFound} />
+
+        {/* Error screens */}
+
+        <Stack.Screen name='NetworkError' component={NetworkErrorScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -1,73 +1,70 @@
-import React, { useState, useRef, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useRef, useEffect } from 'react'
+import axios from 'axios'
 import {
     View,
     Text,
     TextInput,
     TouchableOpacity,
     SafeAreaView,
-    KeyboardAvoidingView,
-    Platform,
     Alert,
     Animated,
     Dimensions,
     ScrollView,
     Vibration,
     ActivityIndicator,
-} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import hostConfig from '../../config/hostConfig';
-import { Ionicons, FontAwesome } from '@expo/vector-icons';
-import { StatusBar } from 'expo-status-bar';
-import tw from 'twrnc';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { LinearGradient } from 'expo-linear-gradient';
+} from 'react-native'
+import { useNavigation } from '@react-navigation/native'
+import hostConfig from '../../config/hostConfig'
+import { Ionicons, FontAwesome } from '@expo/vector-icons'
+import tw from 'twrnc'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { LinearGradient } from 'expo-linear-gradient'
 
-import { NavigationProps } from '@/interfaces/Navigation';
-import TopNavigation from '../navigation/TopNavigation';
+import { NavigationProps } from '@/interfaces/Navigation'
+import TopNavigation from '../navigation/TopNavigation'
 
 export default function SignInScreen() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
-    const [isEmailFocused, setIsEmailFocused] = useState(false);
-    const [isPasswordFocused, setIsPasswordFocused] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-    const [emailError, setEmailError] = useState('');
-    const [passwordError, setPasswordError] = useState('');
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [showPassword, setShowPassword] = useState(false)
+    const [isEmailFocused, setIsEmailFocused] = useState(false)
+    const [isPasswordFocused, setIsPasswordFocused] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
+    const [emailError, setEmailError] = useState('')
+    const [passwordError, setPasswordError] = useState('')
 
-    const fadeAnim = useRef(new Animated.Value(0)).current;
-    const slideAnim = useRef(new Animated.Value(30)).current;
-    const buttonScale = useRef(new Animated.Value(1)).current;
-    const shakeAnim = useRef(new Animated.Value(0)).current;
+    const fadeAnim = useRef(new Animated.Value(0)).current
+    const slideAnim = useRef(new Animated.Value(30)).current
+    const buttonScale = useRef(new Animated.Value(1)).current
+    const shakeAnim = useRef(new Animated.Value(0)).current
 
-    const navigation = useNavigation<NavigationProps>();
-    const { width } = Dimensions.get('window');
+    const navigation = useNavigation<NavigationProps>()
+    const { width } = Dimensions.get('window')
 
     const inputRefs = {
         email: useRef<TextInput>(null),
         password: useRef<TextInput>(null),
-    };
+    }
 
     // Validate email format
     const validateEmail = (email: string) => {
-        const trimmedEmail = email.trim();
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(trimmedEmail);
-    };
+        const trimmedEmail = email.trim()
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        return emailRegex.test(trimmedEmail)
+    }
 
     useEffect(() => {
         const checkUserSignIn = async () => {
             try {
-                const token = await AsyncStorage.getItem('token');
+                const token = await AsyncStorage.getItem('token')
                 if (token && token != null) {
-                    navigation.navigate('FarmerHome');
+                    navigation.navigate('FarmerHome')
                 }
             } catch (error) {
-                console.error('Error checking token:', error);
+                console.error('Error checking token:', error)
             }
-        };
-        checkUserSignIn();
+        }
+        checkUserSignIn()
         // Animate elements when component mounts
         Animated.parallel([
             Animated.timing(fadeAnim, {
@@ -80,18 +77,18 @@ export default function SignInScreen() {
                 duration: 800,
                 useNativeDriver: true,
             }),
-        ]).start();
-    }, []);
+        ]).start()
+    }, [])
 
     const handleBack = () => {
-        Vibration.vibrate(20);
-        navigation.goBack();
-    };
+        Vibration.vibrate(20)
+        navigation.goBack()
+    }
 
     const handleSignUp = () => {
-        Vibration.vibrate(20);
-        navigation.navigate('SignUp');
-    };
+        Vibration.vibrate(20)
+        navigation.navigate('SignUp')
+    }
 
     const animateButton = () => {
         Animated.sequence([
@@ -106,9 +103,9 @@ export default function SignInScreen() {
                 useNativeDriver: true,
             }),
         ]).start(() => {
-            buttonScale.setValue(1); // Reset the value
-        });
-    };
+            buttonScale.setValue(1) // Reset the value
+        })
+    }
 
     const shakeAnimation = () => {
         Animated.sequence([
@@ -117,92 +114,83 @@ export default function SignInScreen() {
             Animated.timing(shakeAnim, { toValue: 10, duration: 50, useNativeDriver: true }),
             Animated.timing(shakeAnim, { toValue: 0, duration: 50, useNativeDriver: true }),
         ]).start(() => {
-            shakeAnim.setValue(0); // Reset the value
-        });
-    };
+            shakeAnim.setValue(0) // Reset the value
+        })
+    }
 
     const handleSignIn = async () => {
         // Reset errors
-        setEmailError('');
-        setPasswordError('');
+        setEmailError('')
+        setPasswordError('')
 
         // Validate inputs
-        let isValid = true;
+        let isValid = true
 
         if (!email.trim()) {
-            setEmailError('Email is required');
-            isValid = false;
+            setEmailError('Email is required')
+            isValid = false
         } else if (!validateEmail(email)) {
-            setEmailError('Please enter a valid email');
-            isValid = false;
+            setEmailError('Please enter a valid email')
+            isValid = false
         }
 
         if (!password.trim()) {
-            setPasswordError('Password is required');
-            isValid = false;
+            setPasswordError('Password is required')
+            isValid = false
         } else if (password.trim().length < 4) {
-            setPasswordError('Password must be at least 4 characters');
-            isValid = false;
+            setPasswordError('Password must be at least 4 characters')
+            isValid = false
         }
 
         if (!isValid) {
-            shakeAnimation();
-            Vibration.vibrate([0, 30, 30, 30]);
-            return;
+            shakeAnimation()
+            Vibration.vibrate([0, 30, 30, 30])
+            return
         }
 
         try {
-            Vibration.vibrate(20);
-            animateButton();
-            setIsLoading(true);
+            Vibration.vibrate(20)
+            animateButton()
+            setIsLoading(true)
 
             const response = await axios.post(hostConfig.host + '/signInUser', {
                 email: email.trim(),
                 password: password.trim(),
-            });
+            })
 
             // Handle success (save token, navigate)
-            console.log('Login Successful:', response.data);
-            await AsyncStorage.setItem('token', response.data.token);
-            await AsyncStorage.setItem('userEmail', email.trim());
+            console.log('Login Successful:', response.data)
+            await AsyncStorage.setItem('token', response.data.token)
+            await AsyncStorage.setItem('userEmail', email.trim())
 
-            setIsLoading(false);
-            navigation.navigate('FarmerHome');
+            setIsLoading(false)
+            navigation.navigate('FarmerHome')
         } catch (error) {
-            setIsLoading(false);
+            setIsLoading(false)
             if (axios.isAxiosError(error)) {
-                console.log(error.response?.data)
-                if (!error.response) {
-                    Alert.alert('Network Error', 'Please check your internet connection');
-                } else if (error.response.status === 400) {
-                    Alert.alert('Authentication Failed', error.response.data.message);
-                }
-            } else {
-                Alert.alert('Error', 'An unexpected error occurred');
-            }
-            shakeAnimation();
-            Vibration.vibrate([0, 30, 30, 30]);
+                if (!error.response) navigation.navigate('NetworkError')
+                else if (error.response.status === 400) Alert.alert('Authentication Failed', error.response.data.message)
+            } else Alert.alert('Error', 'An unexpected error occurred')
+            shakeAnimation()
+            Vibration.vibrate([0, 30, 30, 30])
         }
-    };
+    }
 
     const handleForgotPassword = () => {
-        Vibration.vibrate(20);
-        navigation.navigate('ForgotPassword');
-    };
+        Vibration.vibrate(20)
+        navigation.navigate('ForgotPassword')
+    }
 
     const handleSocialSignIn = (provider: string) => {
-        Vibration.vibrate(20);
-        animateButton();
-        console.log(`Sign in with ${provider}`);
-        if (provider === 'Google') {
-            navigation.navigate('GoogleSignIn');
-        }
-    };
+        Vibration.vibrate(20)
+        animateButton()
+        if (provider === 'Google') navigation.navigate('GoogleSignIn')
+    }
 
     // Enhanced styles
     const styles = {
         container: tw`flex-1 bg-white`,
-        scrollContent: tw`flex-grow mt-20`,
+        scrollContent: tw`flex-grow py-10`,
         mainContent: [
             tw`flex-1 px-7 pt-4`,
             { opacity: fadeAnim, transform: [{ translateY: slideAnim }] },
@@ -242,7 +230,7 @@ export default function SignInScreen() {
         signUpContainer: tw`flex-row justify-center mt-auto mb-6 pt-8`,
         signUpText: tw`text-gray-500 text-base`,
         signUpLinkText: tw`text-orange-600 font-semibold text-base`,
-    };
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -279,8 +267,8 @@ export default function SignInScreen() {
                                     placeholder="Enter your email"
                                     value={email}
                                     onChangeText={(text) => {
-                                        setEmail(text);
-                                        if (emailError) setEmailError('');
+                                        setEmail(text)
+                                        if (emailError) setEmailError('')
                                     }}
                                     keyboardType="email-address"
                                     autoCapitalize="none"
@@ -312,8 +300,8 @@ export default function SignInScreen() {
                                     autoCapitalize='none'
                                     value={password}
                                     onChangeText={(text) => {
-                                        setPassword(text);
-                                        if (passwordError) setPasswordError('');
+                                        setPassword(text)
+                                        if (passwordError) setPasswordError('')
                                     }}
                                     secureTextEntry={!showPassword}
                                     placeholderTextColor="#9CA3AF"
@@ -414,5 +402,5 @@ export default function SignInScreen() {
                 </Animated.View>
             </ScrollView>
         </SafeAreaView>
-    );
+    )
 }

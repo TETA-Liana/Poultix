@@ -5,20 +5,15 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ScrollView,
-  Image,
   Animated,
-  ImageBackground,
   Dimensions,
   Platform,
   ActivityIndicator,
-  RefreshControl,
   Alert,
 } from 'react-native';
 import axios from 'axios';
 import hostConfig from '../../config/hostConfig';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
-import { StatusBar } from 'expo-status-bar';
-import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import tw from 'twrnc';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -26,7 +21,6 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NavigationProps } from '@/interfaces/Navigation';
 import { BlurView } from 'expo-blur';
 import { SharedElement } from 'react-navigation-shared-element';
-import { AnimatePresence, MotiView } from 'moti';
 import { FarmData } from '@/interfaces/Farm';
 import BottomNavigation from '../navigation/BottomNavigator';
 import TopNavigation from '../navigation/TopNavigation';
@@ -35,19 +29,19 @@ const { width } = Dimensions.get('window');
 const isPad = width >= 768;
 const isLargePhone = width >= 428;
 
-export default function farmDataScreen() {
+export default function FarmDataScreen() {
   const router = useNavigation<NavigationProps>();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [farmData, setFarmData] = useState<FarmData>({
     _id: '0',
-    farmName: 'loading',
+    farmName: 'loading...',
     chickens: {
       healthyChickens: 0,
       sickChickens: 0,
       riskChickens: 0
     },
-    locations: 'loading'
+    locations: 'loading...'
   })
   const totalChickens = farmData.chickens.healthyChickens + farmData.chickens.sickChickens + farmData.chickens.riskChickens
   const [weatherPreview, setWeatherPreview] = useState({
@@ -68,14 +62,7 @@ export default function farmDataScreen() {
   const chartAnim = useRef(new Animated.Value(0)).current;
   const buttonAnim = useRef(new Animated.Value(0)).current;
   const notificationAnim = useRef(new Animated.Value(0)).current;
-  const scrollY = useRef(new Animated.Value(0)).current;
 
-
-  const headerScale = scrollY.interpolate({
-    inputRange: [0, 100],
-    outputRange: [1, 0.95],
-    extrapolate: 'clamp',
-  });
 
   // Card health colors based on farm status
   const healthColors = useMemo(() => {
@@ -106,7 +93,7 @@ export default function farmDataScreen() {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (!error.response) {
-          Alert.alert('Network error', 'Please check your connection.');
+          router.navigate("NetworkError")
           return
         }
 
@@ -126,10 +113,6 @@ export default function farmDataScreen() {
     }
   };
 
-  const onRefresh = () => {
-    setRefreshing(true);
-    fetchfarmData(false);
-  };
 
   useEffect(() => {
 
@@ -182,6 +165,7 @@ export default function farmDataScreen() {
   );
 
   const handleNavigation = (path: string) => {
+    console.log(path)
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
     Animated.timing(fadeAnim, {
       toValue: 0.5,
@@ -219,9 +203,8 @@ export default function farmDataScreen() {
   if (loading) {
     return (
       <View style={tw`flex-1 justify-center items-center bg-white`}>
-        <StatusBar style="dark" backgroundColor="transparent" translucent />
-        <View style={tw`w-20 h-20 rounded-full justify-center items-center mb-4 bg-[#EF4444]`}>
-          <ActivityIndicator color="#FFFFFF" size="large" />
+        <View style={tw`w-20 h-20 rounded-full justify-center items-center mb-4 bg-orange-500`}>
+          <ActivityIndicator color="white" size="large" />
         </View>
         <Text style={tw`text-lg font-medium text-gray-700`}>Loading farm data...</Text>
       </View>
@@ -231,47 +214,21 @@ export default function farmDataScreen() {
   return (
     <SafeAreaView style={tw`flex-1`}>
       <TopNavigation />
-      <Animated.ScrollView
+      <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={tw`pt-15 `}
-        scrollEventThrottle={16}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: true }
-        )}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor={healthColors.primary}
-            colors={[healthColors.primary]}
-          />
-        }
+        contentContainerStyle={tw`pt-15 pb-20 bg-white`}
       >
-        <Animated.View
-          style={[
-            tw`flex-1 px-5 pt-${Platform.OS === 'ios' ? '12' : '16'}`,
-            { opacity: fadeAnim, transform: [{ scale: headerScale }] },
-          ]}
+        <View
+          style={[tw`flex-1 px-5 pt-${Platform.OS === 'ios' ? '12' : '16'}`]}
         >
-          {/* Header */}
-          <View style={tw`flex-row justify-between items-center mb-2`}>
-            <TouchableOpacity
-              style={tw`p-2 rounded-full bg-gray-100`}
-              onPress={() => handleNavigation('Settings')}
-            >
-              <Ionicons name="settings-outline" size={22} color="#6B7280" />
-            </TouchableOpacity>
-          </View>
-
-          <Text style={tw`text-4xl font-extrabold tracking-tight mb-2 leading-tight text-[#EF4444]`}>
+          <Text style={tw`text-4xl font-extrabold tracking-tight mb-2 leading-tight text-orange-600`}>
             {farmData.farmName}
           </Text>
 
-          <Text style={tw`text-gray-500 text-lg mb-8`}>Your farm at a {farmData.locations}</Text>
+          <Text style={tw`text-gray-500 text-lg mb-8`}>Your farm at a testing</Text>
 
           {/* Notifications */}
-          {notifications.length > 0 && (
+          {/* {notifications.length > 0 && (
             <Animated.View
               style={{
                 opacity: notificationAnim,
@@ -294,7 +251,7 @@ export default function farmDataScreen() {
                   <TouchableOpacity
                     key={notification.id}
                     style={tw`mr-3 p-3 w-96 bg-white rounded-xl border border-gray-100 shadow-sm flex-row items-center max-w-[${isPad ? '300px' : '260px'}]`}
-              
+
                   >
                     <View
                       style={tw`mr-3 p-2 rounded-full bg-${notification.type === 'alert' ? 'red-100' : 'blue-100'}`}
@@ -313,27 +270,13 @@ export default function farmDataScreen() {
                 ))}
               </ScrollView>
             </Animated.View>
-          )}
+          )} */}
 
           {/* Farm Overview Card */}
-          <Animated.View
-            style={[
-              tw`rounded-3xl overflow-hidden shadow-xl mb-6 border border-white/30`,
-              {
-                opacity: cardAnim,
-                transform: [
-                  {
-                    translateY: cardAnim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [20, 0],
-                    }),
-                  },
-                ],
-              },
-            ]}
+          <View style={[tw`rounded-3xl overflow-hidden shadow-xl mb-6 border border-white/30`,]}
           >
-            <SharedElement id="farm-overview-card">
-              <View style={tw`bg-[#EF4444] p-6 relative`}>
+            <SharedElement id='' >
+              <View style={tw`bg-orange-600 p-6 relative`}>
                 <BlurView intensity={25} tint="light" style={tw`absolute inset-0 rounded-3xl`} />
                 <View style={tw`absolute top-0 right-0 w-40 h-40 -mr-10 -mt-10 rounded-full bg-white/10`} />
                 <View style={tw`absolute bottom-0 left-0 w-20 h-20 -ml-5 -mb-5 rounded-full bg-white/5`} />
@@ -354,20 +297,8 @@ export default function farmDataScreen() {
 
                 {/* Main Stats */}
                 <View style={tw`flex-row items-center mb-6 z-10 relative`}>
-                  <Animated.View
-                    style={[
-                      tw`justify-center items-center`,
-                      {
-                        transform: [
-                          {
-                            scale: chartAnim.interpolate({
-                              inputRange: [0, 1],
-                              outputRange: [0.8, 1],
-                            }),
-                          },
-                        ],
-                      },
-                    ]}
+                  <View
+                    style={[tw`justify-center items-center`,]}
                   >
                     <View style={tw`relative justify-center items-center mb-2`}>
                       <View style={tw`w-26 h-26 rounded-full border-8 border-white/30`} />
@@ -406,13 +337,11 @@ export default function farmDataScreen() {
                         ]}
                       />
                       <View style={tw`absolute flex items-center justify-center`}>
-                        <Text style={tw`text-white text-2xl font-bold`}>
-                          {totalChickens}
-                        </Text>
+                        <Text style={tw`text-white text-2xl font-bold`}> {totalChickens}</Text>
                         <Text style={tw`text-white/80 text-xs`}>chickens</Text>
                       </View>
                     </View>
-                  </Animated.View>
+                  </View>
 
                   <View style={tw`flex-1 ml-5`}>
                     <View style={tw`flex-row items-center mb-3`}>
@@ -435,72 +364,35 @@ export default function farmDataScreen() {
 
                 {/* Quick Action Buttons */}
                 <View style={tw`flex-row justify-between z-10 relative`}>
-                  <Animated.View
-                    style={{
-                      opacity: buttonAnim,
-                      transform: [
-                        {
-                          scale: buttonAnim.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: [0.9, 1],
-                          }),
-                        },
-                      ],
-                    }}
-                  >
+                  <View>
                     <TouchableOpacity
-                      style={tw`bg-white rounded-xl py-3 px-4 flex-row items-center justify-center border border-white/30 flex-1 mr-3 shadow-md`}
+                      style={tw`bg-transparent rounded-xl py-3 px-4 flex-row items-center justify-center border border-white/30 flex-1 mr-3 shadow-md`}
                       onPress={() => handleNavigation('FarmDetails')}
                     >
                       <Ionicons name="analytics-outline" size={18} color="white" style={tw`mr-2`} />
-                      <Text style={tw`text-white font-semibold`}>Analytics</Text>
+                      <Text style={tw`text-white font-semibold bg-transparent`}>Analytics</Text>
                     </TouchableOpacity>
-                  </Animated.View>
+                  </View>
 
-                  <Animated.View
-                    style={{
-                      opacity: buttonAnim,
-                      transform: [
-                        {
-                          scale: buttonAnim.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: [0.9, 1],
-                          }),
-                        },
-                      ],
-                    }}
-                  >
+                  <View                  >
                     <TouchableOpacity
-                      style={tw`bg-white/20 rounded-xl py-3 px-4 flex-row items-center justify-center border border-white/30 flex-1 shadow-md`}
+                      style={tw`bg-transparent rounded-xl py-3 px-4 flex-row items-center justify-center border border-white/30  shadow-md`}
                       onPress={() => handleNavigation('AddChicken')}
                     >
                       <Ionicons name="add-circle-outline" size={18} color="white" style={tw`mr-2`} />
                       <Text style={tw`text-white font-semibold`}>Add Chicken</Text>
                     </TouchableOpacity>
-                  </Animated.View>
+                  </View>
                 </View>
               </View>
             </SharedElement>
-          </Animated.View>
+          </View>
 
           {/* Weather & Tools Row */}
-          <View style={tw`flex-row justify-between mb-6`}>
+          <View style={tw`flex-row justify-between h-96`}>
             {/* Weather Preview */}
-            <Animated.View
-              style={[
-                tw`flex-1 mr-3 rounded-3xl overflow-hidden shadow-lg border border-gray-100`,
-                {
-                  opacity: cardAnim,
-                  transform: [
-                    {
-                      translateY: cardAnim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [20, 0],
-                      }),
-                    },
-                  ],
-                },
-              ]}
+            <View
+              style={[tw`flex mr-3 rounded-3xl shadow-lg border border-gray-100 h-full `]}
             >
               <TouchableOpacity
                 style={tw`bg-white p-4 h-full`}
@@ -516,43 +408,30 @@ export default function farmDataScreen() {
                   <Text style={tw`text-gray-500 text-sm`}>{weatherPreview.humidity}% humidity</Text>
                 </View>
               </TouchableOpacity>
-            </Animated.View>
+            </View>
 
             {/* Stool Analysis Quick Access */}
-            <Animated.View
-              style={[
-                tw`flex-1 rounded-3xl overflow-hidden shadow-lg border border-gray-100`,
-                {
-                  opacity: cardAnim,
-                  transform: [
-                    {
-                      translateY: cardAnim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [20, 0],
-                      }),
-                    },
-                  ],
-                },
-              ]}
+            <View
+              style={[tw`flex rounded-3xl shadow-lg border border-gray-100`]}
             >
               <TouchableOpacity
                 style={tw`bg-white p-4 h-full justify-between`}
-                onPress={() => handleNavigation('StoolAnalysis')}
+                onPress={() => handleNavigation('PhReader')}
                 activeOpacity={0.9}
               >
                 <View style={tw`flex-row items-center justify-between`}>
                   <Text style={tw`text-gray-800 font-semibold`}>Quick Scan</Text>
                   <Ionicons name="scan-outline" size={24} color="#EF4444" />
                 </View>
-                <View style={tw`bg-gray-50 rounded-xl p-3 mt-2 border border-gray-100`}>
+                <View style={tw`bg-gray-500 rounded-xl p-3 mt-2 border border-gray-100`}>
                   <Text style={tw`text-gray-800 text-xs text-center`}>Tap to analyze stool samples</Text>
                 </View>
               </TouchableOpacity>
-            </Animated.View>
+            </View>
           </View>
 
           {/* Health Monitoring Section */}
-          <View style={tw`mb-6`}>
+          <View style={tw`mb-6 p-3`}>
             <Text style={tw`text-2xl font-bold text-gray-900 mb-4`}>Health Tools</Text>
 
             {[
@@ -560,7 +439,7 @@ export default function farmDataScreen() {
                 title: 'Stool Analysis',
                 description: 'Scan and analyze chicken stool samples',
                 icon: 'mic-circle-outline',
-                path: 'StoolAnalysis',
+                path: 'PhReader',
                 bgColor: 'bg-purple-50',
                 iconColor: 'text-purple-600',
                 borderColor: 'border-purple-100',
@@ -667,9 +546,8 @@ export default function farmDataScreen() {
               ))}
             </View>
           </View>
-        </Animated.View>
-      </Animated.ScrollView>
-
+        </View>
+      </ScrollView>
 
       {/* Bottom Navigation Bar */}
       <BottomNavigation />

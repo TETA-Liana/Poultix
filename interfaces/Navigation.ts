@@ -18,6 +18,7 @@ export type RootStackParamList = {
     PhReader:undefined;
     Settings:undefined;
     CreateNewPassword:undefined;
+    NetworkError:undefined
 };
 
 export type NavigationProps = StackNavigationProp<RootStackParamList>;

@@ -19,6 +19,7 @@ import SettingsScreen from './components/home/Settings';
 import CreateNewPasswordScreen from './components/auth/CreateNewPassword';
 import PageNotFound from './errors/PageNotFound';
 import NetworkErrorScreen from './errors/NetworkError';
+import Testing from './components/testing/Bluetooth';
 
 const Stack = createStackNavigator();
 
@@ -57,8 +58,11 @@ const App = () => {
         <Stack.Screen name='*' component={PageNotFound} />
 
         {/* Error screens */}
-
         <Stack.Screen name='NetworkError' component={NetworkErrorScreen} />
+
+        {/* Testing Screens */}
+        <Stack.Screen name='Testing' component={Testing} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

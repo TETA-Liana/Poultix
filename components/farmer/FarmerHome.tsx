@@ -65,6 +65,8 @@ export default function FarmerScreen() {
                     }
                 })
                 setFarmerData(response.data)
+                const tobeSaved = JSON.stringify(response.data)
+                await AsyncStorage.setItem('farmerData', tobeSaved)
             } catch (error) {
                 if (axios.isAxiosError(error)) {
                     if (!error.response) {
@@ -76,7 +78,6 @@ export default function FarmerScreen() {
                         router.navigate('SignIn')
                         return
                     }
-
                 }
             }
         }

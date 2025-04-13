@@ -1,18 +1,44 @@
-import { SafeAreaView, Text, Touchable, TouchableOpacity, View } from "react-native";
-import tw from 'twrnc'
+import React, { useEffect } from 'react';
+import { PermissionsAndroid, Platform, Text, View, TouchableOpacity } from 'react-native';
+import { BleManager } from 'react-native-ble-plx';
+
+// const manager = new BleManager();
+
 export default function Testing() {
-    const test = () => {
-        console.log('aaaaaaa')
-        
-    }
+    // const requestPermissions = async () => {
+    //     if (Platform.OS === 'android') {
+    //         await PermissionsAndroid.requestMultiple([
+    //             PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
+    //             PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
+    //             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    //         ]);
+    //     }
+    // };
+
+    // useEffect(() => {
+    //     requestPermissions();
+    // }, []);
+
+    // const scan = () => {
+    //     manager.startDeviceScan(null, null, (error, device) => {
+    //         if (error) {
+    //             console.log('Scan error:', error);
+    //             return;
+    //         }
+    //         console.log('Device:', device?.name, device?.id);
+    //     });
+
+    //     setTimeout(() => {
+    //         manager.stopDeviceScan();
+    //         console.log('Scan stopped');
+    //     }, 10000);
+    // };
+
     return (
-        <SafeAreaView style={tw`flex-1 bg-white`}>
-            <View style={tw`flex-1 bg-white p-20 `}>
-                <Text style={tw`text-gray-500 text-sm`}>Trust your feelings, be a good human being</Text>
-                <TouchableOpacity style={tw`bg-black p-10 rounded-2xl`} onPress={test}>
-                    <Text style={tw`text-white font-semibold text-xl`}>Test bluetooth</Text>
-                </TouchableOpacity>
-            </View>
-        </SafeAreaView>
-    )
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <TouchableOpacity  style={{ backgroundColor: 'black', padding: 20, borderRadius: 10 }}>
+                <Text style={{ color: 'white', fontSize: 18 }}>Scan for Devices</Text>
+            </TouchableOpacity>
+        </View>
+    );
 }

@@ -2,16 +2,17 @@ import { Alert, Text, TouchableOpacity, View } from "react-native";
 import tw from "twrnc"
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { NavigationProps } from "@/interfaces/Navigation";
 
 export default function TopNavigation() {
-    const router = useNavigation()
+    const router = useNavigation<NavigationProps>()
     const route = useRoute()
     const handleBack = () => {
         router.goBack()
     }
 
     const handleMenu = () => {
-        Alert.alert(('Still in development'))
+        router.navigate('Testing')
     }
     
     return (

@@ -12,7 +12,8 @@
       "supportsTablet": true,
       "permissions": {
         "BLUETOOTH_PERIPHERAL_USAGE_DESCRIPTION": "Allow this app to use Bluetooth to connect to devices."
-      }
+      },
+      "bundleIdentifier": "com.anonymous.poultix"
     },
     "android": {
       "adaptiveIcon": {
@@ -20,14 +21,6 @@
         "backgroundColor": "#ffffff"
       },
       "permissions": [
-        "BLUETOOTH",
-        "BLUETOOTH_ADMIN",
-        "BLUETOOTH_CONNECT",
-        "BLUETOOTH_SCAN",
-        "ACCESS_FINE_LOCATION",
-        "android.permission.BLUETOOTH",
-        "android.permission.BLUETOOTH_ADMIN",
-        "android.permission.BLUETOOTH_CONNECT",
         "BLUETOOTH",
         "BLUETOOTH_ADMIN",
         "BLUETOOTH_CONNECT",

@@ -1,140 +1,43 @@
-import { useEffect, useRef, useState } from 'react';
-import {
-    View,
-    Text,
-    TouchableOpacity,
-    SafeAreaView,
-    ScrollView,
-    Image,
-    Animated,
-    Alert,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import tw from 'twrnc';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useNavigation } from '@react-navigation/native';
-import { NavigationProps } from '@/interfaces/Navigation';
-import axios from 'axios';
-import hostConfig from '@/config/hostConfig';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FarmerData } from '@/interfaces/Farmer';
-import { FarmData } from '@/interfaces/Farm';
-import { Schedule } from '@/interfaces/Schedule';
-import BottomNavigation from '../navigation/BottomNavigator';
-import TopNavigation from '../navigation/TopNavigation';
+import { Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native"
+import tw from 'twrnc'
+import BottomNavigation from "../navigation/BottomNavigator"
+import { useNavigation } from "@react-navigation/native"
+import { NavigationProps } from "@/interfaces/Navigation"
+import TopNavigation from "../navigation/TopNavigation"
+import { LinearGradient } from "expo-linear-gradient"
+import { useEffect, useState } from "react"
+import { VeterinaryData } from "@/interfaces/Veterinary"
+import { Schedule } from "@/interfaces/Schedule"
+import { Ionicons } from '@expo/vector-icons'
+import axios from "axios"
+import hostConfig from "@/config/hostConfig"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 
-export default function FarmerScreen() {
+export default function VeterinaryHome() {
     const router = useNavigation<NavigationProps>()
-    const fadeAnim = useRef(new Animated.Value(0)).current;
-    const [farmerData, setFarmerData] = useState<FarmerData>({
-        _id: '0',
-        email: 'loading',
-        names: 'loading'
-    })
-    const [farmData, setFarmData] = useState<FarmData>({
-        _id: '0',
-        farmName: 'loading',
-        chickens: {
-            healthyChickens: 0,
-            sickChickens: 0,
-            riskChickens: 0
-        },
-        locations: 'loading'
-    })
-
     const [schedules, setSchedules] = useState<Schedule[]>()
+    const [veterinaryData, setVeterinaryData] = useState<VeterinaryData>({
+        names: 'loading...',
+        email: 'loading...',
+        _id: 'loading...',
+        farmManaged: 0
+    })
 
     useEffect(() => {
-        Animated.timing(fadeAnim, {
-            toValue: 1,
-            duration: 800,
-            useNativeDriver: true,
-        }).start();
-    }, []);
-
-
-    // Fetch farm and farmer data
-    useEffect(() => {
-        const fetchFarmerData = async () => {
+        const fetchVeterinaryData = async () => {
             try {
-                const token = await AsyncStorage.getItem('token')
-                const response = await axios.get(hostConfig.host + '/loggedInFarmer', {
-                    headers: {
-                        Authorization: 'Bearer ' + token
-                    }
+                const token = await AsyncStorage.getItem('')
+                const response = await axios.get(hostConfig.host+'', {
+                    headers: { Authorization: `Bearer ` + token }
                 })
-                setFarmerData(response.data)
-                const tobeSaved = JSON.stringify(response.data)
-                await AsyncStorage.setItem('farmerData', tobeSaved)
+                console.log(response.data)
+
             } catch (error) {
-                if (axios.isAxiosError(error)) {
-                    if (!error.response) {
-                        router.navigate("NetworkError")
-                        return
-                    }
-                    if (error.response.status == 401) {
-                        await AsyncStorage.removeItem('token')
-                        router.navigate('SignIn')
-                        return
-                    }
-                }
+                console.error(error)
             }
         }
-
-        const fetchFarmData = async () => {
-            try {
-                const token = await AsyncStorage.getItem('token')
-                const response = await axios.get(hostConfig.host + '/userFarm', {
-                    headers: {
-                        Authorization: 'Bearer ' + token
-                    }
-                })
-                setFarmData(response.data)
-            } catch (error) {
-                if (axios.isAxiosError(error)) {
-                    if (!error.response) {
-                        router.navigate("NetworkError")
-
-                        return
-                    }
-                    if (error.response.status == 401) {
-                        await AsyncStorage.removeItem('token')
-                        router.navigate('SignIn')
-                        return
-                    }
-                    Alert.alert('Error', error.response.data.message)
-                }
-            }
-        }
-
-        const fetchSchedules = async () => {
-            try {
-                const token = await AsyncStorage.getItem('token')
-                const response = await axios.get(hostConfig.host + '/schedules', {
-                    headers: {
-                        Authorization: 'Bearer ' + token
-                    }
-                })
-                setSchedules(response.data)
-            } catch (error) {
-                if (axios.isAxiosError(error)) {
-                    if (!error.response) {
-                        router.navigate("NetworkError")
-                        return
-                    }
-                    if (error.response.status == 401) {
-                        await AsyncStorage.removeItem('token')
-                        router.navigate('SignIn')
-                        return
-                    }
-                    Alert.alert('Error', error.response.data.message)
-                }
-            }
-        }
-        fetchSchedules()
-        fetchFarmData()
-        fetchFarmerData()
+        fetchVeterinaryData()
     }, [])
 
     return (
@@ -142,7 +45,7 @@ export default function FarmerScreen() {
             <TopNavigation />
             <ScrollView showsVerticalScrollIndicator={false}
                 style={tw`mt-15 mb-20`}>
-                <Animated.View style={[tw`flex-1 px-5 pt-12 pb-8`, { opacity: fadeAnim }]}>
+                <View style={[tw`flex-1 px-5 pt-12 pb-8`]}>
                     {/* Profile Section */}
                     <LinearGradient
                         colors={['#F95316', '#EB580C']}
@@ -151,7 +54,7 @@ export default function FarmerScreen() {
                         <View style={tw`flex-row justify-between items-center`}>
                             <View>
                                 <Text style={tw`text-2xl font-extrabold text-white tracking-tight`}>
-                                    {farmerData.names}
+                                    {veterinaryData.names}
                                 </Text>
                                 <Text style={tw`text-orange-100 text-sm mt-1 font-medium opacity-90`}>
                                     Farmer • Female, 25
@@ -218,7 +121,7 @@ export default function FarmerScreen() {
                                 <TouchableOpacity
                                     key={location}
                                     style={[tw`flex-1 bg-white p-4 rounded-xl shadow-sm border border-orange-100 active:bg-orange-50`]}
-                                    onPress={()=>router.navigate('VeterinaryHome')}
+                                    onPress={() => router.navigate('VeterinaryHome')}
                                 >
                                     <Text style={tw`text-gray-800 text-sm font-semibold text-center`}>
                                         {location}
@@ -258,10 +161,10 @@ export default function FarmerScreen() {
                         </Text>
                         <View style={tw`flex-row items-center justify-between`}>
                             <View style={tw`relative items-center justify-center`}>
-                                <Animated.View
+                                <View
                                     style={tw`w-28 h-28 rounded-full border-8 border-orange-100`}
                                 />
-                                <Animated.View
+                                <View
                                     style={tw`absolute top-0 left-0 w-28 h-28 rounded-full border-8 border-orange-500`}
                                 />
                                 <Text style={tw`absolute text-orange-600 text-2xl font-bold`}>
@@ -280,11 +183,11 @@ export default function FarmerScreen() {
                             </View>
                         </View>
                     </View>
-                </Animated.View>
+                </View>
             </ScrollView>
             {/* Bottom Navigation */}
 
             <BottomNavigation />
         </SafeAreaView>
-    );
+    )
 }

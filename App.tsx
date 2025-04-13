@@ -11,14 +11,16 @@ import VerifyCode from './components/auth/VerifyCode';
 import GoogleSignIn from './components/auth/GoogleSignIn';
 import BtSettings from './components/bluetooth/BtSettings';
 import BtResult from './components/bluetooth/BtResult';
-import Pairing from './components/bluetooth/Pairing';
+import Pairing from './components/bluetooth/BtSearching';
 import FarmerHome from './components/farmer/FarmerHome';
 import FarmOverview from './components/farmer/FarmOverview';
-import ChickenPHReadingsScreen from './components/bluetooth/phreadings';
+import ChickenPHReadingsScreen from './components/bluetooth/PhChecker';
 import SettingsScreen from './components/home/Settings';
 import CreateNewPasswordScreen from './components/auth/CreateNewPassword';
 import PageNotFound from './errors/PageNotFound';
 import NetworkErrorScreen from './errors/NetworkError';
+import Testing from './components/testing/Bluetooth';
+import VeterinaryHome from './components/veterinary/VeterinaryHome';
 
 const Stack = createStackNavigator();
 
@@ -54,11 +56,17 @@ const App = () => {
         {/* Farmer Screens */}
         <Stack.Screen name="FarmerHome" component={FarmerHome} />
         <Stack.Screen name="FarmOverview" component={FarmOverview} />
-        <Stack.Screen name='*' component={PageNotFound} />
+        {/* <Stack.Screen name='*' component={PageNotFound} /> */}
+
+        {/* Veterinary Screens */}
+        <Stack.Screen name='VeterinaryHome' component={VeterinaryHome} />
 
         {/* Error screens */}
-
         <Stack.Screen name='NetworkError' component={NetworkErrorScreen} />
+
+        {/* Testing Screens */}
+        <Stack.Screen name='Testing' component={Testing} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

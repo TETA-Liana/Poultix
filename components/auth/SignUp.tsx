@@ -35,14 +35,17 @@ export default function SignUpScreen() {
         const checkUserSignIn = async () => {
             try {
                 const token = await AsyncStorage.getItem('token')
-                if (token) {
+                if (token && token !== null) {
                     navigation.navigate('Home')
+
                 }
+
+                console.log('Token:', token)
             } catch (error) {
                 console.error('Error checking token:', error)
             }
         }
-        checkUserSignIn()
+
 
         Animated.parallel([
             Animated.timing(fadeAnim, {
@@ -57,6 +60,7 @@ export default function SignUpScreen() {
                 useNativeDriver: true,
             }),
         ]).start()
+        checkUserSignIn()
     }, [])
 
     const handleSignUp = async () => {
@@ -70,6 +74,7 @@ export default function SignUpScreen() {
             })
             if (response.status == 200) navigation.navigate('SignIn')
         } catch (error) {
+            console.error(error)
             if (axios.isAxiosError(error)) {
                 if (!error.response) {
                     navigation.navigate("NetworkError")

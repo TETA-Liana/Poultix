@@ -160,19 +160,20 @@ export default function SignInScreen() {
                 password: password.trim(),
             })
             const { role, token } = await response.data
-
             // Handle success (save token, navigate)
             await AsyncStorage.setItem('token', token)
             await AsyncStorage.setItem('role', role)
             setIsLoading(false)
             if (role == 'farmer') navigation.navigate('FarmerHome')
             else if (role == 'veterinary') navigation.navigate('VeterinaryHome')
+            else Alert.alert('Error', 'Invalid role')
         } catch (error) {
             setIsLoading(false)
             if (axios.isAxiosError(error)) {
                 if (!error.response) navigation.navigate('NetworkError')
                 else if (error.response.status === 400) Alert.alert('Authentication Failed', error.response.data.message)
             } else Alert.alert('Error', 'An unexpected error occurred')
+            console.log(error)
             shakeAnimation()
             Vibration.vibrate([0, 30, 30, 30])
             setPassword('')

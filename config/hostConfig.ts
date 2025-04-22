@@ -1,4 +1,4 @@
-const host='http://192.168.44.224:5000/api'
+const host='https://poultix-production.up.railway.app/api'
 export default{
     host
 }

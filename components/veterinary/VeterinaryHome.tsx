@@ -27,14 +27,15 @@ export default function VeterinaryHome() {
     useEffect(() => {
         const fetchVeterinaryData = async () => {
             try {
-                const token = await AsyncStorage.getItem('')
-                const response = await axios.get(hostConfig.host+'', {
-                    headers: { Authorization: `Bearer ` + token }
+                const token = await AsyncStorage.getItem('token')
+                const response = await axios.get(hostConfig.host + '/userVeterinary', {
+                    headers: { Authorization: 'Bearer ' + token }
                 })
                 console.log(response.data)
-
             } catch (error) {
-                console.error(error)
+                if (axios.isAxiosError(error)) {
+                    console.error(error.response?.data)
+                }
             }
         }
         fetchVeterinaryData()

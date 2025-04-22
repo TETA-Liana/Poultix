@@ -22,10 +22,7 @@ export default function News() {
   const scaleAnim = React.useRef(new Animated.Value(0.95)).current
 
   React.useEffect(() => {
-    const what = async () => {
-      await AsyncStorage.removeItem('token')
-    }
-    what()
+  
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,

@@ -57,8 +57,10 @@ export default function SignInScreen() {
         const checkUserSignIn = async () => {
             try {
                 const token = await AsyncStorage.getItem('token')
+                const role = await AsyncStorage.getItem('role')
                 if (token && token != null) {
-                    navigation.navigate('FarmerHome')
+                    if (role == 'farmer') navigation.navigate('FarmerHome')
+                    else if (role == 'veterinary') navigation.navigate('VeterinaryHome')
                 }
             } catch (error) {
                 console.error('Error checking token:', error)
@@ -157,14 +159,14 @@ export default function SignInScreen() {
                 email: email.trim(),
                 password: password.trim(),
             })
+            const { role, token } = await response.data
 
             // Handle success (save token, navigate)
-            console.log('Login Successful:', response.data)
-            await AsyncStorage.setItem('token', response.data.token)
-            await AsyncStorage.setItem('userEmail', email.trim())
-
+            await AsyncStorage.setItem('token', token)
+            await AsyncStorage.setItem('role', role)
             setIsLoading(false)
-            navigation.navigate('FarmerHome')
+            if (role == 'farmer') navigation.navigate('FarmerHome')
+            else if (role == 'veterinary') navigation.navigate('VeterinaryHome')
         } catch (error) {
             setIsLoading(false)
             if (axios.isAxiosError(error)) {
@@ -173,6 +175,7 @@ export default function SignInScreen() {
             } else Alert.alert('Error', 'An unexpected error occurred')
             shakeAnimation()
             Vibration.vibrate([0, 30, 30, 30])
+            setPassword('')
         }
     }
 

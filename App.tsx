@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, ThemeProvider } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Home from './components/home/Home';
 import News from './components/home/News';
@@ -17,7 +17,6 @@ import FarmOverview from './components/farmer/FarmOverview';
 import ChickenPHReadingsScreen from './components/bluetooth/PhChecker';
 import SettingsScreen from './components/home/Settings';
 import CreateNewPasswordScreen from './components/auth/CreateNewPassword';
-import PageNotFound from './errors/PageNotFound';
 import NetworkErrorScreen from './errors/NetworkError';
 import Testing from './components/testing/Bluetooth';
 import VeterinaryHome from './components/veterinary/VeterinaryHome';
@@ -27,8 +26,10 @@ const Stack = createStackNavigator();
 const App = () => {
 
   return (
-    <NavigationContainer>
+    <NavigationContainer >
       <Stack.Navigator screenOptions={{ headerShown: false }}>
+
+        {/* Welcome Screen */}
 
         {/* Authentication Screens */}
         <Stack.Screen name="SignIn" component={SignIn} />
@@ -60,6 +61,8 @@ const App = () => {
 
         {/* Veterinary Screens */}
         <Stack.Screen name='VeterinaryHome' component={VeterinaryHome} />
+
+        {/* Pharmacy Screens */}
 
         {/* Error screens */}
         <Stack.Screen name='NetworkError' component={NetworkErrorScreen} />

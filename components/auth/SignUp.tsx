@@ -68,7 +68,7 @@ export default function SignUpScreen() {
                 password,
                 role: isVeterinary ? 'veterinary' : 'farmer',
             })
-            console.log(response)
+            if (response.status == 200) navigation.navigate('SignIn')
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 if (!error.response) {
@@ -106,7 +106,7 @@ export default function SignUpScreen() {
                     </View>
 
                     {/* Form */}
-                    <View style={tw`flex-1`}>
+                    <View style={tw`flex-1`} >
                         {/* Full Name Input with Icon */}
                         <View style={tw`bg-white/70 rounded-xl p-1 mb-5 shadow-md border  bg-gray-50 border-gray-100 flex-row items-center`}>
                             <View style={tw`pl-4 pr-2`}>
@@ -156,6 +156,7 @@ export default function SignUpScreen() {
                                 style={tw`flex-1 p-4 text-lg text-gray-900`}
                                 placeholder="Enter your password"
                                 value={password}
+                                autoCapitalize={'none'}
                                 onChangeText={setPassword}
                                 secureTextEntry={!showPassword}
                                 placeholderTextColor="#94A3B8"

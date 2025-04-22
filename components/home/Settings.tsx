@@ -82,8 +82,13 @@ export default function SettingsScreen() {
     }).start(() => router.navigate(path))
   }
 
-  const test=()=>{
-    
+
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem('token')
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   const toggleDarkMode = () => {
@@ -147,7 +152,6 @@ export default function SettingsScreen() {
               { icon: 'pie-chart-outline', title: 'Data and storage', path: 'DataAndStorage' },
               { icon: 'lock-closed-outline', title: 'Privacy and security', path: 'PrivacyAndSecurity' },
               { icon: 'information-circle-outline', title: 'About', path: 'About' },
-              { icon: 'log-out', title: 'Logout', path: 'About' },
             ].map((item, index) => (
               <Animated.View
                 key={item.title}
@@ -182,6 +186,13 @@ export default function SettingsScreen() {
               </Animated.View>
             ))}
           </View>
+          <TouchableOpacity
+            onPress={handleLogout}
+            style={tw`flex-row items-center p-4 bg-white rounded-2xl shadow-sm border border-gray-100`}
+          >
+            <Ionicons name='log-out' color="#EF4444" size={24} style={tw`mr-4`} />
+            <Text style={tw`flex-1 text-gray-900 font-semibold text-lg`}>Logout</Text>
+          </TouchableOpacity>
         </Animated.View>
       </ScrollView>
 

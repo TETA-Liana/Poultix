@@ -1,44 +1,90 @@
-import React, { useEffect } from 'react';
-import { PermissionsAndroid, Platform, Text, View, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, PermissionsAndroid, Platform, FlatList } from 'react-native';
 import { BleManager } from 'react-native-ble-plx';
+import { requestMultiple, PERMISSIONS } from 'react-native-permissions';
+import DeviceInfo from 'react-native-device-info';
 
-// const manager = new BleManager();
+const bleManager = new BleManager();
 
-export default function Testing() {
-    // const requestPermissions = async () => {
-    //     if (Platform.OS === 'android') {
-    //         await PermissionsAndroid.requestMultiple([
-    //             PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
-    //             PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
-    //             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-    //         ]);
-    //     }
-    // };
+interface Device {
+    id: string;
+    name: string | null;
+}
 
-    // useEffect(() => {
-    //     requestPermissions();
-    // }, []);
+export default function ScanDevices() {
+    const [devices, setDevices] = useState<Device[]>([]);
+    const [scanning, setScanning] = useState(false);
 
-    // const scan = () => {
-    //     manager.startDeviceScan(null, null, (error, device) => {
-    //         if (error) {
-    //             console.log('Scan error:', error);
-    //             return;
-    //         }
-    //         console.log('Device:', device?.name, device?.id);
-    //     });
+    const requestPermissions = async () => {
+        if (Platform.OS === 'android') {
+            const apiLevel = await DeviceInfo.getApiLevel();
+            if (apiLevel < 31) {
+                await PermissionsAndroid.request(
+                    PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+                );
+            } else {
+                await requestMultiple([
+                    PERMISSIONS.ANDROID.BLUETOOTH_SCAN,
+                    PERMISSIONS.ANDROID.BLUETOOTH_CONNECT,
+                    PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+                ]);
+            }
+        }
+    };
 
-    //     setTimeout(() => {
-    //         manager.stopDeviceScan();
-    //         console.log('Scan stopped');
-    //     }, 10000);
-    // };
+    const startScan = async () => {
+        await requestPermissions();
+
+        setDevices([]);
+        setScanning(true);
+
+        bleManager.startDeviceScan(null, null, (error, device) => {
+            if (error) {
+                console.warn('Scan error:', error);
+                setScanning(false);
+                return;
+            }
+
+            // Avoid duplicates
+            setDevices((prev) => {
+                if (device && !prev.find((d) => d.id === device.id)) {
+                    return [...prev, device];
+                }
+                return prev;
+            });
+        });
+
+        // Stop scanning after 10 seconds
+        setTimeout(() => {
+            bleManager.stopDeviceScan();
+            setScanning(false);
+        }, 10000);
+    };
 
     return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <TouchableOpacity  style={{ backgroundColor: 'black', padding: 20, borderRadius: 10 }}>
-                <Text style={{ color: 'white', fontSize: 18 }}>Scan for Devices</Text>
+        <View style={{ flex: 1, paddingTop: 50, alignItems: 'center' }}>
+            <TouchableOpacity
+                onPress={startScan}
+                style={{
+                    backgroundColor: scanning ? '#888' : 'black',
+                    padding: 20,
+                    borderRadius: 10,
+                    marginBottom: 20,
+                }}
+                disabled={scanning}
+            >
+                <Text style={{ color: 'white', fontSize: 18 }}>
+                    {scanning ? 'Scanning...' : 'Scan for Devices'}
+                </Text>
             </TouchableOpacity>
+
+            <FlatList
+                data={devices}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                    <Text style={{ marginVertical: 4 }}>{item.name || 'Unnamed'} - {item.id}</Text>
+                )}
+            />
         </View>
     );
 }

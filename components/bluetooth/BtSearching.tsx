@@ -84,7 +84,7 @@ export default function ConnectToDeviceScreen() {
         setTimeout(() => {
             bleManager.stopDeviceScan();
             setScanning(false);
-            router.navigate('BtResult', { devices });
+            router.navigate('Bluetooth_Result', { devices });
         }, 10000);
     };
 
@@ -132,8 +132,7 @@ export default function ConnectToDeviceScreen() {
 
     const handleToggleBluetooth = () => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => { });
-        setIsBluetoothOn(!isBluetoothOn);
-        router.navigate('BtResult')
+        // setIsBluetoothO/n(!isBluetoothOn);
     };
 
 

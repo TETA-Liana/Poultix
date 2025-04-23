@@ -49,18 +49,18 @@ const App = () => {
         <Stack.Screen name="AiScreen" component={AiScreen} />
 
         {/* Bluetooth Screens */}
-        <Stack.Screen name="BtSettings" component={BtSettings} />
-        <Stack.Screen name="BtResult" component={BtResult} />
-        <Stack.Screen name="Pairing" component={Pairing} />
-        <Stack.Screen name="PhReader" component={ChickenPHReadingsScreen} />
+        <Stack.Screen name="Bluetooth_Setting" component={BtSettings} />
+        <Stack.Screen name="Bluetooth_Result" component={BtResult} />
+        <Stack.Screen name="Bluetooth_Pairing" component={Pairing} />
+        <Stack.Screen name="Ph_Reader" component={ChickenPHReadingsScreen} />
 
         {/* Farmer Screens */}
-        <Stack.Screen name="FarmerHome" component={FarmerHome} />
-        <Stack.Screen name="FarmOverview" component={FarmOverview} />
+        <Stack.Screen name="Farmer" component={FarmerHome} />
+        <Stack.Screen name="Farm" component={FarmOverview} />
         {/* <Stack.Screen name='*' component={PageNotFound} /> */}
 
         {/* Veterinary Screens */}
-        <Stack.Screen name='VeterinaryHome' component={VeterinaryHome} />
+        <Stack.Screen name='Veterinary' component={VeterinaryHome} />
 
         {/* Pharmacy Screens */}
 

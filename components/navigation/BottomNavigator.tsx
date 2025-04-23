@@ -27,8 +27,8 @@ export default function BottomNavigation() {
     }
 
     const handleHomeNavigation = () => {
-        if (role == 'farmer') router.navigate('FarmerHome')
-        else if (role == 'veterinary') router.navigate('VeterinaryHome')
+        if (role == 'farmer') router.navigate('Farmer')
+        else if (role == 'veterinary') router.navigate('Veterinary')
     }
     return (
         <>
@@ -42,7 +42,7 @@ export default function BottomNavigation() {
                     <Text style={tw`text-xs text-gray-900 font-medium tracking-wide mt-1`}>Home</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => router.navigate('Pairing')} style={tw`items-center`}>
+                <TouchableOpacity onPress={() => router.navigate('Bluetooth_Pairing')} style={tw`items-center`}>
                     <View style={tw`w-12 h-12 rounded-full items-center justify-center  ${isCurrentScreen('Pairing') ? ' bg-orange-600 shadow-md' : 'black'}`}>
                         <Ionicons name="hardware-chip" size={28} color={`${isCurrentScreen('Pairing') ? 'white' : 'black'}`} />
                     </View>

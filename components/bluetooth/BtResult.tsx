@@ -2,13 +2,11 @@ import React from 'react';
 import {
     View,
     Text,
-    TouchableOpacity,
     SafeAreaView,
     Animated,
     Easing,
     ScrollView,
 } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import tw from 'twrnc';
 import BottomNavigation from '../navigation/BottomNavigator';
@@ -70,7 +68,7 @@ export default function BluetoothResultScreen() {
 
                             </View>
                             <Text style={tw`text-gray-900 text-3xl font-extrabold tracking-tight mb-2`}>
-                                {deviceId || 'Device12'}
+                                { 'Device12'}
                             </Text>
                             <Text style={tw`text-red-600 text-lg font-medium italic mb-4 tracking-wide`}>
                                 Paired Successfully

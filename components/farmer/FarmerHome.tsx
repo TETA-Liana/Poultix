@@ -158,7 +158,7 @@ export default function FarmerScreen() {
                                 </Text>
                             </View>
                             <View
-                                onTouchStart={() => router.navigate('FarmOverview')}
+                                onTouchStart={() => router.navigate('Farm')}
                                 style={tw`relative`}>
                                 <Image
                                     source={require('@/assets/logo.png')}
@@ -218,7 +218,7 @@ export default function FarmerScreen() {
                                 <TouchableOpacity
                                     key={location}
                                     style={[tw`flex-1 bg-white p-4 rounded-xl shadow-sm border border-orange-100 active:bg-orange-50`]}
-                                    onPress={()=>router.navigate('VeterinaryHome')}
+                                    onPress={()=>router.navigate('Veterinary')}
                                 >
                                     <Text style={tw`text-gray-800 text-sm font-semibold text-center`}>
                                         {location}

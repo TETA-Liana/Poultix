@@ -36,7 +36,7 @@ export default function SignUpScreen() {
             try {
                 const token = await AsyncStorage.getItem('token')
                 if (token && token !== null) {
-                    navigation.navigate('Home')
+                    navigation.navigate('Farm')
 
                 }
 

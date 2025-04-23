@@ -11,17 +11,17 @@ export type RootStackParamList = {
     Home: undefined;
     News: undefined;
     AiScreen: undefined;
-    BtSettings: undefined;
-    BtResult: { devices: Device[]|null };
-    Pairing: undefined;
-    FarmerHome: undefined;
-    FarmOverview: undefined;
-    PhReader: undefined;
+    Bluetooth_Setting: undefined;
+    Bluetooth_Result: { devices: Device[]|null };
+    Bluetooth_Pairing: undefined;
+    Farmer: undefined;
+    Farm: undefined;
+    Ph_Reader: undefined;
     Settings: undefined;
     CreateNewPassword: undefined;
     NetworkError: undefined;
     Testing: undefined;
-    VeterinaryHome: undefined
+    Veterinary: undefined
 };
 
 export type NavigationProps = StackNavigationProp<RootStackParamList>;

@@ -1,6 +1,5 @@
 import { Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native"
 import tw from 'twrnc'
-import BottomNavigation from "../navigation/BottomNavigator"
 import { useNavigation } from "@react-navigation/native"
 import { NavigationProps } from "@/interfaces/Navigation"
 import TopNavigation from "../navigation/TopNavigation"
@@ -62,7 +61,7 @@ export default function VeterinaryHome() {
                                 </Text>
                             </View>
                             <View
-                                onTouchStart={() => router.navigate('FarmOverview')}
+                                onTouchStart={() => router.navigate('Farm')}
                                 style={tw`relative`}>
                                 <Image
                                     source={require('@/assets/logo.png')}
@@ -122,7 +121,7 @@ export default function VeterinaryHome() {
                                 <TouchableOpacity
                                     key={location}
                                     style={[tw`flex-1 bg-white p-4 rounded-xl shadow-sm border border-orange-100 active:bg-orange-50`]}
-                                    onPress={() => router.navigate('VeterinaryHome')}
+                                    onPress={() => router.navigate('Veterinary')}
                                 >
                                     <Text style={tw`text-gray-800 text-sm font-semibold text-center`}>
                                         {location}
@@ -186,9 +185,7 @@ export default function VeterinaryHome() {
                     </View>
                 </View>
             </ScrollView>
-            {/* Bottom Navigation */}
 
-            <BottomNavigation />
         </SafeAreaView>
     )
 }

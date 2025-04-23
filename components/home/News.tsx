@@ -12,9 +12,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
 import tw from 'twrnc'
 import { LinearGradient } from 'expo-linear-gradient'
-import BottomNavigation from '../navigation/BottomNavigator'
 import TopNavigation from '../navigation/TopNavigation'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function News() {
   const router = useRouter()
@@ -175,8 +173,7 @@ export default function News() {
           </View>
         </Animated.View>
       </ScrollView>
-      {/* Bottom navigation */}
-      <BottomNavigation />
+
     </SafeAreaView>
   )
 }

@@ -59,8 +59,8 @@ export default function SignInScreen() {
                 const token = await AsyncStorage.getItem('token')
                 const role = await AsyncStorage.getItem('role')
                 if (token && token != null) {
-                    if (role == 'farmer') navigation.navigate('FarmerHome')
-                    else if (role == 'veterinary') navigation.navigate('VeterinaryHome')
+                    if (role == 'farmer') navigation.navigate('Farmer')
+                    else if (role == 'veterinary') navigation.navigate('Veterinary')
                 }
             } catch (error) {
                 console.error('Error checking token:', error)
@@ -164,8 +164,8 @@ export default function SignInScreen() {
             await AsyncStorage.setItem('token', token)
             await AsyncStorage.setItem('role', role)
             setIsLoading(false)
-            if (role == 'farmer') navigation.navigate('FarmerHome')
-            else if (role == 'veterinary') navigation.navigate('VeterinaryHome')
+            if (role == 'farmer') navigation.navigate('Farmer')
+            else if (role == 'veterinary') navigation.navigate('Veterinary')
             else Alert.alert('Error', 'Invalid role')
         } catch (error) {
             setIsLoading(false)

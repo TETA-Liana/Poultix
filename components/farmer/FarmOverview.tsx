@@ -22,7 +22,6 @@ import { NavigationProps } from '@/interfaces/Navigation';
 import { BlurView } from 'expo-blur';
 import { SharedElement } from 'react-navigation-shared-element';
 import { FarmData } from '@/interfaces/Farm';
-import BottomNavigation from '../navigation/BottomNavigator';
 import TopNavigation from '../navigation/TopNavigation';
 
 const { width } = Dimensions.get('window');
@@ -416,7 +415,7 @@ export default function FarmDataScreen() {
             >
               <TouchableOpacity
                 style={tw`bg-white p-4 h-full justify-between`}
-                onPress={() => handleNavigation('PhReader')}
+                onPress={() => handleNavigation('Ph_Reader')}
                 activeOpacity={0.9}
               >
                 <View style={tw`flex-row items-center justify-between`}>
@@ -439,7 +438,7 @@ export default function FarmDataScreen() {
                 title: 'Stool Analysis',
                 description: 'Scan and analyze chicken stool samples',
                 icon: 'mic-circle-outline',
-                path: 'PhReader',
+                path: 'Ph_Reader',
                 bgColor: 'bg-purple-50',
                 iconColor: 'text-purple-600',
                 borderColor: 'border-purple-100',
@@ -549,8 +548,7 @@ export default function FarmDataScreen() {
         </View>
       </ScrollView>
 
-      {/* Bottom Navigation Bar */}
-      <BottomNavigation />
+
     </SafeAreaView>
   );
 }

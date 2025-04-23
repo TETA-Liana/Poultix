@@ -12,7 +12,6 @@ import { StatusBar } from 'expo-status-bar';
 import tw from 'twrnc';
 import { useNavigation } from '@react-navigation/native';
 import { NavigationProps } from '@/interfaces/Navigation';
-import BottomNavigation from '../navigation/BottomNavigator';
 
 export default function BluetoothSettingsScreen() {
     const router = useNavigation<NavigationProps>()
@@ -159,8 +158,7 @@ export default function BluetoothSettingsScreen() {
                     </TouchableOpacity>
                 </Animated.View>
 
-                {/* Bottom Navigation Bar */}
-                <BottomNavigation />
+          
             </Animated.View>
         </SafeAreaView>
     );

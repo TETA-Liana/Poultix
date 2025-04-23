@@ -11,7 +11,6 @@ import {
 import tw from 'twrnc';
 import { Ionicons } from '@expo/vector-icons';
 import TopNavigation from '../navigation/TopNavigation';
-import BottomNavigation from '../navigation/BottomNavigator';
 
 interface Feedback {
   isSick: boolean;
@@ -243,7 +242,6 @@ export default function PoultryPHInputScreen() {
 
         </Animated.View>
       </ScrollView>
-      <BottomNavigation />
     </SafeAreaView>
   );
 }

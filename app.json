@@ -13,12 +13,20 @@
       "permissions": {
         "BLUETOOTH_PERIPHERAL_USAGE_DESCRIPTION": "Allow this app to use Bluetooth to connect to devices."
       },
-      "bundleIdentifier": "com.anonymous.poultix"
+      "bundleIdentifier": "com.anonymous.poultix",
+      "config": {
+        "googleMapsApiKey": "AIzaSyBPcaYnBoFQUKBmD-00x9r43oDkNdaL_B8"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "gray"
+      },
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBPcaYnBoFQUKBmD-00x9r43oDkNdaL_B8"
+        }
       },
       "permissions": [
         "BLUETOOTH",

@@ -131,7 +131,7 @@ const AnimatedCard = ({ title, icon, selected, onPress, delay, colors, descripti
 
 export default function MainReasonScreen() {
     const router = useNavigation<NavigationProps>();
-    const [selectedReason, setSelectedReason] = useState<'News' | 'Diseases' | 'Connecting' | 'PhReader' | 'FarmOverview' | null>(null);
+    const [selectedReason, setSelectedReason] = useState<'News' | 'Diseases' | 'Connecting' | 'Ph_Reader' | 'Farm' | null>(null);
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const headerAnim = useRef(new Animated.Value(-100)).current;
 
@@ -181,14 +181,14 @@ export default function MainReasonScreen() {
             title: 'Vet Suite',
             description: 'Advanced tools for professionals',
             colors: ['#A78BFA', '#C4B5FD'],
-            icon: <Ionicons name="medkit" size={32} color={selectedReason === 'PhReader' ? '#FFF' : '#A78BFA'} />,
+            icon: <Ionicons name="medkit" size={32} color={selectedReason === 'Ph_Reader' ? '#FFF' : '#A78BFA'} />,
         },
         {
             id: 'FarmOverview',
             title: 'Discovery Mode',
             description: 'Experience Poultix’s potential',
             colors: ['#22D3EE', '#67E8F9'],
-            icon: <Ionicons name="compass" size={32} color={selectedReason === 'FarmOverview' ? '#FFF' : '#22D3EE'} />,
+            icon: <Ionicons name="compass" size={32} color={selectedReason === 'Farm' ? '#FFF' : '#22D3EE'} />,
         },
     ];
 

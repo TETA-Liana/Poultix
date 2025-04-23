@@ -18,7 +18,6 @@ import tw from 'twrnc';
 import { BlurView } from 'expo-blur';
 import { useNavigation } from '@react-navigation/native';
 import { NavigationProps } from '@/interfaces/Navigation';
-import BottomNavigation from '../navigation/BottomNavigator';
 import TopNavigation from '../navigation/TopNavigation';
 import { BleManager, State } from 'react-native-ble-plx';
 import DeviceInfo from 'react-native-device-info';
@@ -84,7 +83,7 @@ export default function ConnectToDeviceScreen() {
         setTimeout(() => {
             bleManager.stopDeviceScan();
             setScanning(false);
-            router.navigate('BtResult', { devices });
+            router.navigate('Bluetooth_Result', { devices });
         }, 10000);
     };
 
@@ -133,7 +132,7 @@ export default function ConnectToDeviceScreen() {
     const handleToggleBluetooth = () => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => { });
         setIsBluetoothOn(!isBluetoothOn);
-        router.navigate('BtResult')
+        router.navigate('Bluetooth_Result', { devices });
     };
 
 
@@ -183,7 +182,6 @@ export default function ConnectToDeviceScreen() {
                                         style={tw`flex-1 rounded-full`}
                                     />
                                 </LinearGradient>
-
                                 {/* Inner circle */}
                                 <View style={tw`w-32 h-32 rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center z-10 shadow-lg overflow-hidden`}>
                                     <LinearGradient
@@ -262,8 +260,7 @@ export default function ConnectToDeviceScreen() {
                             </Animated.View>
                         </Animated.View>
 
-                        {/* Bottom Navigation Bar */}
-                        <BottomNavigation />
+                     
                     </View>
                 </SafeAreaView>
             </LinearGradient>

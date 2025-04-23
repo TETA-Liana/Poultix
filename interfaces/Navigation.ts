@@ -1,5 +1,6 @@
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Device } from './Bluetooth';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
 
 export type RootStackParamList = {
     SignIn: undefined;
@@ -12,7 +13,7 @@ export type RootStackParamList = {
     News: undefined;
     AiScreen: undefined;
     Bluetooth_Setting: undefined;
-    Bluetooth_Result: { devices: Device[]|null };
+    Bluetooth_Result: { devices: Device[] | null };
     Bluetooth_Pairing: undefined;
     Farmer: undefined;
     Farm: undefined;
@@ -21,7 +22,21 @@ export type RootStackParamList = {
     CreateNewPassword: undefined;
     NetworkError: undefined;
     Testing: undefined;
-    Veterinary: undefined
+    Veterinary: undefined;
+    Pharmacies: undefined;
+    Drawer: undefined; // DrawerNavigator
 };
 
-export type NavigationProps = StackNavigationProp<RootStackParamList>;
+// Define drawer param list
+export type DrawerParamList = {
+    Home: undefined;
+    Farmer: undefined;
+    Farm: undefined;
+    Pharmacies: undefined;
+    Veterinary: undefined;
+    AiScreen: undefined;
+    Settings: undefined;
+    News: undefined;
+};
+
+export type NavigationProps = StackNavigationProp<RootStackParamList> & DrawerNavigationProp<DrawerParamList>;

@@ -22,7 +22,6 @@ import { NavigationProps } from '@/interfaces/Navigation';
 import { BlurView } from 'expo-blur';
 import { SharedElement } from 'react-navigation-shared-element';
 import { FarmData } from '@/interfaces/Farm';
-import BottomNavigation from '../navigation/BottomNavigator';
 import TopNavigation from '../navigation/TopNavigation';
 
 const { width } = Dimensions.get('window');
@@ -549,8 +548,7 @@ export default function FarmDataScreen() {
         </View>
       </ScrollView>
 
-      {/* Bottom Navigation Bar */}
-      <BottomNavigation />
+
     </SafeAreaView>
   );
 }

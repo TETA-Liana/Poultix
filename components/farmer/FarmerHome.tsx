@@ -20,7 +20,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FarmerData } from '@/interfaces/Farmer';
 import { FarmData } from '@/interfaces/Farm';
 import { Schedule } from '@/interfaces/Schedule';
-import BottomNavigation from '../navigation/BottomNavigator';
 import TopNavigation from '../navigation/TopNavigation';
 
 
@@ -282,9 +281,7 @@ export default function FarmerScreen() {
                     </View>
                 </Animated.View>
             </ScrollView>
-            {/* Bottom Navigation */}
-
-            <BottomNavigation />
+    
         </SafeAreaView>
     );
 }

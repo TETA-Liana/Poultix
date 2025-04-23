@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import tw from 'twrnc';
-import BottomNavigation from '../navigation/BottomNavigator';
 import TopNavigation from '../navigation/TopNavigation';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { NavigationProps } from '@/interfaces/Navigation';
@@ -123,8 +122,7 @@ export default function BluetoothResultScreen() {
                     </View>
                 </Animated.View>
             </ScrollView>
-            {/* Bottom navigation */}
-            <BottomNavigation />
+
         </SafeAreaView>
     );
 }

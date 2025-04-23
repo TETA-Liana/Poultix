@@ -12,7 +12,12 @@ export default function TopNavigation() {
     }
 
     const handleMenu = () => {
-        router.navigate('Testing')
+        try {
+            router.toggleDrawer();
+        } catch (error) {
+            console.error('Error toggling drawer:', error);
+            Alert.alert('Navigation Error', 'Unable to open menu.');
+        }
     }
     
     return (

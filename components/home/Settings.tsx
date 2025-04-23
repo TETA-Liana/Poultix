@@ -7,17 +7,13 @@ import {
   ScrollView,
   Image,
   Animated,
-  ImageBackground,
   Switch,
-  Platform,
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
-import { LinearGradient } from 'expo-linear-gradient'
 import * as Haptics from 'expo-haptics'
 import tw from 'twrnc'
 import { useNavigation } from '@react-navigation/native'
 import { NavigationProps } from '@/interfaces/Navigation'
-import BottomNavigation from '../navigation/BottomNavigator'
 import TopNavigation from '../navigation/TopNavigation'
 import { FarmerData } from '@/interfaces/Farmer'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -196,8 +192,7 @@ export default function SettingsScreen() {
         </Animated.View>
       </ScrollView>
 
-      {/* Bottom Navigation Bar */}
-      <BottomNavigation />
+
     </SafeAreaView>
   )
 }

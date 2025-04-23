@@ -1,4 +1,5 @@
 import { StackNavigationProp } from '@react-navigation/stack';
+import { Device } from './Bluetooth';
 
 export type RootStackParamList = {
     SignIn: undefined;
@@ -11,7 +12,7 @@ export type RootStackParamList = {
     News: undefined;
     AiScreen: undefined;
     BtSettings: undefined;
-    BtResult: undefined;
+    BtResult: { devices: Device[]|null };
     Pairing: undefined;
     FarmerHome: undefined;
     FarmOverview: undefined;

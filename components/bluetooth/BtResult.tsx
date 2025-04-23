@@ -9,15 +9,20 @@ import {
     ScrollView,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import tw from 'twrnc';
 import BottomNavigation from '../navigation/BottomNavigator';
 import TopNavigation from '../navigation/TopNavigation';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { NavigationProps } from '@/interfaces/Navigation';
+import { Device } from '@/interfaces/Bluetooth';
 
 export default function BluetoothResultScreen() {
-    const router = useRouter();
-    const { deviceId } = useLocalSearchParams();
+    const router = useNavigation<NavigationProps>();
+    const route = useRoute();
+
+    const { devices } = route.params as { devices: Device[] };
+
 
     // Animation states (for page entry and button)
     const [fadeAnim] = React.useState(new Animated.Value(0));
@@ -41,20 +46,9 @@ export default function BluetoothResultScreen() {
         ]).start();
     }, []);
 
-    const handleBack = () => {
-        Animated.spring(buttonScale, {
-            toValue: 0.95,
-            friction: 4,
-            useNativeDriver: true,
-        }).start(() => {
-            buttonScale.setValue(1);
-            router.back();
-        });
-    };
-
     return (
         <SafeAreaView style={tw`flex-1 bg-white`}>
-            <TopNavigation/>
+            <TopNavigation />
             <ScrollView>
                 <Animated.View
                     style={[
@@ -73,7 +67,7 @@ export default function BluetoothResultScreen() {
                                 <View style={tw`absolute inset-2 bg-white rounded-full shadow-lg flex items-center justify-center border-2 border-red-300`}>
                                     <Ionicons name="bluetooth" size={40} color="red" />
                                 </View>
-                          
+
                             </View>
                             <Text style={tw`text-gray-900 text-3xl font-extrabold tracking-tight mb-2`}>
                                 {deviceId || 'Device12'}
@@ -132,7 +126,7 @@ export default function BluetoothResultScreen() {
                 </Animated.View>
             </ScrollView>
             {/* Bottom navigation */}
-            <BottomNavigation/>
+            <BottomNavigation />
         </SafeAreaView>
     );
 }

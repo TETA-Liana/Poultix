@@ -7,11 +7,12 @@ import {
     Animated,
     ImageBackground,
     Dimensions,
+    Alert,
+    Platform,
+    PermissionsAndroid,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
-import MaskedView from '@react-native-masked-view/masked-view';
 import * as Haptics from 'expo-haptics';
 import tw from 'twrnc';
 import { BlurView } from 'expo-blur';
@@ -19,16 +20,73 @@ import { useNavigation } from '@react-navigation/native';
 import { NavigationProps } from '@/interfaces/Navigation';
 import BottomNavigation from '../navigation/BottomNavigator';
 import TopNavigation from '../navigation/TopNavigation';
+import { BleManager, State } from 'react-native-ble-plx';
+import DeviceInfo from 'react-native-device-info';
+import { requestMultiple, PERMISSIONS } from 'react-native-permissions';
+
+const bleManager = new BleManager();
+
+interface Device {
+    id: string;
+    name: string | null;
+}
 
 export default function ConnectToDeviceScreen() {
     const router = useNavigation<NavigationProps>()
     const [isBluetoothOn, setIsBluetoothOn] = useState(false);
+    const [devices, setDevices] = useState<Device[]>([]);
+    const [scanning, setScanning] = useState(false);
+
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const iconAnim = useRef(new Animated.Value(0)).current;
     const buttonAnim = useRef(new Animated.Value(0)).current;
     const menuItemsAnim = useRef([...Array(4)].map(() => new Animated.Value(0))).current;
-    const [activeTab, setActiveTab] = useState('devices');
-    const { width } = Dimensions.get('window');
+
+    const requestPermissions = async () => {
+        if (Platform.OS === 'android') {
+            const apiLevel = await DeviceInfo.getApiLevel();
+            if (apiLevel < 31) {
+                await PermissionsAndroid.request(
+                    PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+                );
+            } else {
+                await requestMultiple([
+                    PERMISSIONS.ANDROID.BLUETOOTH_SCAN,
+                    PERMISSIONS.ANDROID.BLUETOOTH_CONNECT,
+                    PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+                ]);
+            }
+        }
+    };
+    const startScan = async () => {
+        await requestPermissions();
+
+        setDevices([]);
+        setScanning(true);
+
+        bleManager.startDeviceScan(null, null, (error, device) => {
+            if (error) {
+                console.warn('Scan error:', error);
+                setScanning(false);
+                return;
+            }
+            console.log('Scanned device:', device);
+            // Avoid duplicates
+            setDevices((prev) => {
+                if (device && !prev.find((d) => d.id === device.id)) {
+                    return [...prev, device];
+                }
+                return prev;
+            });
+        });
+
+        // Stop scanning after 10 seconds
+        setTimeout(() => {
+            bleManager.stopDeviceScan();
+            setScanning(false);
+            router.navigate('BtResult', { devices });
+        }, 10000);
+    };
 
     useEffect(() => {
         // Animate main content
@@ -61,6 +119,15 @@ export default function ConnectToDeviceScreen() {
                 useNativeDriver: true,
             }).start();
         });
+        const subscription = bleManager.onStateChange((state) => {
+            if (state === State.PoweredOn) {
+                subscription.remove();
+                setIsBluetoothOn(true);
+            } else if (state === State.PoweredOff && Platform.OS === 'android') {
+                Alert.alert("Bluetooth Required", "Please enable Bluetooth manually from settings.");
+            }
+        }, true);
+        startScan()
     }, []);
 
     const handleToggleBluetooth = () => {
@@ -69,88 +136,7 @@ export default function ConnectToDeviceScreen() {
         router.navigate('BtResult')
     };
 
-    const handleBack = () => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
-        Animated.timing(fadeAnim, {
-            toValue: 0,
-            duration: 300,
-            useNativeDriver: true,
-        }).start(() => router.navigate('PhReader'));
-    };
 
-    const handleNavigation = (path: string, tabName: string) => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
-        setActiveTab(tabName);
-        Animated.timing(fadeAnim, {
-            toValue: 0,
-            duration: 300,
-            useNativeDriver: true,
-        }).start(() => router.navigate(path));
-    };
-
-    const renderMenuButton = (icon: any, label: string, path: string, tabName: string, index: number, special = false) => {
-        const isActive = activeTab === tabName;
-        const buttonStyle = special
-            ? tw`items-center -mt-8`
-            : tw`items-center px-4`;
-
-        const textColor = isActive ? 'text-red-500' : 'text-gray-700';
-        const iconColor = isActive ? '#EF4444' : '#6B7280';
-
-        return (
-            <Animated.View style={{
-                opacity: menuItemsAnim[index],
-                transform: [
-                    {
-                        translateY: menuItemsAnim[index].interpolate({
-                            inputRange: [0, 1],
-                            outputRange: [20, 0]
-                        })
-                    }
-                ]
-            }}>
-                <TouchableOpacity
-                    onPress={() => handleNavigation(path, tabName)}
-                    style={buttonStyle}
-                    activeOpacity={0.7}
-                >
-                    {special ? (
-                        <View style={tw`w-16 h-16 rounded-full shadow-2xl overflow-hidden`}>
-                            <LinearGradient
-                                colors={['#EF4444', '#FF6B6B']}
-                                style={tw`flex-1 items-center justify-center`}
-                            >
-                                <BlurView
-                                    intensity={15}
-                                    tint="light"
-                                    style={tw`flex-1 items-center justify-center w-full h-full`}
-                                />
-                                <View style={tw`absolute inset-0 flex items-center justify-center`}>
-                                    <Ionicons name={icon} size={28} color="#FFFFFF" />
-                                </View>
-                            </LinearGradient>
-                        </View>
-                    ) : (
-                        <>
-                            <View style={tw`relative w-12 h-12 items-center justify-center`}>
-                                {isActive && (
-                                    <View style={tw`absolute w-10 h-10 bg-red-100 rounded-full opacity-30`} />
-                                )}
-                                <Ionicons name={icon} size={24} color={iconColor} />
-                            </View>
-                            <Text style={tw`text-xs font-semibold mt-1 ${textColor}`}>{label}</Text>
-                            {isActive && (
-                                <View style={tw`h-1 w-6 bg-red-500 rounded-full mt-1`} />
-                            )}
-                        </>
-                    )}
-                    {special && (
-                        <Text style={tw`text-xs font-semibold mt-2 text-gray-700`}>{label}</Text>
-                    )}
-                </TouchableOpacity>
-            </Animated.View>
-        );
-    };
 
     return (
         <ImageBackground
@@ -167,8 +153,6 @@ export default function ConnectToDeviceScreen() {
                     <View style={tw`flex-1 px-5 relative`}>
                         {/* Main Content */}
                         <Animated.View style={[tw`flex-1 items-center justify-center`, { opacity: fadeAnim }]}>
-
-
                             {/* Bluetooth Icon with Glow Effect */}
                             <Animated.View
                                 style={[

@@ -48,7 +48,17 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      "react-native-ble-manager"
+      "react-native-ble-manager",
+      [
+        "react-native-permissions",
+        {
+          "ios": [
+            "BluetoothPeripheral",
+            "LocationAlways",
+            "LocationWhenInUse"
+          ]
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

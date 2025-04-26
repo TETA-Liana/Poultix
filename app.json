@@ -21,7 +21,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo.png",
-        "backgroundColor": "gray"
+        "backgroundColor": "#ffffff"
       },
       "config": {
         "googleMaps": {

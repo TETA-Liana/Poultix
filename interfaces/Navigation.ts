@@ -1,6 +1,7 @@
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Device } from './Bluetooth';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
+import { Pharmacy } from './Pharmacy';
 
 export type RootStackParamList = {
     SignIn: undefined;
@@ -23,7 +24,9 @@ export type RootStackParamList = {
     NetworkError: undefined;
     Testing: undefined;
     Veterinary: undefined;
-    Pharmacies: undefined;
+    Pharmacies: {
+        pharmacies: Pharmacy[];
+    };
     Drawer: undefined; // DrawerNavigator
 };
 

@@ -33,14 +33,14 @@ const Drawer = createDrawerNavigator();
 // Drawer Navigator for authenticated users
 const DrawerNavigator = () => (
   <Drawer.Navigator
-    initialRouteName="Farm"
+    initialRouteName="Farmer"
     drawerContent={(props) => <CustomDrawerContent {...props} />}
     screenOptions={{
       drawerStyle: tw`w-72 bg-white`,
       drawerActiveTintColor: '#EF4444',
       drawerInactiveTintColor: '#6B7280',
       drawerLabelStyle: tw`text-base font-medium`,
-      headerShown: false, // Use TopNavigation in screens
+      headerShown: false,
     }}
   >
     <Drawer.Screen
@@ -161,6 +161,7 @@ const App = () => {
             <Stack.Screen name="Ph_Reader" component={ChickenPHReadingsScreen} />
             <Stack.Screen name="NetworkError" component={NetworkErrorScreen} />
             <Stack.Screen name="Testing" component={Testing} />
+
           </>
         ) : (
           <>

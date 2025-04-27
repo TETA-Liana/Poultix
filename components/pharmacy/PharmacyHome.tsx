@@ -23,19 +23,8 @@ import { NavigationProps } from '@/interfaces/Navigation';
 import { BlurView } from 'expo-blur';
 import { SharedElement } from 'react-navigation-shared-element';
 import TopNavigation from '../navigation/TopNavigation';
+import { Pharmacy } from '@/interfaces/Pharmacy';
 
-interface Pharmacy {
-    id: string;
-    name: string;
-    address: string;
-    distance: number;
-    phone: string;
-    isOpen: boolean;
-    location: {
-        latitude: number;
-        longitude: number;
-    };
-}
 
 const GOOGLE_API_KEY = 'YOUR_GOOGLE_API_KEY'; // Replace with your API key
 
@@ -202,7 +191,7 @@ const PharmaciesScreen = () => {
             ]).start();
         };
         initialize();
-    }, [userLocation]);
+    }, []);
 
     if (loading || !userLocation) {
         return (
@@ -295,7 +284,7 @@ const PharmaciesScreen = () => {
                     {/* Pharmacy List */}
                     {filteredPharmacies.length === 0 ? (
                         <View style={tw`items-center py-10`}>
-                            <Ionicons name="search-off-outline" size={48} color="#6B7280" />
+                            <Ionicons name="search-outline" size={48} color="#6B7280" />
                             <Text style={tw`text-gray-500 text-lg mt-4`}>No pharmacies found</Text>
                         </View>
                     ) : (

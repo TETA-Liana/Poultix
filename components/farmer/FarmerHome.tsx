@@ -139,9 +139,8 @@ export default function FarmerScreen() {
     return (
         <SafeAreaView style={tw`flex-1 bg-white`}>
             <TopNavigation />
-            <ScrollView showsVerticalScrollIndicator={false}
-                style={tw`mt-15 mb-20`}>
-                <Animated.View style={[tw`flex-1 px-5 pt-12 pb-8`, { opacity: fadeAnim }]}>
+            <ScrollView showsVerticalScrollIndicator={false}>
+                <Animated.View style={[tw`flex-1 px-5  pb-8`, { opacity: fadeAnim }]}>
                     {/* Profile Section */}
                     <LinearGradient
                         colors={['#F95316', '#EB580C']}

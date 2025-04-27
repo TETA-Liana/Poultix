@@ -142,7 +142,7 @@ export default function PoultryPHInputScreen() {
   return (
     <SafeAreaView style={tw`flex-1`}>
       <TopNavigation />
-      <ScrollView contentContainerStyle={tw`bg-white py-30 px-6`}>
+      <ScrollView contentContainerStyle={tw`bg-white pb-20 px-6`}>
         <Animated.View style={{ opacity: fadeAnim }}>
           <Text style={tw`text-base text-gray-500 mb-8`}>
             Enter the pH reading of your poultry's stool to check for health issues.

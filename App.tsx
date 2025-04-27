@@ -84,13 +84,13 @@ const DrawerNavigator = () => (
       }}
     />
     <Drawer.Screen
-      name="Veterinary"
-      component={VeterinaryHome}
+      name="Bluetooth_Pairing"
+      component={Pairing}
       options={{
         drawerIcon: ({ color }) => (
-          <Ionicons name="heart-outline" size={24} color={color} />
+          <Ionicons name="paw-outline" size={24} color={color} />
         ),
-        title: 'Veterinary',
+        title: 'Stool checker',
       }}
     />
     <Drawer.Screen

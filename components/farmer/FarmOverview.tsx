@@ -215,10 +215,10 @@ export default function FarmDataScreen() {
       <TopNavigation />
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={tw`pt-15 pb-20 bg-white`}
+        contentContainerStyle={tw` pb-10 bg-white`}
       >
         <View
-          style={[tw`flex-1 px-5 pt-${Platform.OS === 'ios' ? '12' : '16'}`]}
+          style={[tw`flex-1 px-5 `]}
         >
           <Text style={tw`text-4xl font-extrabold tracking-tight mb-2 leading-tight text-orange-600`}>
             {farmData.farmName}

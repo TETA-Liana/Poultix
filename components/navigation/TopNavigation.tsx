@@ -19,10 +19,10 @@ export default function TopNavigation() {
             Alert.alert('Navigation Error', 'Unable to open menu.');
         }
     }
-    
+
     return (
         <>
-            <View style={tw`absolute top-0 left-0 right-0 flex-row justify-between px-5 items-center bg-white/98 pt-10 pb-5 z-5`}>
+            <View style={tw`fixed top-0 left-0  flex-row justify-between items-center  bg-white/95 p-5 z-5 `}>
                 {/* Back Button (Top-Left, Small) */}
                 <TouchableOpacity
                     onPress={handleBack}

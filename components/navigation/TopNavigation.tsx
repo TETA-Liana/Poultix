@@ -3,6 +3,7 @@ import tw from "twrnc"
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { NavigationProps } from "@/interfaces/Navigation";
+import { StatusBar } from "expo-status-bar";
 
 export default function TopNavigation() {
     const router = useNavigation<NavigationProps>()
@@ -21,8 +22,10 @@ export default function TopNavigation() {
     }
 
     return (
-        <>
-            <View style={tw`fixed top-0 left-0  flex-row justify-between items-center  bg-white/95 p-5 z-5 `}>
+        <View style={tw`fixed top-0 left-0 bg-white/95 p-5 pt-0`}>
+            <StatusBar style="auto" translucent={false} />
+            <View style={tw`flex-row justify-between items-center `}>
+
                 {/* Back Button (Top-Left, Small) */}
                 <TouchableOpacity
                     onPress={handleBack}
@@ -41,6 +44,6 @@ export default function TopNavigation() {
                 </TouchableOpacity>
 
             </View>
-        </>
+        </View>
     )
 }

@@ -128,12 +128,15 @@ const DrawerNavigator = () => (
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [role, setRole] = useState<string | null>(null);
 
   // Check authentication state
   useEffect(() => {
     const checkAuth = async () => {
       try {
         const token = await AsyncStorage.getItem('token');
+        const userRole = await AsyncStorage.getItem('role');
+        if (userRole) setRole(userRole);
         setIsAuthenticated(!!token);
       } catch (error) {
         console.error('Auth check error:', error);
@@ -160,6 +163,15 @@ const App = () => {
             <Stack.Screen name="Bluetooth_Pairing" component={Pairing} />
             <Stack.Screen name="Ph_Reader" component={ChickenPHReadingsScreen} />
             <Stack.Screen name="NetworkError" component={NetworkErrorScreen} />
+            {role === "Veterinary" ? (<Stack.Screen name="Veterinary" component={VeterinaryHome} />
+            ) : (<Stack.Screen name="Farmer" component={FarmerHome} />
+            )}
+            <Stack.Screen name="Pharmacy" component={PharmaciesScreen} />
+            <Stack.Screen name="Settings" component={SettingsScreen} />
+            <Stack.Screen name="AiScreen" component={AiScreen} />
+            <Stack.Screen name="News" component={News} />
+            <Stack.Screen name="Farm" component={FarmOverview} />
+
             <Stack.Screen name="Testing" component={Testing} />
 
           </>

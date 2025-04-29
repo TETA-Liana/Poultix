@@ -54,7 +54,7 @@ const HomeScreen = () => {
                 behavior={Platform.OS === 'ios' ? 'padding' : undefined}
                 style={tw`flex-1`}
             >
-                <ScrollView style={tw`flex-1 px-6`}>
+                <View style={tw`flex-1 px-6`}>
                     <Text style={tw`text-4xl font-bold mt-10 mb-2 text-gray-800`}>
                         Hello 👋
                     </Text>
@@ -87,7 +87,7 @@ const HomeScreen = () => {
                             )}
                         />
                     </Animated.View>
-                </ScrollView>
+                </View>
             </KeyboardAvoidingView>
         </SafeAreaView>
     );

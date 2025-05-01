@@ -101,7 +101,7 @@ export default function SignInScreen() {
             }),
             Animated.timing(buttonScale, {
                 toValue: 1,
-                duration: 100,
+                duration: 110,
                 useNativeDriver: true,
             }),
         ]).start(() => {

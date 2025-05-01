@@ -95,8 +95,8 @@ export default function SettingsScreen() {
   return (
     <SafeAreaView style={tw`flex-1 bg-white`}>
       <TopNavigation />
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={tw`pb-35 mt-15`}>
-        <Animated.View style={[tw`flex-1 px-5 pt-12`, { opacity: fadeAnim }]}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={tw`pb-30 pt-5`}>
+        <Animated.View style={[tw`flex-1 px-5 `, { opacity: fadeAnim }]}>
           {/* Profile Section */}
           <Animated.View
             style={[

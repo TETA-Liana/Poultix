@@ -23,7 +23,7 @@ export default function TopNavigation() {
 
     return (
         <View style={tw`fixed top-0 left-0 bg-white/95 p-5 pt-0`}>
-            <StatusBar style="auto" translucent={false} />
+            <StatusBar style="dark" translucent={false} />
             <View style={tw`flex-row justify-between items-center `}>
 
                 {/* Back Button (Top-Left, Small) */}

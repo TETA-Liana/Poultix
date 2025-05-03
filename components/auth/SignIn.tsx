@@ -166,7 +166,7 @@ export default function SignInScreen() {
             setIsLoading(false)
             if (role == 'farmer') navigation.navigate('Farmer')
             else if (role == 'veterinary') navigation.navigate('Veterinary')
-            else Alert.alert('Error', 'Invalid role')
+            else navigation.navigate('Home')
         } catch (error) {
             setIsLoading(false)
             if (axios.isAxiosError(error)) {

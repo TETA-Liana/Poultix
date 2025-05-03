@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -22,10 +23,10 @@ import ChickenPHReadingsScreen from './components/bluetooth/PhChecker';
 import SettingsScreen from './components/home/Settings';
 import CreateNewPasswordScreen from './components/auth/CreateNewPassword';
 import NetworkErrorScreen from './errors/NetworkError';
-import Testing from './components/testing/Bluetooth';
 import VeterinaryHome from './components/veterinary/VeterinaryHome';
 import PharmaciesScreen from './components/pharmacy/PharmacyHome';
 import CustomDrawerContent from './components/navigation/Drawer';
+import Tester from './components/testing/Tester';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -172,7 +173,7 @@ const App = () => {
             <Stack.Screen name="News" component={News} />
             <Stack.Screen name="Farm" component={FarmOverview} />
 
-            <Stack.Screen name="Testing" component={Testing} />
+            <Stack.Screen name="Tester" component={Tester} />
 
           </>
         ) : (
@@ -186,6 +187,7 @@ const App = () => {
             <Stack.Screen name="CreateNewPassword" component={CreateNewPasswordScreen} />
           </>
         )}
+        <Stack.Screen name="Home" component={Home} />
       </Stack.Navigator>
     </NavigationContainer>
   );

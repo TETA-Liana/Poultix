@@ -1,4 +1,7 @@
-{
+import 'dotenv/config';  
+
+
+export default {
   "expo": {
     "name": "poultix",
     "slug": "poultix",
@@ -15,7 +18,7 @@
       },
       "bundleIdentifier": "com.anonymous.poultix",
       "config": {
-        "googleMapsApiKey": "AIzaSyBPcaYnBoFQUKBmD-00x9r43oDkNdaL_B8"
+        "googleMapsApiKey": process.env.GOOGLE_MAP_KEY
       }
     },
     "android": {
@@ -25,7 +28,7 @@
       },
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyBPcaYnBoFQUKBmD-00x9r43oDkNdaL_B8"
+          "apiKey": process.env.GOOGLE_MAP_KEY
         }
       },
       "permissions": [
@@ -70,6 +73,8 @@
     ],
     "experiments": {
       "typedRoutes": true
+    }, extra: {
+      GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID, // Use your .env variable here
     }
   }
 }

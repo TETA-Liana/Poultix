@@ -23,13 +23,11 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
 
   // Handle logout
   const handleLogout = async () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => { });
     try {
       await AsyncStorage.removeItem('token');
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'SignIn' }],
-      });
+      await AsyncStorage.removeItem('role');
+      navigation.navigate('SignIn')
     } catch (error) {
       console.error('Logout error:', error);
     }
@@ -58,7 +56,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
         <TouchableOpacity
           style={tw`flex-row items-center p-4 mt-4`}
           onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
             navigation.navigate('Settings');
           }}
         >
@@ -77,7 +75,21 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
           <Text style={tw`text-base font-medium text-red-500`}>Logout</Text>
         </TouchableOpacity>
       </View>
+
+
+      {/* Testing */}
+      <View style={tw`p-5 border-t border-gray-200`}>
+        <TouchableOpacity
+          style={tw`flex-row items-center`}
+          onPress={()=>navigation.navigate('Tester')}
+        >
+          <Ionicons name="log-out-outline" size={24} color="#EF4444" style={tw`mr-4`} />
+          <Text style={tw`text-base font-medium text-red-500`}>Tester</Text>
+        </TouchableOpacity>
+      </View>
     </Animated.View>
+
+
   );
 };
 

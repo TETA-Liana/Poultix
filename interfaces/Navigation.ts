@@ -28,6 +28,7 @@ export type RootStackParamList = {
         pharmacies: Pharmacy[];
     };
     Drawer: undefined; // DrawerNavigator
+    Tester: undefined;
 };
 
 // Define drawer param list

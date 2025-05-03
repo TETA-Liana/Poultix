@@ -7,3 +7,8 @@ Database:mongodb
 
 To run the app 
 run : npx expo run:android
+
+creating sha keys
+ keytool -genkey -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000
+
+ keytool -keystore ~/.android/debug.keystore -list -v

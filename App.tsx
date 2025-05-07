@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -164,9 +163,8 @@ const App = () => {
             <Stack.Screen name="Bluetooth_Pairing" component={Pairing} />
             <Stack.Screen name="Ph_Reader" component={ChickenPHReadingsScreen} />
             <Stack.Screen name="NetworkError" component={NetworkErrorScreen} />
-            {role === "Veterinary" ? (<Stack.Screen name="Veterinary" component={VeterinaryHome} />
-            ) : (<Stack.Screen name="Farmer" component={FarmerHome} />
-            )}
+            <Stack.Screen name="Veterinary" component={VeterinaryHome} />
+            <Stack.Screen name="Farmer" component={FarmerHome} />
             <Stack.Screen name="Pharmacy" component={PharmaciesScreen} />
             <Stack.Screen name="Settings" component={SettingsScreen} />
             <Stack.Screen name="AiScreen" component={AiScreen} />

@@ -1,5 +1,4 @@
-import 'dotenv/config';  
-
+import 'dotenv/config'
 
 export default {
   "expo": {
@@ -29,7 +28,7 @@ export default {
       "config": {
         "googleMaps": {
           "apiKey": process.env.GOOGLE_MAP_KEY
-        }
+        },
       },
       "permissions": [
         "BLUETOOTH",
@@ -69,12 +68,17 @@ export default {
             "LocationWhenInUse"
           ]
         }
-      ]
+      ],
+      [
+        "@react-native-google-signin/google-signin", {
+          "iosUrlScheme": "com.googleusercontent.apps.480918748504-96eo9ab0g4uac9p4r7kshh2fep039k9g"
+        }]
     ],
     "experiments": {
       "typedRoutes": true
-    }, extra: {
-      GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID, // Use your .env variable here
+    }, 
+    extra: {
+      GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID, 
     }
   }
 }

@@ -1,122 +1,159 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, SafeAreaView, TextInput } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import {
+    View,
+    Text,
+    TouchableOpacity,
+    SafeAreaView,
+    TextInput,
+    Animated,
+    KeyboardAvoidingView,
+    Platform,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
 import tw from 'twrnc';
+import TopNavigation from '../navigation/TopNavigation';
 
 export default function AIFrontScreen() {
     const router = useRouter();
+    const [question, setQuestion] = useState('');
+    const fadeAnim = useRef(new Animated.Value(0)).current;
+    const slideAnim = useRef(new Animated.Value(50)).current;
 
-    // State for the user question
-    const [question, setQuestion] = useState('What is the latest news in poultry farming?');
+    // Animation effect on mount
+    useEffect(() => {
+        Animated.parallel([
+            Animated.timing(fadeAnim, {
+                toValue: 1,
+                duration: 600,
+                useNativeDriver: true,
+            }),
+            Animated.spring(slideAnim, {
+                toValue: 0,
+                friction: 8,
+                tension: 60,
+                useNativeDriver: true,
+            }),
+        ]).start();
+    }, []);
 
-    // Handle navigation to conversation with selected style
     const handleStyleSelect = (style: string) => {
-        router.push({
-            pathname: '/screens/ai-front',
-            params: { style, question }, // Pass selected style and question to conversation screen
-        });
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     };
 
-    // Handle navigation to ask a new question
     const handleAskQuestion = () => {
         if (question.trim()) {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
             router.push({
                 pathname: '/screens/ai-conversation',
-                params: { style: 'Balanced', question }, // Default to Balanced style
+                params: { style: 'Balanced', question },
             });
         }
     };
 
     return (
-        <SafeAreaView style={tw`flex-1 bg-white`}>
-            <StatusBar hidden />
-            <View style={tw`flex-1 px-5 pt-5`}>
-                {/* Header */}
-                <View style={tw`flex-row items-center justify-between mb-4`}>
-                    <View style={tw`flex-row items-center`}>
-                        <Ionicons name="person-circle-outline" size={24} color="#6B7280" />
-                        <View style={tw`ml-2`}>
-                            <Text style={tw`text-gray-900 text-sm font-semibold`}>Good Morning 🌞</Text>
-                            <Text style={tw`text-gray-500 text-xs`}>Komari Gaspari</Text>
+        <SafeAreaView style={tw`flex-1`}>
+           <TopNavigation/>
+            <LinearGradient
+                colors={['#F9FAFB', '#E5E7EB']}
+                style={tw`flex-1`}
+            >
+                <KeyboardAvoidingView
+                    behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                    style={tw`flex-1`}
+                >
+                    <View style={tw`flex-1 px-4 pt-6 pb-4`}>
+
+
+                        {/* Welcome Message */}
+                        <Animated.View
+                            style={[tw`mb-8`, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}
+                        >
+                            <Text style={tw`text-gray-900 text-xl font-bold mb-2 tracking-tight`}>
+                                Chat Farm AI
+                            </Text>
+                            <Text style={tw`text-gray-600 text-base leading-6`}>
+                                Ask about poultry farming, find vets, or explore AI-powered insights.
+                            </Text>
+                            <TouchableOpacity onPress={() => handleAskQuestion()}>
+                                <Text style={tw`text-blue-500 text-base mt-2 font-medium`}>
+                                    Vets near me?
+                                </Text>
+                            </TouchableOpacity>
+                        </Animated.View>
+
+                        {/* User Question (Chat Bubble) */}
+                        <Animated.View
+                            style={[
+                                tw`max-w-[75%] bg-blue-500 rounded-2xl p-4 mb-6 ml-auto relative`,
+                                { opacity: fadeAnim, transform: [{ translateY: slideAnim }] },
+                            ]}
+                        >
+                            <Text style={tw`text-white text-base`}>
+                                Hello there! Can you help me today?
+                            </Text>
+                            {/* Bubble Tail */}
+
+                        </Animated.View>
+
+
+
+                        {/* AI Response (Chat Bubble) */}
+                        <Animated.View
+                            style={[
+                                tw`max-w-[75%] bg-gray-200 rounded-2xl p-4 mb-6 mr-auto relative`,
+                                { opacity: fadeAnim, transform: [{ translateY: slideAnim }] },
+                            ]}
+                        >
+                            <View style={tw`flex-row items-center mb-2`}>
+                                <Ionicons name="chatbubble-outline" size={20} color="#4B5563" />
+                                <Text style={tw`text-gray-600 text-sm ml-2 font-medium`}>AI Assistant</Text>
+                            </View>
+                            <Text style={tw`text-gray-900 text-base leading-6`}>
+                                Hello! I'm here to help with your farming queries. What's on your mind? 😊
+                            </Text>
+                            <Text style={tw`text-gray-500 text-xs mt-2`}>1 of 5 • 🌟</Text>
+                            {/* Bubble Tail */}
+                            <View
+                                style={tw`absolute bottom-0 left-[-8px] w-0 h-0 border-t-[8px] border-t-transparent border-r-[12px] border-r-gray-200 border-b-[8px] border-b-transparent`}
+                            />
+                        </Animated.View>
+                    </View>
+
+                    {/* Input Area */}
+                    <Animated.View
+                        style={[
+                            tw`px-4 pb-4`,
+                            { opacity: fadeAnim, transform: [{ translateY: slideAnim }] },
+                        ]}
+                    >
+                        <View
+                            style={tw`flex-row items-center bg-white rounded-full p-3 shadow-lg border border-gray-200`}
+                        >
+                            <TextInput
+                                style={tw`flex-1 text-gray-900 text-base px-3 py-2`}
+                                value={question}
+                                onChangeText={setQuestion}
+                                placeholder="Ask me anything..."
+                                placeholderTextColor="#6B7280"
+                            />
+                            <TouchableOpacity
+                                onPress={handleAskQuestion}
+                                style={tw`p-2`}
+                                activeOpacity={0.7}
+                            >
+                                <Ionicons name="send" size={24} color="#3B82F6" />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={tw`p-2`} activeOpacity={0.7}>
+                                <Ionicons name="mic" size={24} color="#3B82F6" />
+                            </TouchableOpacity>
                         </View>
-                    </View>
-                    <Text style={tw`text-gray-500 text-xs`}>09:41</Text>
-                </View>
-
-                {/* Welcome Message */}
-                <View style={tw`mb-6`}>
-                    <Text style={tw`text-gray-900 text-lg font-bold mb-2`}>Welcome to Chat Farm Ai</Text>
-                    <Text style={tw`text-gray-600 text-sm`}>
-                        Use the power of AI to find answers from the web, create written content, and more.
-                    </Text>
-                    <TouchableOpacity>
-                        <Text style={tw`text-blue-500 text-sm mt-1`}>Vets near me?</Text>
-                    </TouchableOpacity>
-                </View>
-
-                {/* User Question */}
-                <View style={tw`bg-red-100 rounded-lg p-3 mb-6 yellow-600`}>
-                    <Text style={tw`text-red-700 text-base`}>{question}</Text>
-                </View>
-
-                {/* Conversation Style Selection */}
-                <View style={tw`mb-6`}>
-                    <Text style={tw`text-gray-900 text-sm font-semibold mb-2`}>Choose a conversation style</Text>
-                    <View style={tw`flex-row justify-between`}>
-                        <TouchableOpacity
-                            onPress={() => handleStyleSelect('Creative')}
-                            style={tw`bg-yellow-600 rounded-lg px-4 py-2`}
-                        >
-                            <Text style={tw`text-white text-sm font-medium`}>Creative</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={() => handleStyleSelect('Balanced')}
-                            style={tw`bg-yellow-600 rounded-lg px-4 py-2`}
-                        >
-                            <Text style={tw`text-white text-sm font-medium`}>Balanced</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={() => handleStyleSelect('Precise')}
-                            style={tw`bg-yellow-600 rounded-lg px-4 py-2`}
-                        >
-                            <Text style={tw`text-white text-sm font-medium`}>Precise</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-
-                {/* Chatbot Response */}
-                <View style={tw`bg-gray-100 rounded-lg p-3 mb-6`}>
-                    <View style={tw`flex-row items-center mb-2`}>
-                        <Ionicons name="chatbubble-outline" size={20} color="#6B7280" />
-                        <Text style={tw`text-gray-600 text-sm ml-2`}>Hello</Text>
-                    </View>
-                    <Text style={tw`text-gray-900 text-base`}>
-                        Hello! This is... How can I help you today? 😊
-                    </Text>
-                    <Text style={tw`text-gray-500 text-xs mt-1`}>1 of 5 • 🌟</Text>
-                </View>
-
-                {/* User Input Area */}
-                <View style={tw`flex-row items-center bg-gray-100 rounded-lg p-2 mb-6`}>
-                    <View style={tw`flex-1 mr-2`}>
-                        <TextInput
-                            style={tw`text-gray-900 text-base p-2`}
-                            value={question}
-                            onChangeText={setQuestion}
-                            placeholder="Ask me anything..."
-                            placeholderTextColor="#6B7280"
-                        />
-                    </View>
-                    <TouchableOpacity onPress={handleAskQuestion}>
-                        <Ionicons name="send" size={24} color="#6B7280" />
-                    </TouchableOpacity>
-                    <TouchableOpacity>
-                        <Ionicons name="mic" size={24} color="#6B7280" />
-                    </TouchableOpacity>
-                </View>
-            </View>
+                    </Animated.View>
+                </KeyboardAvoidingView>
+            </LinearGradient>
         </SafeAreaView>
     );
 }

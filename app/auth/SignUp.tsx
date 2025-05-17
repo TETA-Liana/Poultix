@@ -19,6 +19,7 @@ import hostConfig from '../../config/hostConfig'
 import { useNavigation } from '@react-navigation/native'
 import { NavigationProps } from '@/interfaces/Navigation'
 import TopNavigation from '../navigation/TopNavigation'
+import { StatusBar } from "expo-status-bar";
 
 export default function SignUpScreen() {
     const [name, setName] = useState('')

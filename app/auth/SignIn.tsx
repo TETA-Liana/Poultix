@@ -19,9 +19,8 @@ import { Ionicons, FontAwesome } from '@expo/vector-icons'
 import tw from 'twrnc'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { LinearGradient } from 'expo-linear-gradient'
-
+import { StatusBar } from "expo-status-bar";
 import { NavigationProps } from '@/interfaces/Navigation'
-import TopNavigation from '../navigation/TopNavigation'
 
 export default function SignInScreen() {
     const [email, setEmail] = useState('')
@@ -194,7 +193,7 @@ export default function SignInScreen() {
     // Enhanced styles
     const styles = {
         container: tw`flex-1 bg-white`,
-        scrollContent: tw`flex-grow py-10`,
+        scrollContent: tw`flex-grow pb-10`,
         mainContent: [
             tw`flex-1 px-7 pt-4`,
             { opacity: fadeAnim, transform: [{ translateY: slideAnim }] },
@@ -238,15 +237,13 @@ export default function SignInScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-
-            <TopNavigation />
+            <StatusBar style="dark" translucent={false} />
             <ScrollView
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
                 keyboardShouldPersistTaps="handled"
             >
                 <Animated.View style={styles.mainContent}>
-
                     {/* Header */}
                     <View style={styles.headerContainer}>
                         <Text style={styles.headerTitle}>Welcome Back</Text>

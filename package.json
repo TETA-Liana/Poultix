@@ -39,6 +39,7 @@
     "lottie-ios": "^4.5.1",
     "lottie-react-native": "^7.1.0",
     "moti": "^0.30.0",
+    "node-fetch": "^3.3.2",
     "path": "^0.12.7",
     "react": "19.0.0",
     "react-dom": "19.0.0",

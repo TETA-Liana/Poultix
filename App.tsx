@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import tw from 'twrnc';
 import Home from './app/home/Home';
-import News from './app/home/News';
+import News from './app/news/News';
 import AiScreen from './app/ai/AiScreen';
 import SignIn from './app/auth/SignIn';
 import SignUp from './app/auth/SignUp';
@@ -147,7 +147,7 @@ const App = () => {
   }, []);
 
   if (isAuthenticated === null) {
-    return null; // Optionally show a loading screen
+    return null;
   }
 
   return (

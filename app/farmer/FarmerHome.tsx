@@ -21,6 +21,7 @@ import { FarmerData } from '@/interfaces/Farmer';
 import { FarmData } from '@/interfaces/Farm';
 import { Schedule } from '@/interfaces/Schedule';
 import TopNavigation from '../navigation/TopNavigation';
+import VeterinaryComponent from '@/components/shared/veterinary/veterinary';
 
 
 export default function FarmerScreen() {
@@ -203,51 +204,8 @@ export default function FarmerScreen() {
                         )}
                     </View>
 
-                    {/* Choose Your Location Section */}
-                    <View style={tw`mb-6`}>
-                        <Text style={tw`text-xl font-bold text-center text-gray-800 my-4`}>
-                            See Veterinaries around you
-                        </Text>
-                        <Text style={tw`text-lg font-semibold text-center text-gray-800 mb-4`}>
-                            Choose Location
-                        </Text>
-                        <View style={tw`flex-row gap-3 mb-5`}>
-                            {['Byose', 'Kibuye', 'Muhanga'].map((location) => (
-                                <TouchableOpacity
-                                    key={location}
-                                    style={[tw`flex-1 bg-white p-4 rounded-xl shadow-sm border border-orange-100 active:bg-orange-50`]}
-                                    onPress={()=>router.navigate('Veterinary')}
-                                >
-                                    <Text style={tw`text-gray-800 text-sm font-semibold text-center`}>
-                                        {location}
-                                    </Text>
-                                </TouchableOpacity>
-                            ))}
-                        </View>
-                        {[
-                            { name: 'Dr. Mutesi Hadidja', location: 'Muhanga' },
-                            { name: 'Dr. Teta Liana', location: 'Nyamirambo' },
-                        ].map((doctor) => (
-                            <View
-                                key={doctor.name}
-                                style={tw`bg-white rounded-xl p-4 mb-3 shadow-sm flex-row items-center border border-orange-100`}
-                            >
-                                <Image
-                                    source={require('@/assets/logo.png')}
-                                    style={[tw`w-12 h-12 rounded-full mr-3 border border-orange-200`]}
-                                />
-                                <View style={tw`flex-1`}>
-                                    <Text style={tw`text-gray-800 text-base font-semibold`}>
-                                        {doctor.name}
-                                    </Text>
-                                    <Text style={tw`text-gray-600 text-sm`}>{doctor.location}</Text>
-                                </View>
-                                <TouchableOpacity style={tw`p-2 bg-orange-50 rounded-full`}>
-                                    <Ionicons name="ellipsis-horizontal" size={20} color="#EA580C" />
-                                </TouchableOpacity>
-                            </View>
-                        ))}
-                    </View>
+                    {/* Veterinaries */}
+                    <VeterinaryComponent/>
 
                     {/* Weekly Report Section */}
                     <View style={tw`bg-white rounded-2xl p-5 shadow-md border border-orange-100`}>
